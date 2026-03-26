@@ -1,16 +1,11 @@
-Recreate the functionality of Concert in this repository (concert2) using the guidance and technology that the following blog posts describes:
+Recreate the functionality of Concert in this repository (concert2). The best goal would be that Concert2 is just a node npm/npx tool to install and update agents/skills/commands/workflows in a github repo. I do the vast mojority of work using the github Agents on the github website and minimizing the external dependencies will keep maintenance simple. Concert helps me automate my development process by making use of documented workflows along with agents and skills. I think the new github agentic workflow from the article listed below will help solve how workflows are defined and keep it in the github ecosystem. One of the major problems for me has been automating long running tasks that span multiple sessions and now that workflows can be tightly coupled with agents should solve that problem. But I also posted an article about cloudflare dynamic workers below. It seems as if the long running coding tasks that can be processed in parralel and use different models per file would have a huge performance increase if they could be performed in the supposed cloudflare environments. It is not a requirement to make use of that technology, I want you to review it and see if 1. It can be used for the no feedback (coding) sessions for a major performance increase that is worth the extra tech dependency. And 2. if it could be run from a github workflow or agent session environment so that it is all cloud and nothing running on my laptop. 
+
+New developments in AI agentic programming that could be of value to concert.
 
 - https://blog.cloudflare.com/dynamic-workers/  [efficiency and speed]
 - https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/ [fits with i do most work in github UI (agents)]
 
-The goal is still to have a agentic workflows for a single developer (me) to use for automating tasks with as much done in the cloud as possible. 
+So to summarize, the goal of concert2 is for a single developer (me) to be able to work only in cloud sessions mainly with github UI (except for the interviewing agents which will be done in Claude Code UI only until github UI has a equivilent interview tool) and that Concert2 is just a node npm/npx tool to install and update agents/skills/commands/workflows in a github repo (something like "npx concert update")
 
-The current concert workflows and agents are only focused on tasks related to software development and its lifecycle as envisioned by me.
+For extra context, I should be able to use concert2 from a Google Pixelbook laptop. Low power, chromebook like, has a linux terminal if a cli tool is necessary.
 
-Concert 2 should have all the same functionality, even if it achieved in a completely different [better] way. Preferably without having to install any additional apps (currently concert requires a go app). For concert2 I want to switch from Go to a node npm/npx app if it really requires a CLI.
-
-Working in the cloud is still one of the most important goals, but until a cloud solution can possibly to the interviewing of me like claude code can, those tasks need to be cli or claude cloud for the time being.
-
-To be more specific, I should be able to use concert2 from a Google Pixelbook laptop. Low power, chromebook like, has a linux terminal if a cli tool is necessary.
-
-Continous development of concert2 should be easily done within the repo, perhaps running concert2 to add features to iteself, including releasing new versions.

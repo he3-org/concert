@@ -11,7 +11,7 @@
   "pipeline": {
     "vision": "accepted",
     "requirements": "accepted",
-    "architecture": "pending",
+    "architecture": "draft",
     "ux": "pending",
     "tasks": "pending"
   },
@@ -53,10 +53,16 @@
       "action": "requirements_accepted",
       "timestamp": "2026-03-26",
       "details": "Requirements accepted, REQUIREMENTS-SPEC.md created, advancing to architecture. Final count: 41 functional, 7 non-functional, 6 data, 5 integration requirements"
+    },
+    {
+      "action": "architecture_drafted",
+      "timestamp": "2026-03-26",
+      "details": "Architecture designed: npm package (3 CLI commands, ~1 dependency), markdown agents as brain, TypeScript/tsup build, surgical merge for config/state, quality loop with crash-recoverable quality_loop_state, cross-environment handoff via concert-push"
     }
   ],
   "next_steps": [
-    "Run /concert:plan to generate architecture from accepted requirements",
+    "Run /concert:review to review the architecture draft",
+    "Run /concert:accept to accept and advance to UX stage",
     "Run /concert:status to check current status"
   ]
 }

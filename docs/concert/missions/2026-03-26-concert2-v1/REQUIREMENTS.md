@@ -4,14 +4,14 @@
 
 ### FR-001: Repository Bootstrapping via npx (must)
 
-The system must provide a CLI command `npx concert2 init` that bootstraps a repository with all Concert files.
+The system must provide a CLI command `npx @he3-org/concert init` that bootstraps a repository with all Concert files.
 
 **Acceptance Criteria:**
-- Running `npx concert2 init` in a git repository creates the `docs/concert/` directory structure with agents, workflows, skills, and configuration files
-- Running `npx concert2 init` creates `.github/agents/` with all GitHub Agent definition files
-- Running `npx concert2 init` creates `.github/workflows/` with Concert workflow files (auto-continue, version-check)
-- Running `npx concert2 init` creates `concert.jsonc` at the project root with default configuration
-- Running `npx concert2 init` creates `docs/concert/state.json` with empty/initial state
+- Running `npx @he3-org/concert init` in a git repository creates the `docs/concert/` directory structure with agents, workflows, skills, and configuration files
+- Running `npx @he3-org/concert init` creates `.github/agents/` with all GitHub Agent definition files
+- Running `npx @he3-org/concert init` creates `.github/workflows/` with Concert workflow files (auto-continue, version-check)
+- Running `npx @he3-org/concert init` creates `concert.jsonc` at the project root with default configuration
+- Running `npx @he3-org/concert init` creates `docs/concert/state.json` with empty/initial state
 - If Concert files already exist, the command warns and asks for confirmation before overwriting managed files
 - The command succeeds in a clean git repository with no prior Concert installation
 - The command exits with a non-zero code and a descriptive error if run outside a git repository
@@ -164,7 +164,7 @@ All Concert-generated files must carry a "do not edit" header indicating they ar
 The system must support updating Concert files in a repository to a new version.
 
 **Acceptance Criteria:**
-- A command (e.g., `npx concert2 update` or an update agent) upgrades Concert files in an existing installation
+- A command (e.g., `npx @he3-org/concert update` or an update agent) upgrades Concert files in an existing installation
 - **Safe to overwrite:** Agent definitions, skill files, workflow files, GitHub agent files, and GitHub workflow files are replaced entirely from the new version
 - **Surgical updates:** `concert-state.json` and `concert.jsonc` are merged intelligently — new fields are added, existing user values are preserved, removed fields are cleaned up
 - **User content preserved:** Mission files (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX.md, TASK files, PHASE-SUMMARY files) are never modified or deleted
@@ -296,8 +296,8 @@ The system should provide a scientific-method debugging agent.
 Concert 2 must be distributed as an npm package.
 
 **Acceptance Criteria:**
-- The package is published to npm under the name `concert2` (or equivalent)
-- `npx concert2 init` bootstraps a repository without requiring a global install
+- The package is published to npm under the name `@he3-org/concert`
+- `npx @he3-org/concert init` bootstraps a repository without requiring a global install
 - The package includes all agent definitions, workflow files, skill files, GitHub agent files, and GitHub workflow files as distributable assets
 - The package has a `bin` entry in `package.json` for the `concert2` CLI command
 - The package version follows semver (pre-v1, breaking changes do not require major bumps)
@@ -326,7 +326,7 @@ Concert commands must work from the Claude Code web UI for interactive steps.
 All state changes must be committed to git.
 
 **Acceptance Criteria:**
-- Every operation that modifies `state.json` commits the change to git
+- State changes are committed alongside the work that triggered them (e.g., a task commit includes the state.json update); state-only commits occur only when no other files changed (e.g., a stage transition)
 - Every planning stage that produces a document commits the document
 - Every task execution commits the code with conventional commit format
 - State is always recoverable from the git history
@@ -360,15 +360,18 @@ The system should maintain a human-readable status display.
 - The status display shows the visual pipeline, current position, and recent history
 - The display is updated after stage acceptance and phase completion
 
-### FR-032: Auto-Continue Workflow (could)
+### FR-032: Auto-Continue Workflow (should)
 
-The system could trigger automatic continuation via GitHub Actions.
+The system should support automatic continuation with environment-aware execution strategy.
 
 **Acceptance Criteria:**
 - A GitHub Actions workflow triggers on pushes to `docs/concert/state.json`
 - The workflow checks if the mission stage is not "done" or "verified"
-- If work remains, it signals that the `concert-continue` agent should run
-- The workflow does not run Concert directly — it only checks and signals
+- If work remains, it triggers the appropriate continuation strategy based on environment
+- **GitHub Actions environment:** supports parallel execution — can trigger multiple concurrent agents for independent tasks (e.g., wave tasks with no dependencies between them)
+- **Claude Code web UI environment:** runs linearly — completes one task at a time, outputs `concert-continue` guidance for manual session continuation
+- The decision logic for parallel vs. linear execution lives near the orchestration layer that assigns work, not in the auto-continue workflow itself
+- The workflow files carry managed-file headers
 
 ### FR-033: Context Compaction (must)
 
@@ -389,6 +392,47 @@ The system must support a skills system that provides domain-specific guidance t
 - Task files reference skills by name in their specification
 - Agents load applicable skills before implementing or reviewing code
 - `concert.jsonc` has a `skills` section with `auto_discover` and `enabled` fields
+
+### FR-036: Interactive Mode Enforcement (must)
+
+Interactive interview agents must be restricted to Claude Code unless the restriction is explicitly disabled.
+
+**Acceptance Criteria:**
+- `concert.jsonc` includes a configuration option `"interactive_mode": "claude_code_only"` (default)
+- When set to `"claude_code_only"`, interactive agents (`concert-init`, `concert-review`) refuse to run in GitHub Agents UI and output a message directing the user to Claude Code
+- When set to `"any"`, interactive agents attempt to run in any environment (for future GitHub interactivity support)
+- The toggle is respected by all agents marked `interactive_only: true`
+- The default value is `"claude_code_only"` in newly initialized repos
+
+### FR-037: Quick Task Execution (must)
+
+The system must provide a `concert-quick` command for small tasks that skip the full pipeline.
+
+**Acceptance Criteria:**
+- The `concert-quick` command accepts a task description as an argument
+- The agent operates as a senior full-stack developer with design, UX, security, and documentation expertise
+- The agent uses all available tools (Read, Write, Edit, Bash, Grep, Glob, etc.)
+- The agent follows TDD: writes tests first, then implements, then verifies all tests pass
+- After implementation, the agent performs a thorough self-review covering: code quality, security implications, UX considerations, documentation completeness, and edge cases
+- The agent produces a single conventional commit with the changes
+- The agent updates `state.json` with a history entry for the quick task
+- The agent does not create mission folders, VISION.md, or go through planning stages
+- The agent runs on the highest model tier (opus) by default
+- The output ends with actionable next steps
+- The command works in both interactive and non-interactive environments
+
+### FR-035: Cost-Optimized Task Decomposition (must)
+
+
+The planner agent must prioritize decomposing tasks so they can be executed by the cheapest viable model tier.
+
+**Acceptance Criteria:**
+- The planner actively breaks down complex work into smaller, simpler tasks that haiku can handle before resorting to sonnet or opus
+- Task decomposition favors many small haiku-tier tasks over fewer sonnet/opus-tier tasks when the result is equivalent
+- The planner only assigns sonnet when the task genuinely requires business logic reasoning, nuanced test writing, or multi-file coordination that haiku cannot handle
+- The planner only assigns opus when the task involves security-critical code, complex algorithms, or architectural decisions that sonnet cannot handle
+- The planner documents the rationale for any task assigned above haiku tier (e.g., "sonnet: requires coordinating changes across 4 interdependent files")
+- The resulting task plan is reviewed for tier inflation — if a task can be split further to use a cheaper tier, it should be
 
 ---
 
@@ -520,6 +564,7 @@ The system must define a user-editable configuration file.
 - `actions.auto_continue`: boolean
 - `telemetry`: object — enabled, generate_cost_report
 - `self_improvement.enabled`: boolean
+- `interactive_mode`: string — "claude_code_only" (default) or "any"; controls where interactive agents can run
 - `user_guidance`: object — always_show_next_steps, include_file_paths, include_copy_paste_commands, show_both_cli_and_ui_options
 
 **Acceptance Criteria:**
@@ -645,8 +690,8 @@ Concert must be published to and installable from the npm registry.
 
 **Acceptance Criteria:**
 - The package is published to npm with proper metadata (name, version, description, license, repository)
-- `npx concert2 init` works without prior installation
-- `npx concert2 update` works for upgrading existing installations
+- `npx @he3-org/concert init` works without prior installation
+- `npx @he3-org/concert update` works for upgrading existing installations
 - The package includes all necessary assets (agents, workflows, skills, templates)
 
 ### IR-005: GitHub Actions Integration (could)
@@ -733,7 +778,7 @@ The following items are explicitly excluded from Concert 2 v1, as defined in the
 1. **GitHub is available and reliable.** The system assumes GitHub's platform (repos, Actions, Agents UI) is accessible during Concert operations.
 2. **Claude Code web UI supports the Task tool.** Subagent spawning for the orchestrator-coder-reviewer loop requires this capability.
 3. **npm registry is accessible for publishing and installing.** The distribution model depends on npm availability.
-4. **Git is installed on the user's machine** for `npx concert2 init` bootstrapping.
+4. **Git is installed on the user's machine** for `npx @he3-org/concert init` bootstrapping.
 5. **One developer operates Concert.** All design decisions assume a single user — no conflict resolution, locking, or multi-user state management is needed.
 6. **Agent definitions are markdown files.** Both GitHub Agents UI and Claude Code consume markdown-based agent instructions.
 7. **Conventional commits are the commit format.** All agents produce commits following the `type(scope): description` pattern.
@@ -745,8 +790,8 @@ The following items are explicitly excluded from Concert 2 v1, as defined in the
 
 ## Open Questions
 
-1. **Package name availability:** Is `concert2` available on npm, or should an alternative name (e.g., `@he3/concert`, `concert-cli`) be used?
+1. **Package name:** Resolved — using `@he3-org/concert` as the scoped npm package name.
 2. **Version check workflow migration:** The current version-check workflow references Go (`go install`). Should it be updated in-place during v1 development, or left as-is until the update mechanism is built?
 3. **GitHub Actions auto-continue:** The current auto-continue workflow only checks and signals — it does not actually launch agents. Should v1 implement the actual agent launching, or is the signal sufficient?
 4. **Skill auto-discovery mechanism:** The `auto_discover` field in `concert.jsonc` is defined but the discovery mechanism is not specified. How should skills be auto-discovered — by file pattern matching against the codebase?
-5. **State file naming:** The vision document refers to `concert-state.json` while the existing codebase uses `state.json` at `docs/concert/state.json`. Which naming convention should v1 use?
+5. **State file naming:** Resolved — use `state.json` at `docs/concert/state.json`. The `concert-*` prefix is reserved for root-level files; files inside `docs/concert/` are already namespaced by directory.

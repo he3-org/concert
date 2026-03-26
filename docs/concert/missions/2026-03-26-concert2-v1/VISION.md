@@ -28,11 +28,11 @@ A single developer (the author) working primarily from a browser environment, in
 
 ### Language & Distribution
 - TypeScript implementation, published as an npm package
-- `npx concert2 init` bootstraps a repo with all necessary files
+- `npx @he3-org/concert init` bootstraps a repo with all necessary files
 - Simple, maintainable dependency choices
 
 ### State Management
-- `concert-state.json` in the repo — GitHub is the source of truth
+- `docs/concert/state.json` in the repo — GitHub is the source of truth
 - One active mission per repo at a time
 - All state changes committed to git
 
@@ -47,7 +47,7 @@ A single developer (the author) working primarily from a browser environment, in
 
 ### Update Strategy
 - **Safe to overwrite:** agents, skills, commands, workflows, GitHub agent definitions (`.github/agents/`), GitHub workflow files (`.github/workflows/`) — all generated files carry a "managed by Concert, do not edit" header
-- **Surgical updates:** `concert-state.json` and `concert-config.jsonc` — schema may evolve, so updates use intelligent merging (dedicated update agent rather than brittle migration scripts)
+- **Surgical updates:** `docs/concert/state.json` and `concert.jsonc` — schema may evolve, so updates use intelligent merging (dedicated update agent rather than brittle migration scripts)
 - **User content preserved:** mission files (VISION.md, specs, task plans, etc.) are never overwritten by updates
 
 ### Future-Ready Architecture
@@ -77,7 +77,7 @@ A single developer (the author) working primarily from a browser environment, in
 
 1. Can run a full pipeline (vision → execution with reviews) on a real project
 2. Works from GitHub Agents UI and Claude Code web UI
-3. npm package published and installable via `npx concert2 init`
+3. npm package published and installable via `npx @he3-org/concert init`
 4. `concert-status` reliably recovers context from a cold start
 5. Updates safely preserve user content and surgically merge state/config
 6. Concert 2 can be used to develop Concert 2

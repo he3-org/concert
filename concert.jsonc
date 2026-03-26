@@ -1,0 +1,76 @@
+{
+  // Concert configuration — see https://github.com/he3-org/concert
+  "project_name": "concert2",
+  "concert_version": "dev",
+
+  "project": {
+    "platforms": []
+  },
+
+  "git": {
+    "base_branch": "main",
+    "production_branch": "main",
+    "pre_v1": true,
+    "commit_format": "conventional",
+    "pr_target": "main"
+  },
+
+  "status_display": "wip_pr",
+
+  "execution": {
+    "mode": "wave",
+    "max_tasks_per_file": 4,
+    "max_files_per_phase": 5
+  },
+
+  "review_triggers": {
+    "on_phase_complete": true,
+    "on_dependency_boundary": true,
+    "on_inferred_breakpoint": true,
+    "after_n_files": 0,
+    "after_n_commits": 0
+  },
+
+  "gates": {
+    "task_checker": true,
+    "regression": true,
+    "acceptance_testing": true
+  },
+
+  "model_profiles": {
+    "quality": "claude-opus-4-6",
+    "balanced": "claude-sonnet-4-6",
+    "budget": "claude-haiku-4-5-20251001"
+  },
+
+  "task_models": {
+    "opus": "claude-opus-4-6",
+    "sonnet": "claude-sonnet-4-6",
+    "haiku": "claude-haiku-4-5-20251001"
+  },
+
+  "skills": {
+    "auto_discover": true,
+    "enabled": []
+  },
+
+  "actions": {
+    "auto_continue": true
+  },
+
+  "telemetry": {
+    "enabled": true,
+    "generate_cost_report": true
+  },
+
+  "self_improvement": {
+    "enabled": true
+  },
+
+  "user_guidance": {
+    "always_show_next_steps": true,
+    "include_file_paths": true,
+    "include_copy_paste_commands": true,
+    "show_both_cli_and_ui_options": true
+  }
+}

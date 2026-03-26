@@ -1,0 +1,33 @@
+{
+  "mission": "",
+  "mission_path": "",
+  "workflow": "",
+  "workflow_path": "",
+  "branch": "",
+  "pr_number": 0,
+  "status_display": "wip_pr",
+  "feature_size": "",
+  "stage": "init",
+  "pipeline": {
+    "vision": "pending",
+    "requirements": "pending",
+    "architecture": "pending",
+    "ux": "pending",
+    "tasks": "pending"
+  },
+  "phases_completed": 0,
+  "phases_total": 0,
+  "tasks_completed": 0,
+  "tasks_total": 0,
+  "commits": 0,
+  "cost": {
+    "estimated_remaining": "",
+    "spent_this_mission": "",
+    "by_stage": {}
+  },
+  "blockers": [],
+  "telemetry": [],
+  "failure_log": [],
+  "history": [],
+  "next_steps": []
+}

@@ -12,7 +12,7 @@
     "vision": "accepted",
     "requirements": "accepted",
     "architecture": "accepted",
-    "ux": "pending",
+    "ux": "draft",
     "tasks": "pending"
   },
   "phases_completed": 0,
@@ -68,10 +68,16 @@
       "action": "architecture_accepted",
       "timestamp": "2026-03-26",
       "details": "Architecture accepted, ARCHITECTURE-SPEC.md created, advancing to UX. 17 sections covering system overview, tech stack, package structure, CLI commands, agent/workflow/skill architecture, state management, GitHub workflow generation, code quality loop, branch/PR strategy, cross-environment handoff, plan usage (deferred), model tier routing, update mechanism, documentation currency, security, trade-offs, dependency budget"
+    },
+    {
+      "action": "ux_drafted",
+      "timestamp": "2026-03-26",
+      "details": "UX designed: 12 sections covering design principles, user flows (6 journeys), CLI output design (3 commands), agent conversation patterns (interview/review/status/failure/redirect), WIP PR body design, terminal output conventions, agent output structure, error recovery flows, accessibility, platform conventions, cross-environment consistency, key UX decisions summary"
     }
   ],
   "next_steps": [
-    "Run /concert:plan to plan the UX stage",
+    "Run /concert:review to review the UX draft",
+    "Run /concert:accept to accept UX and advance to tasks",
     "Run /concert:status to check current status"
   ]
 }

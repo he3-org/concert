@@ -30,11 +30,7 @@ The system must support creating a new mission via an interactive interview proc
 - The interviewer summarizes the vision back to the user and waits for confirmation before writing
 - A mission folder is created at `docs/concert/missions/YYYY-MM-DD-<slug>/`
 - A `VISION.md` file is written to the mission folder
-- `state.json` is updated with mission name, path, workflow, branch, PR number, stage, and pipeline state
-- The interviewer detects the current branch:
-  - **CC Web UI / GitHub UI:** A branch is auto-created by the environment — `concert-init` detects and uses it
-  - **CC CLI:** `concert-init` creates a mission branch (e.g., `concert/<slug>`) and pushes it to origin
-- A WIP PR is created for the mission branch (in CC CLI; in web UIs the PR may already exist or is created)
+- `state.json` is updated with mission name, path, workflow, branch, stage, and pipeline state
 - The interviewer commits the new mission files
 - The output ends with actionable next steps including file paths and commands
 - The command fails with a clear message if run in a non-interactive environment (GitHub Agents UI)
@@ -66,7 +62,7 @@ The system must support generating an architecture plan from accepted requiremen
 **Acceptance Criteria:**
 - The `concert-plan` command auto-selects the architecture stage when requirements are accepted
 - The `concert-architect` agent reads VISION.md, REQUIREMENTS.md, existing specs, and deeply analyzes the codebase
-- The agent produces `ARCHITECTURE.md` with: system overview, tech stack decisions with rationale, component design, data model, API design, error handling, security, performance, integration points, and trade-offs
+- The agent produces `ARCHITECTURE.md` with: system overview, tech stack decisions with rationale, component design, data model, API design, error handling, security, performance, integration points, trade-offs, and migration plan
 - `state.json` is updated with `pipeline.architecture = "draft"`
 - The output ends with actionable next steps
 
@@ -296,7 +292,7 @@ The system must handle failures with structured error classification and crash-s
 
 **Acceptance Criteria:**
 - On task failure, execution stops immediately — no skipping ahead
-- A failure block is written to `state.json` with: phase, phase_name, task_file, task_index, task_title, failed_at (ISO 8601), error_type, error_summary, files_touched, last_successful_commit
+- A failure block is written to `state.json` with: phase, phase_name, task_file, task_index, task_title, failed_at (ISO 8601), error_type, error_summary, files_touched, last_successful_commit, context_usage_percent
 - Error types include: test_failure, build_error, context_exhaustion, dependency_missing, model_capability_exceeded, timeout, unknown
 - The failure is appended to `failure_log[]`
 - The working tree is left dirty (no rollback)
@@ -374,16 +370,14 @@ The system must select the appropriate workflow based on feature size.
 - Feature size "small" selects `CONCERT-WORKFLOW-MISSION-SMALL.md` (vision, tasks, execution)
 - The selected workflow determines which pipeline stages are active
 
-### FR-031: Human Status Display via WIP PR (must)
+### FR-031: Human Status Display (should)
 
-The system must maintain a human-readable status display as a WIP PR.
+The system should maintain a human-readable status display.
 
 **Acceptance Criteria:**
-- A WIP PR is created during mission initialization (by `concert-init` in CC CLI, or using the existing branch/PR in web UIs)
-- The WIP PR body is updated with pipeline progress after each stage transition
+- When `status_display` in `concert.jsonc` is `"wip_pr"`, the WIP PR body is updated with pipeline progress after each stage transition
 - The status display shows the visual pipeline, current position, and recent history
 - The display is updated after stage acceptance and phase completion
-- The WIP PR is the single source of human-readable status across all environments — no STATUS.md alternative
 
 ### FR-032: Auto-Continue Workflow (should)
 
@@ -405,7 +399,7 @@ The system must compact context as phases complete to keep agents within context
 **Acceptance Criteria:**
 - Agents reading execution state use a tiered strategy: current phase reads TASK files + PHASE-SUMMARY, previous phase reads PHASE-SUMMARY only, older phases are skipped unless specifically relevant
 - PHASE-SUMMARY files contain enough information for downstream agents to understand completed work without reading individual TASK files
-- The orchestrator spawns continuation agents when approaching context window limits (best effort — plan usage exhaustion is undetectable and handled via `concert-push` + `concert-continue`)
+- The orchestrator monitors context usage and spawns continuation agents before hitting limits
 
 ### FR-034: Skills System (must)
 
@@ -460,9 +454,17 @@ The system must provide a Node CLI command to safely push local work to origin f
 - If there is nothing to push (already up to date), it outputs a confirmation and next steps
 - The command works without an active LLM session (critical for when CC plan usage is exhausted)
 
-### FR-039: Context/Plan Usage Gating (deferred)
+### FR-039: Context Usage Gating for concert-continue (must)
 
-**Deferred until Claude Code exposes plan usage programmatically.** When CC provides a way to read the current plan usage percentage, this requirement should be implemented: gate `concert-continue` at task boundaries to stop before hitting the plan usage limit, save state, and output handoff instructions. Until then, plan usage exhaustion is handled as an undetectable halt — recovered via `npx @he3-org/concert push` + `concert-continue`.
+The `concert-continue` command must check context usage before starting each new task to avoid mid-task exhaustion.
+
+**Acceptance Criteria:**
+- `concert.jsonc` includes a configurable `"execution.max_context_usage_percent"` value (default: 85)
+- Before starting each new task, `concert-continue` checks current context usage (only when running in Claude Code)
+- If context usage exceeds the configured threshold, `concert-continue` stops, saves all state (including `quality_loop_state` if active), commits state.json, and outputs handoff instructions: "Run `npx @he3-org/concert push` to push to origin, then run `concert-continue` in GitHub Agents UI"
+- The check occurs at the task boundary — never mid-task or mid-quality-loop — so the current task always completes fully before halting
+- In GitHub Agents UI, the check is skipped (GitHub manages its own session limits)
+- If context usage cannot be determined, the agent proceeds with a warning
 
 ### FR-040: Documentation Currency (must)
 
@@ -488,9 +490,7 @@ Concert workflow definitions must generate GitHub agentic workflow files for nat
 - The Concert workflow format remains independent of GitHub's workflow format — Concert workflows are portable, GitHub workflows are the generated execution layer
 - If GitHub adds multi-agent chaining or agent communication specs in the future, the generation layer can be updated to leverage those features without changing Concert's workflow format
 
-**Future considerations (out of scope for v1):**
-- Easy custom workflow authoring — a user creates a Concert workflow file referencing agents and Concert auto-generates all GitHub workflow, agent, and skill files needed. Deferred until a concrete use case drives the requirements.
-- PR-triggered state validation workflow — a GitHub workflow that fires on PRs to verify or fix `state.json` consistency against the branch and PR number. Would catch state drift from manual edits, failed handoffs, or out-of-band operations.
+**Future consideration (out of scope for v1):** Easy custom workflow authoring — a user creates a Concert workflow file referencing agents and Concert auto-generates all GitHub workflow, agent, and skill files needed. Deferred until a concrete use case drives the requirements.
 
 ### FR-035: Cost-Optimized Task Decomposition (must)
 
@@ -593,6 +593,7 @@ The system must define and maintain a structured state file.
 - `workflow_path`: string — path to workflow file
 - `branch`: string — git branch name
 - `pr_number`: number — PR number (0 if none)
+- `status_display`: string — display mode (wip_pr, status_md)
 - `feature_size`: string — small, medium, large
 - `stage`: string — current pipeline stage
 - `pipeline`: object — stage statuses (pending, draft, accepted)
@@ -632,7 +633,8 @@ The system must define a user-editable configuration file.
 - `concert_version`: string
 - `project.platforms`: array
 - `git.base_branch`, `git.production_branch`, `git.pre_v1`, `git.commit_format`, `git.pr_target`: various
-- `execution.mode`, `execution.max_tasks_per_file`, `execution.max_files_per_phase`, `execution.max_review_iterations`: various
+- `status_display`: string
+- `execution.mode`, `execution.max_tasks_per_file`, `execution.max_files_per_phase`, `execution.max_context_usage_percent`, `execution.max_review_iterations`: various
 - `review_triggers`: object — on_phase_complete, on_dependency_boundary, on_inferred_breakpoint, after_n_files, after_n_commits
 - `gates`: object — task_checker, acceptance_testing
 - `model_profiles`: object — quality, balanced, budget model names
@@ -803,7 +805,7 @@ Concert may integrate with GitHub Actions for automation.
 
 ### EC-005: Context Window Exhaustion During Execution
 
-**Expected Behavior:** Plan usage exhaustion is undetectable and treated as an unexpected halt. The user runs `npx @he3-org/concert push` to push work to origin, then `concert-continue` in another environment to resume. At most one task of work is lost. Context usage gating will be added when Claude Code exposes plan usage programmatically.
+**Expected Behavior:** The orchestrator monitors context usage. When approaching limits, it commits current progress, updates `state.json`, and spawns a continuation agent or outputs `concert-continue` guidance. At most one task of work is lost.
 
 ### EC-006: Model Tier Insufficient for Task
 
@@ -828,6 +830,10 @@ Concert may integrate with GitHub Actions for automation.
 ### EC-011: Replan After Partial Execution
 
 **Expected Behavior:** `concert-replan <stage>` marks downstream stages as needing re-run. The planner regenerates TASK files accounting for already-completed work by reading committed code and PHASE-SUMMARY files. Committed code is NOT rolled back.
+
+### EC-012: Version Check Workflow Still References Go
+
+**Expected Behavior:** The version-check GitHub Actions workflow (currently referencing `go install`) must be updated to use `npm`/`npx` for Concert 2. This is handled by the init/update process.
 
 ---
 
@@ -857,14 +863,14 @@ The following items are explicitly excluded from Concert 2 v1, as defined in the
 7. **Conventional commits are the commit format.** All agents produce commits following the `type(scope): description` pattern.
 8. **The user's browser can render GitHub markdown.** Status displays and mission documents are formatted in GitHub-Flavored Markdown.
 9. **File system paths use forward slashes.** Concert targets Linux/macOS environments (Chromebook Linux terminal).
-10. **The Concert 1 agent/workflow/skill structure is the inspiration for v1.** Concert 2 uses a similar logical structure but is a clean implementation with no migration path from Concert 1.
+10. **The current Concert 1 agent/workflow/skill structure is the template for v1.** Concert 2 preserves the same logical structure while potentially changing the implementation.
 
 ---
 
 ## Open Questions
 
 1. **Package name:** Resolved — using `@he3-org/concert` as the scoped npm package name.
-2. ~~Version check workflow migration~~ — Resolved: no Concert 1 migration. Concert 2 is a clean install.
+2. **Version check workflow migration:** The current version-check workflow references Go (`go install`). Should it be updated in-place during v1 development, or left as-is until the update mechanism is built?
 3. **GitHub Actions auto-continue:** The current auto-continue workflow only checks and signals — it does not actually launch agents. Should v1 implement the actual agent launching, or is the signal sufficient?
 4. **Skill auto-discovery mechanism:** The `auto_discover` field in `concert.jsonc` is defined but the discovery mechanism is not specified. How should skills be auto-discovered — by file pattern matching against the codebase?
 5. **State file naming:** Resolved — use `state.json` at `docs/concert/state.json`. The `concert-*` prefix is reserved for root-level files; files inside `docs/concert/` are already namespaced by directory.

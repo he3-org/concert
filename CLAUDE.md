@@ -24,10 +24,9 @@ This is the Concert framework itself — an orchestration system for agentic sof
 
 - `/concert:init` — Start a new mission
 - `/concert:plan` — Plan a stage
-- `/concert:run` — Execute a phase
 - `/concert:review` — Review a stage
 - `/concert:accept` — Accept a stage
 - `/concert:status` — Check current status
-- `/concert:continue` — Continue work
+- `/concert:continue` — Continue work (start execution, resume mid-task, or advance to next stage)
 - `/concert:debug` — Debug an issue
 - `/concert:verify` — Verify work

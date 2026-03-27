@@ -3,22 +3,22 @@
   "mission_path": "docs/concert/missions/2026-03-26-concert2-v1",
   "workflow": "mission-full",
   "workflow_path": "docs/concert/workflows/CONCERT-WORKFLOW-MISSION-FULL.md",
-  "branch": "setup-concert",
-  "pr_number": 0,
+  "branch": "concert/concert2-v1",
+  "pr_number": 3,
   "status_display": "wip_pr",
   "feature_size": "large",
-  "stage": "requirements",
+  "stage": "tasks",
   "pipeline": {
     "vision": "accepted",
-    "requirements": "draft",
-    "architecture": "pending",
-    "ux": "pending",
-    "tasks": "pending"
+    "requirements": "accepted",
+    "architecture": "accepted",
+    "ux": "accepted",
+    "tasks": "accepted"
   },
   "phases_completed": 0,
-  "phases_total": 0,
+  "phases_total": 5,
   "tasks_completed": 0,
-  "tasks_total": 0,
+  "tasks_total": 31,
   "commits": 0,
   "cost": {
     "estimated_remaining": "",
@@ -43,12 +43,65 @@
       "action": "requirements_drafted",
       "timestamp": "2026-03-26",
       "details": "Requirements formalized: 34 functional, 7 non-functional, 6 data, 5 integration, 12 edge cases, 5 open questions"
+    },
+    {
+      "action": "requirements_reviewed",
+      "timestamp": "2026-03-26",
+      "details": "Requirements reviewed: added FR-035 through FR-041, updated FR-009/011/013/017/018/020/025, resolved open questions #1 and #5"
+    },
+    {
+      "action": "requirements_accepted",
+      "timestamp": "2026-03-26",
+      "details": "Requirements accepted, REQUIREMENTS-SPEC.md created, advancing to architecture. Final count: 41 functional, 7 non-functional, 6 data, 5 integration requirements"
+    },
+    {
+      "action": "architecture_drafted",
+      "timestamp": "2026-03-26",
+      "details": "Architecture designed: npm package (3 CLI commands, ~1 dependency), markdown agents as brain, TypeScript/tsup build, surgical merge for config/state, quality loop with crash-recoverable quality_loop_state, cross-environment handoff via concert-push"
+    },
+    {
+      "action": "architecture_reviewed",
+      "timestamp": "2026-03-26",
+      "details": "Architecture reviewed: removed simple mode, removed context gating (deferred), simplified model tier routing, added branch/PR strategy (Section 9), added PR merge gate, added documentation agent to phase flow, removed Concert 1 migration, fixed conventional commits"
+    },
+    {
+      "action": "architecture_accepted",
+      "timestamp": "2026-03-26",
+      "details": "Architecture accepted, ARCHITECTURE-SPEC.md created, advancing to UX. 17 sections covering system overview, tech stack, package structure, CLI commands, agent/workflow/skill architecture, state management, GitHub workflow generation, code quality loop, branch/PR strategy, cross-environment handoff, plan usage (deferred), model tier routing, update mechanism, documentation currency, security, trade-offs, dependency budget"
+    },
+    {
+      "action": "ux_drafted",
+      "timestamp": "2026-03-26",
+      "details": "UX designed: 12 sections covering design principles, user flows (6 journeys), CLI output design (3 commands), agent conversation patterns (interview/review/status/failure/redirect), WIP PR body design, terminal output conventions, agent output structure, error recovery flows, accessibility, platform conventions, cross-environment consistency, key UX decisions summary"
+    },
+    {
+      "action": "ux_reviewed",
+      "timestamp": "2026-03-27",
+      "details": "UX reviewed: removed regression gate from execution flow (coders already run full tests, PR merge gate is the safety net), removed --force flag from init error output (intentionally omitted for v1), updated REQUIREMENTS.md and REQUIREMENTS-SPEC.md to match"
+    },
+    {
+      "action": "ux_accepted",
+      "timestamp": "2026-03-27",
+      "details": "UX accepted, UX-SPEC.md created, advancing to tasks. 12 sections: design principles, 6 user flows, CLI output for 3 commands, agent conversation patterns, WIP PR body design, terminal conventions, error recovery, accessibility, platform conventions, cross-environment consistency"
+    },
+    {
+      "action": "tasks_drafted",
+      "timestamp": "2026-03-27",
+      "details": "Tasks planned: 5 phases, 31 task files (21 haiku, 10 sonnet, 0 opus). Phase 1: Foundation (3 tasks), Phase 2: Core Library (6 tasks), Phase 3: CLI Commands (4 tasks), Phase 4: Templates (14 tasks — agents, workflows, skills, GitHub stubs, CC commands), Phase 5: Integration & Testing (4 tasks)"
+    },
+    {
+      "action": "tasks_reviewed",
+      "timestamp": "2026-03-27",
+      "details": "Tasks reviewed: removed concert-run/concert-runner references, consolidated concert-continue as universal agent (state detection + execution orchestration), renamed agent-planner-runner to agent-planner, removed run.md from command list, added decomposition quality scoring to reviewer, removed planner pause between passes"
+    },
+    {
+      "action": "tasks_accepted",
+      "timestamp": "2026-03-27",
+      "details": "Tasks accepted. 5 phases, 31 task files. Ready for execution."
     }
   ],
   "next_steps": [
-    "Review requirements: docs/concert/missions/2026-03-26-concert2-v1/REQUIREMENTS.md",
-    "Refine them: /concert:review",
-    "Accept & continue: /concert:accept",
-    "Check status: /concert:status"
+    "Run /concert:continue to advance to execution stage",
+    "Run /concert:status to check current status"
   ]
 }

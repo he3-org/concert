@@ -13,7 +13,7 @@
     "requirements": "accepted",
     "architecture": "accepted",
     "ux": "accepted",
-    "tasks": "draft"
+    "tasks": "accepted"
   },
   "phases_completed": 0,
   "phases_total": 5,
@@ -88,12 +88,20 @@
       "action": "tasks_drafted",
       "timestamp": "2026-03-27",
       "details": "Tasks planned: 5 phases, 31 task files (21 haiku, 10 sonnet, 0 opus). Phase 1: Foundation (3 tasks), Phase 2: Core Library (6 tasks), Phase 3: CLI Commands (4 tasks), Phase 4: Templates (14 tasks — agents, workflows, skills, GitHub stubs, CC commands), Phase 5: Integration & Testing (4 tasks)"
+    },
+    {
+      "action": "tasks_reviewed",
+      "timestamp": "2026-03-27",
+      "details": "Tasks reviewed: removed concert-run/concert-runner references, consolidated concert-continue as universal agent (state detection + execution orchestration), renamed agent-planner-runner to agent-planner, removed run.md from command list, added decomposition quality scoring to reviewer, removed planner pause between passes"
+    },
+    {
+      "action": "tasks_accepted",
+      "timestamp": "2026-03-27",
+      "details": "Tasks accepted. 5 phases, 31 task files. Ready for execution."
     }
   ],
   "next_steps": [
-    "Run /concert:review to review the task plan",
-    "Run /concert:accept to accept the task plan",
-    "After accepting, run /concert:continue to advance to execution",
+    "Run /concert:continue to advance to execution stage",
     "Run /concert:status to check current status"
   ]
 }

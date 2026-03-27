@@ -1,7 +1,7 @@
 ---
 task: "claude-code-commands"
 title: "Create Claude Code skill command files for all Concert agents"
-depends_on: ["agent-init-analyst", "agent-architect-designer", "agent-planner-runner", "agent-reviewer-continue", "agent-status-debug-verifier", "agent-quick-push-documenter"]
+depends_on: ["agent-init-analyst", "agent-architect-designer", "agent-planner", "agent-reviewer-continue", "agent-status-debug-verifier", "agent-quick-push-documenter"]
 wave: 3
 model: haiku
 ---
@@ -16,7 +16,6 @@ Create one command file for each Concert command:
 
 - `templates/.claude/commands/init.md`
 - `templates/.claude/commands/plan.md`
-- `templates/.claude/commands/run.md`
 - `templates/.claude/commands/review.md`
 - `templates/.claude/commands/accept.md`
 - `templates/.claude/commands/status.md`
@@ -109,7 +108,7 @@ Each Claude Code command file follows this exact template. Copy it exactly for e
 
 ## Acceptance Criteria
 
-- [ ] All 13 command files are created in `templates/.claude/commands/`
+- [ ] All 12 command files are created in `templates/.claude/commands/`
 - [ ] Every file starts with the managed header
 - [ ] `plan.md` includes auto-selection logic based on pipeline state
 - [ ] `accept.md` includes the copy-to-SPEC logic

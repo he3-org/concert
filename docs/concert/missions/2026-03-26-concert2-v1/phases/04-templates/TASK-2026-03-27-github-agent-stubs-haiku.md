@@ -1,7 +1,7 @@
 ---
 task: "github-agent-stubs"
 title: "Create GitHub Agent stub files for all Concert agents"
-depends_on: ["agent-init-analyst", "agent-architect-designer", "agent-planner-runner", "agent-reviewer-continue", "agent-status-debug-verifier", "agent-quick-push-documenter", "agent-coder-code-reviewer"]
+depends_on: ["agent-init-analyst", "agent-architect-designer", "agent-planner", "agent-reviewer-continue", "agent-status-debug-verifier", "agent-quick-push-documenter", "agent-coder-code-reviewer"]
 wave: 3
 model: haiku
 ---

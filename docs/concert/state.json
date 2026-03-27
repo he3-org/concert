@@ -15,14 +15,14 @@
     "ux": "accepted",
     "tasks": "accepted"
   },
-  "phases_completed": 1,
+  "phases_completed": 2,
   "phases_total": 5,
-  "tasks_completed": 3,
+  "tasks_completed": 9,
   "tasks_total": 31,
-  "commits": 3,
-  "current_phase": 2,
-  "current_task_file": "TASK-2026-03-27-config-helpers-haiku.md",
-  "current_task_index": 4,
+  "commits": 9,
+  "current_phase": 3,
+  "current_task_file": "TASK-2026-03-27-cmd-init-sonnet.md",
+  "current_task_index": 10,
   "cost": {
     "estimated_remaining": "",
     "spent_this_mission": "",
@@ -106,10 +106,15 @@
       "action": "phase_1_completed",
       "timestamp": "2026-03-27",
       "details": "Phase 1 (Foundation) complete: project scaffold, types, default templates. 3 tasks, 3 commits."
+    },
+    {
+      "action": "phase_2_completed",
+      "timestamp": "2026-03-27",
+      "details": "Phase 2 (Core Library) complete: config, state, git, version, copy, merge helpers. 6 tasks, 6 commits."
     }
   ],
   "next_steps": [
-    "Phase 2 in progress: Core Library (config, state, git, version, copy, merge helpers)",
+    "Phase 3 in progress: CLI Commands (cmd-init, cmd-update, cmd-push, cli-router)",
     "Run /concert:status to check current status"
   ]
 }

@@ -158,15 +158,7 @@ export async function runUpdate(cwd: string): Promise<number> {
       currentState as unknown as Record<string, unknown>,
       templateState,
     );
-    // Merge: keep user's data but add new schema fields
-    // Special: preserve all existing state fields that are not in template defaults
-    const currentStateRecord = currentState as unknown as Record<string, unknown>;
-    const finalState = { ...merged, ...Object.fromEntries(
-      Object.entries(currentStateRecord).filter(
-        ([k]) => !(k in templateState),
-      ),
-    ) };
-    writeState(cwd, finalState as unknown as Parameters<typeof writeState>[1]);
+    writeState(cwd, merged as unknown as Parameters<typeof writeState>[1]);
     stateReport = report;
   }
 

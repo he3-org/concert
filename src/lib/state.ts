@@ -50,7 +50,7 @@ export function addHistoryEntry(
 ): void {
   const entry: HistoryEntry = {
     action,
-    timestamp: new Date().toISOString().split("T")[0] ?? new Date().toISOString(),
+    timestamp: new Date().toISOString().split("T")[0],
     details,
   };
   state.history.push(entry);

@@ -31,7 +31,7 @@ pipeline advances. Execution follows `CONCERT-WORKFLOW-EXECUTION.md` rules.
 | 3 | architecture | concert-architect | VISION.md, REQUIREMENTS.md, existing specs | ARCHITECTURE.md | 4 |
 | 4 | ux | concert-designer | all mission docs, platform UX skills | UX.md | 5 |
 | 5 | tasks | concert-planner | all mission docs, all specs, codebase | phases/ with model-tiered TASK files | 6 |
-| 6 | execution | concert-continue | TASK files (model per file) | code + PHASE-SUMMARY files | 7 |
+| 6 | execution | concert-runner | TASK files (model per file) | code + PHASE-SUMMARY files | 7 |
 | 7 | verification | concert-qa | REQUIREMENTS-SPEC.md, PHASE-SUMMARY files | VERIFICATION.md + COST-REPORT.md | 8 |
 | 8 | retrospective | concert-retrospective | telemetry[], COST-REPORT.md, failure_log, mission docs | CONCERT-IMPROVEMENT.md | done |
 
@@ -86,8 +86,8 @@ pipeline advances. Execution follows `CONCERT-WORKFLOW-EXECUTION.md` rules.
 
 ### Stage 6: Execution
 
-- **Command:** `/concert:continue`
-- **Agent:** `concert-continue` (spawns subagents per task model tier)
+- **Command:** `/concert:run`
+- **Agent:** `concert-runner` (spawns subagents per task model tier)
 - **Interactive:** No — can run autonomously
 - **Reads:** `TASK-*.md` files, `CONCERT-WORKFLOW-EXECUTION.md` for wave/failure rules
 - **Produces:** Committed code, `PHASE-SUMMARY-NN.md` files, telemetry records
@@ -120,11 +120,9 @@ After each planning stage (stages 1–5), the review cycle runs automatically:
 → **Refer to:** `CONCERT-WORKFLOW-REVIEW-CYCLE.md`
 
 The review cycle allows the user to:
-1. **Accept** the stage output → creates the corresponding `*-SPEC.md` and finishes the stage
+1. **Accept** the stage output → creates the corresponding `*-SPEC.md` and advances
 2. **Revise** the stage output → open conversation to refine, then re-review
 3. **Restart** the stage → discards the output and re-runs the consultant from scratch
-
-After accepting, the user runs `/concert:continue` to advance to the next stage.
 
 Stages 6–8 (execution, verification, retrospective) do NOT trigger the interactive
 review cycle. Execution produces code reviewed by the code quality workflow.
@@ -142,10 +140,9 @@ After each stage completes and is accepted:
    - Stage 3 → `ARCHITECTURE-SPEC.md`
    - Stage 4 → `UX-SPEC.md`
    - Stage 5 → No spec (produces TASK files directly)
-2. **Update state.json** — Set `pipeline.<stage>` to `"accepted"` (do NOT advance `stage` — that is done by `/concert:continue`)
+2. **Update state.json** — Set `pipeline.<stage>` to `"accepted"` and advance `stage` to the next value in the table
 3. **Update human status display** — Update WIP PR body or `STATUS.md` (per `concert.jsonc` → `status_display`)
-4. **Commit** the spec file and state changes
-5. **Output next steps** — Prompt the user to run `/concert:continue` to advance to the next stage
+4. **Output next steps** — Show the user what to do next with specific file paths and commands
 
 ---
 

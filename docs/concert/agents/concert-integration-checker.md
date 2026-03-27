@@ -85,7 +85,7 @@ Example (PASS):
   - Tests:          ✅ 47 tests passing
 
 📋 Next steps:
-  → Continue to Phase 3:   /concert:continue
+  → Continue to Phase 3:   /concert:run 3
   → Check status:          /concert:status
 ```
 

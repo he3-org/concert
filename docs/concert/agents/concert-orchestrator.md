@@ -86,7 +86,7 @@ Example:
 
 📋 Next steps:
   → Review phase summary:  docs/concert/missions/.../phases/02/PHASE-SUMMARY-02.md
-  → Continue to Phase 3:   /concert:continue
+  → Continue to Phase 3:   /concert:run 3
   → Verify all work:       /concert:verify
   → Check status:          /concert:status
 ```

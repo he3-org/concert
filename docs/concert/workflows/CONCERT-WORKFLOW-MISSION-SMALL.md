@@ -30,7 +30,7 @@ If any skipped stage is later needed, the user can run `/concert:plan <stage>`
 |---|-------|-------|-------|--------|------|
 | 1 | vision | concert-interviewer | user input, existing specs | VISION.md | 2 |
 | 2 | tasks | concert-planner | VISION.md, all existing specs, codebase | phases/ with model-tiered TASK files | 3 |
-| 3 | execution | concert-continue | TASK files (model per file) | code + PHASE-SUMMARY files | 4 |
+| 3 | execution | concert-runner | TASK files (model per file) | code + PHASE-SUMMARY files | 4 |
 | 4 | verification | concert-qa | REQUIREMENTS-SPEC.md, PHASE-SUMMARY files | VERIFICATION.md + COST-REPORT.md | 5 |
 | 5 | retrospective | concert-retrospective | telemetry[], COST-REPORT.md, failure_log, mission docs | CONCERT-IMPROVEMENT.md | done |
 
@@ -59,8 +59,8 @@ If any skipped stage is later needed, the user can run `/concert:plan <stage>`
 
 ### Stage 3: Execution
 
-- **Command:** `/concert:continue`
-- **Agent:** `concert-continue` (spawns subagents per task model tier)
+- **Command:** `/concert:run`
+- **Agent:** `concert-runner` (spawns subagents per task model tier)
 - **Interactive:** No — can run autonomously
 - **Reads:** `TASK-*.md` files, `CONCERT-WORKFLOW-EXECUTION.md`
 - **Produces:** Committed code, `PHASE-SUMMARY-NN.md` files, telemetry records
@@ -109,11 +109,9 @@ After each planning stage (stages 1–2), the review cycle runs automatically:
 → **Refer to:** `CONCERT-WORKFLOW-REVIEW-CYCLE.md`
 
 The review cycle allows the user to:
-1. **Accept** the stage output → creates `*-SPEC.md` (vision only) and finishes the stage
+1. **Accept** the stage output → creates `*-SPEC.md` (vision only) and advances
 2. **Revise** the stage output → refine via conversation, then re-review
 3. **Restart** the stage → discards output and re-runs the consultant
-
-After accepting, the user runs `/concert:continue` to advance to the next stage.
 
 Stages 3–5 (execution, verification, retrospective) do NOT trigger the interactive
 review cycle.
@@ -127,10 +125,9 @@ After each stage completes and is accepted:
 1. **Create project-level spec** (where applicable):
    - Stage 1 → `VISION-SPEC.md`
    - Stage 2 → No spec (produces TASK files directly)
-2. **Update state.json** — Set `pipeline.<stage>` to `"accepted"` (do NOT advance `stage` — that is done by `/concert:continue`)
+2. **Update state.json** — Set `pipeline.<stage>` to `"accepted"` and advance `stage`
 3. **Update human status display** — Update WIP PR body or `STATUS.md`
-4. **Commit** the spec file and state changes
-5. **Output next steps** — Prompt the user to run `/concert:continue` to advance to the next stage
+4. **Output next steps** — Show the user what to do next with file paths and commands
 
 ---
 

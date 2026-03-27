@@ -61,12 +61,12 @@ Before starting planning:
    ```
    phases/
    ├── 01-<slug>/
-   │   ├── TASK-<NN>-<slug>-<model>.md
+   │   ├── TASK-YYYY-MM-DD-<slug>-<model>.md
    │   └── ...
    ├── 02-<slug>/
    │   └── ...
    ```
-8. Name task files: `TASK-<NN>-<slug>-<model>.md` (globally numbered across all phases, zero-padded, model tier suffix)
+8. Name task files: `TASK-YYYY-MM-DD-<slug>-<model>.md` (date, slug, model tier suffix)
 9. Write all TASK files with proper YAML frontmatter:
    ```yaml
    ---
@@ -111,7 +111,7 @@ Example:
   → Review the plan:     docs/concert/missions/.../phases/
   → Refine it:           /concert:review
   → Accept & execute:    /concert:accept
-  → Start execution:     /concert:continue
+  → Start execution:     /concert:run
   → Check status:        /concert:status
 ```
 </user_guidance>

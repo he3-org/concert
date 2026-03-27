@@ -11,7 +11,7 @@ description: Phase/wave/task execution loop — defines how tasks are executed w
 
 This workflow defines the execution model for Concert missions. It is referenced
 by mission workflows (full, medium, small) during their execution stage. The
-`concert-continue` agent reads this file to determine wave ordering, failure
+`concert-runner` agent reads this file to determine wave ordering, failure
 handling, review triggers, and telemetry logging rules.
 
 Execution proceeds as: **phases → waves → tasks**. Each phase contains task files
@@ -99,7 +99,7 @@ For each wave in order (wave 1, wave 2, ... wave N):
 ## Model Routing
 
 Each task file specifies a model tier in its frontmatter (`model: haiku | sonnet | opus`).
-The filename also includes the model suffix (e.g., `TASK-01-db-schema-haiku.md`).
+The filename also includes the model suffix (e.g., `TASK-2026-03-22-db-schema-haiku.md`).
 
 | Environment | Model Selection | Behavior |
 |-------------|----------------|----------|
@@ -226,7 +226,7 @@ maintaining access to historical data when needed.
 When execution spans multiple cloud sessions:
 
 ```
-Session 1: /concert:continue
+Session 1: /concert:run
   → Completes Phase 1, starts Phase 2
   → Session times out
   → state.json is current (updated after every task)

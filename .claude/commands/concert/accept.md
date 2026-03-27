@@ -1,6 +1,6 @@
 # /concert:accept [stage]
 
-Accept the current stage's plan, create project-level spec, finalize the stage.
+Accept the current stage's plan, create project-level spec, advance pipeline.
 
 ## Steps
 
@@ -14,18 +14,17 @@ Accept the current stage's plan, create project-level spec, finalize the stage.
    - `architecture` accepted → write `docs/concert/ARCHITECTURE-SPEC.md`
    - `ux` accepted → write `docs/concert/UX-SPEC.md`
    - `tasks` accepted → no spec, just mark as accepted
-6. Update `state.json` with the accepted status (do NOT advance to the next stage — that is the job of `/concert:continue`)
-7. Update human status display (WIP PR body)
-8. Commit the spec file and state changes
-9. Show current status (what was just accepted)
+6. Advance to the next pipeline stage per the workflow definition
+7. Update `state.json` with new stage
+8. Update human status display
+9. Commit the spec file and state changes
 
 ## Next Steps
 
-After accept, output:
+After accept, output the workflow-appropriate next step:
 ```
 📋 Next steps:
-  → Continue to next stage:  /concert:continue
-  → Check status:            /concert:status
+  → Continue planning:  /concert:plan        (if more planning stages remain)
+  → Start execution:    /concert:run         (if all planning is done)
+  → Check status:       /concert:status
 ```
-
-**Important:** Accept does NOT advance to the next stage or start it. It only finalizes the current stage. The user explicitly runs `/concert:continue` to begin the next stage.

@@ -40,7 +40,7 @@ the runner acts as both coder and self-reviewer.
 
 | Agent | Role | Model |
 |-------|------|-------|
-| `concert-continue` (orchestrator) | Coordinates execution, reads task files, manages state | Per workflow |
+| `concert-runner` (orchestrator) | Coordinates execution, reads task files, manages state | Per workflow |
 | `concert-coder` | Implements code following TDD, reads skills | Per task file `model` field |
 | `concert-code-reviewer` | Reviews code changes with severity ratings | balanced |
 

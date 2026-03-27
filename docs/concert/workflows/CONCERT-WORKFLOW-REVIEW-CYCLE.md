@@ -63,8 +63,8 @@ When a planning stage completes, the user is prompted to review:
     → Calls accept logic (same as /concert:accept)
     → Creates *-SPEC.md (project-level)
     → Updates state.json → pipeline.<stage> = "accepted"
-    → Does NOT advance to next stage (user runs /concert:continue for that)
-    → Outputs next steps (prompts user to run /concert:continue)
+    → Advances to next stage
+    → Outputs next steps
 
 4b. If CHANGES:
     → Open conversation:
@@ -96,12 +96,12 @@ When a planning stage completes, the user is prompted to review:
    - tasks     → No spec (TASK files are the output)
 4. Update state.json:
    - Set pipeline.<stage> = "accepted"
-   - Do NOT advance stage to the next value (that is done by /concert:continue)
+   - Advance stage to the next value per the active workflow's stage table
 5. Commit the spec file and state.json update
 6. Update human status display (WIP PR body or STATUS.md)
 7. Output next steps:
-   → Prompt user to run /concert:continue to advance to the next stage
-   → Suggest /concert:status to check current status
+   → If more planning stages remain: suggest /concert:plan (next stage)
+   → If all planning done: suggest /concert:run
 ```
 
 ### The `/concert:restart` Command
@@ -176,9 +176,9 @@ After the user accepts and the review cycle ends:
 
 1. **Spec created** — `*-SPEC.md` exists in `docs/concert/`
 2. **State updated** — `state.json` reflects the accepted stage
-3. **Stage finalized** — Current stage is marked as accepted (next stage is NOT started — user runs `/concert:continue`)
+3. **Pipeline advanced** — Next stage is ready
 4. **Status updated** — Human status display shows progress
-5. **Next steps output** — User is prompted to run `/concert:continue` to advance
+5. **Next steps output** — User knows exactly what to do next
 
 ---
 

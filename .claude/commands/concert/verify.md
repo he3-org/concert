@@ -24,6 +24,6 @@ After verify, output:
   → Review verification:  docs/concert/missions/.../VERIFICATION.md
   → Cost report:          docs/concert/missions/.../COST-REPORT.md
   → Improvements:         docs/concert/missions/.../CONCERT-IMPROVEMENT.md
-  → If issues found:      /concert:continue (gap-closure tasks auto-generated)
+  → If issues found:      /concert:run (gap-closure tasks auto-generated)
   → If clean:             Mission complete! Create PR for human review.
 ```

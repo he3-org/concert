@@ -61,7 +61,7 @@ export function addHistoryEntry(
  */
 function applyStateDefaults(parsed: Record<string, unknown>): ConcertState {
   const costParsed = (parsed.cost as Record<string, unknown> | undefined) ?? {};
-  return {
+  const merged = {
     mission: "",
     mission_path: "",
     workflow: "",
@@ -77,11 +77,6 @@ function applyStateDefaults(parsed: Record<string, unknown>): ConcertState {
     tasks_completed: 0,
     tasks_total: 0,
     commits: 0,
-    cost: {
-      estimated_remaining: "",
-      spent_this_mission: "",
-      by_stage: {},
-    },
     blockers: [],
     telemetry: [],
     failure_log: [],
@@ -94,5 +89,6 @@ function applyStateDefaults(parsed: Record<string, unknown>): ConcertState {
       by_stage: {},
       ...costParsed,
     },
-  } as ConcertState;
+  };
+  return merged as ConcertState;
 }

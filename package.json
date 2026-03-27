@@ -1,0 +1,39 @@
+{
+  "name": "@he3-org/concert",
+  "version": "0.1.0",
+  "description": "Opinionated agentic development lifecycle orchestrator",
+  "type": "module",
+  "bin": {
+    "concert": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit && vitest run"
+  },
+  "keywords": ["concert", "agentic", "development", "orchestration"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/he3-org/concert.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "jsonc-parser": "^3.3.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

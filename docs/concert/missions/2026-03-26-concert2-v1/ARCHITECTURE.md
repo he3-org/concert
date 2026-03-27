@@ -216,7 +216,7 @@ Each agent is defined in two places:
 
 1. **Full definition:** `docs/concert/agents/concert-<name>.md` — contains the complete agent instructions, role, workflow integration, execution flow, operating principles, and boundaries.
 
-2. **GitHub stub:** `.github/agents/concert-<name>.md` — a minimal file that GitHub Agents UI discovers, containing only the description and a `Read docs/concert/agents/concert-<name>.md` instruction to load the full definition.
+2. **GitHub stub:** `.github/agents/concert-<name>.agent.md` — a minimal file that GitHub Agents UI discovers, containing only `name` and `description` frontmatter and a `Read docs/concert/agents/concert-<name>.md` instruction to load the full definition.
 
 3. **Claude Code command:** `.claude/commands/<name>.md` — a skill file that Claude Code discovers via `/concert:<name>`, containing steps that reference the full agent definition.
 
@@ -397,7 +397,7 @@ This means a state.json from an older Concert version works with newer agents �
 
 Concert workflow definitions (`.md` files in `docs/concert/workflows/`) are the design-layer source of truth. During `init` and `update`, the npm package generates:
 
-1. **GitHub agent stubs** (`.github/agents/concert-<name>.md`) — one per agent, pointing to the full definition.
+1. **GitHub agent stubs** (`.github/agents/concert-<name>.agent.md`) — one per agent, pointing to the full definition.
 2. **GitHub Actions workflows** (`.github/workflows/concert-*.yml`) — the auto-continue and version-check workflows.
 
 The generation is straightforward file copying from `templates/`, not a transformation engine. The Concert workflow `.md` files define orchestration logic for agents to follow at runtime. The GitHub workflow `.yml` files define CI/CD triggers. These are separate concerns:

@@ -100,7 +100,7 @@ Example:
 📋 Next steps:
   → Review the agent:    docs/concert/agents/concert-data-migrator.md
   → Test it:             Reference in a workflow or invoke directly
-  → Create a wrapper:    .github/agents/concert-data-migrator.md (for GitHub Agents UI)
+  → Create a wrapper:    .github/agents/concert-data-migrator.agent.md (for GitHub Agents UI)
   → Check status:        /concert:status
 ```
 </user_guidance>

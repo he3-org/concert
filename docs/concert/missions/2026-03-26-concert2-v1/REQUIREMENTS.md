@@ -330,8 +330,8 @@ Concert 2 must be distributed as an npm package.
 Concert commands must work from the GitHub Agents UI.
 
 **Acceptance Criteria:**
-- Each Concert command has a corresponding `.github/agents/concert-<name>.md` file
-- GitHub Agent files contain the agent description and point to the full agent definition in `docs/concert/agents/`
+- Each Concert command has a corresponding `.github/agents/concert-<name>.agent.md` file
+- GitHub Agent files contain `name` and `description` frontmatter (no `model` or `tools`) and point to the full agent definition in `docs/concert/agents/`
 - Agents that require interactivity (`concert-init`, `concert-review`) detect non-interactive environments and output a clear error directing the user to Claude Code
 - Non-interactive agents (`concert-plan`, `concert-continue`, `concert-status`, `concert-verify`) work fully from GitHub Agents UI
 
@@ -736,8 +736,8 @@ Task files must use a defined YAML frontmatter schema.
 Concert must integrate with the GitHub Agents UI for autonomous agent execution.
 
 **Acceptance Criteria:**
-- Each Concert command has a `.github/agents/concert-<name>.md` file that GitHub Agents UI can discover
-- Agent files include a `description` field that appears in the GitHub UI agent selector
+- Each Concert command has a `.github/agents/concert-<name>.agent.md` file that GitHub Agents UI can discover
+- Agent files include `name` and `description` frontmatter fields (no `model` or `tools`) that appear in the GitHub UI agent selector
 - Agent files reference the full agent definition via "Read docs/concert/agents/..." instructions
 - Non-interactive agents work fully when launched from GitHub Agents UI
 - Interactive agents detect non-interactive mode and output a redirect message

@@ -51,7 +51,7 @@ The planner runs as a **single agent** (not subagents) to maximize prompt cache 
 4. **Discover available skills:** Scan for skill files in these locations (in priority order):
    - `docs/concert/skills/*/SKILL.md` — Concert-managed skills (primary)
    - `.claude/skills/**/*.md` — Claude Code user skills
-   - `.agents/skills/**/*.md` — GitHub Agents skills
+   - `.github/skills/**/*.md` — GitHub-side skills
    Read each discovered skill's frontmatter/header to understand its domain (e.g., typescript standards, console UX guidelines, agent authoring). Build a skill inventory for matching to tasks in Pass 2.
 4. Produce a phase outline as a single text block (kept in context for Pass 2):
    ```

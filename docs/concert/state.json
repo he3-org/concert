@@ -7,7 +7,7 @@
   "pr_number": 3,
   "status_display": "wip_pr",
   "feature_size": "large",
-  "stage": "tasks",
+  "stage": "execution",
   "pipeline": {
     "vision": "accepted",
     "requirements": "accepted",
@@ -15,11 +15,14 @@
     "ux": "accepted",
     "tasks": "accepted"
   },
-  "phases_completed": 0,
+  "phases_completed": 1,
   "phases_total": 5,
-  "tasks_completed": 0,
+  "tasks_completed": 3,
   "tasks_total": 31,
-  "commits": 0,
+  "commits": 3,
+  "current_phase": 2,
+  "current_task_file": "TASK-2026-03-27-config-helpers-haiku.md",
+  "current_task_index": 4,
   "cost": {
     "estimated_remaining": "",
     "spent_this_mission": "",
@@ -98,10 +101,15 @@
       "action": "tasks_accepted",
       "timestamp": "2026-03-27",
       "details": "Tasks accepted. 5 phases, 31 task files. Ready for execution."
+    },
+    {
+      "action": "phase_1_completed",
+      "timestamp": "2026-03-27",
+      "details": "Phase 1 (Foundation) complete: project scaffold, types, default templates. 3 tasks, 3 commits."
     }
   ],
   "next_steps": [
-    "Run /concert:continue to advance to execution stage",
+    "Phase 2 in progress: Core Library (config, state, git, version, copy, merge helpers)",
     "Run /concert:status to check current status"
   ]
 }

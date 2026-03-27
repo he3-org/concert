@@ -88,7 +88,7 @@ After all tasks in a phase finish, the runner MUST:
 2. **Include per-task-file entries** in the summary:
 
    ```markdown
-   ### TASK-2026-03-22-db-schema-haiku (3 tasks)
+   ### TASK-01-db-schema-haiku (3 tasks)
    - **Model:** haiku | **Confidence:** high | **Review:** PASS | **Revisions:** 0
    - Created: src/db/schema.ts, src/db/migrations/001_initial.ts
    - Tests: 5 passing

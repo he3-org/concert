@@ -459,7 +459,7 @@ The `quality_loop_state` in `state.json` enables crash recovery and cross-enviro
 ```json
 {
   "quality_loop_state": {
-    "task_file": "TASK-2026-03-28-auth-middleware-sonnet.md",
+    "task_file": "TASK-02-auth-middleware-sonnet.md",
     "task_index": 2,
     "iteration": 2,
     "phase": "reviewer",
@@ -629,7 +629,7 @@ The orchestrator routes each task to its assigned model tier. Per-task model rou
 ```
 The planner groups tasks into task files by model tier. The user launches `concert-continue` multiple times — once with sonnet selected for sonnet-tier task files, once with opus for opus-tier files. The agent skips task files that don't match the session's model tier, or the user specifies which tier to run.
 
-This is why task filenames include the model suffix (e.g., `TASK-2026-03-28-auth-middleware-sonnet.md`) — it tells the user which model to select in the GitHub UI.
+This is why task filenames include the model suffix (e.g., `TASK-02-auth-middleware-sonnet.md`) — it tells the user which model to select in the GitHub UI.
 
 ### Task Assignment Guidelines (for the planner agent)
 

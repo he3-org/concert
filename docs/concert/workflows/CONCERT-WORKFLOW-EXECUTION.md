@@ -99,7 +99,7 @@ For each wave in order (wave 1, wave 2, ... wave N):
 ## Model Routing
 
 Each task file specifies a model tier in its frontmatter (`model: haiku | sonnet | opus`).
-The filename also includes the model suffix (e.g., `TASK-2026-03-22-db-schema-haiku.md`).
+The filename also includes the model suffix (e.g., `TASK-01-db-schema-haiku.md`).
 
 | Environment | Model Selection | Behavior |
 |-------------|----------------|----------|

@@ -68,7 +68,7 @@ The planner runs as a **single agent** (not subagents) to maximize prompt cache 
 
 **Pass 2 — Full task files (uses cached mission docs, references outline):**
 6. Using the outline as the working plan (already in context), write each task file:
-   - Name: `TASK-YYYY-MM-DD-<slug>-<model>.md`
+   - Name: `TASK-<NN>-<slug>-<model>.md` (globally numbered across all phases, zero-padded)
    - YAML frontmatter: task, title, depends_on, wave, model
    - Body: Objective, Files (exact paths), Requirements (FR/NFR IDs), Tests (or Detailed Instructions for haiku), Acceptance Criteria, Skills
    - **Skills section:** Match relevant skills from the inventory to each task based on domain. Skills provide standards and best practices that the coder must follow — agents have instructions for action, skills contain the details. Examples:

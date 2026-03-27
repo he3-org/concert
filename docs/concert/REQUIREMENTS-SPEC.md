@@ -85,7 +85,7 @@ The system must support decomposing approved plans into executable phases and ta
 - The `concert-plan` command auto-selects the tasks stage when UX is accepted
 - The `concert-planner` agent reads all approved mission documents and analyzes the codebase
 - The agent creates a `phases/` directory structure with numbered phase directories
-- Each phase directory contains task files named `TASK-YYYY-MM-DD-<slug>-<model>.md`
+- Each phase directory contains task files named `TASK-<NN>-<slug>-<model>.md` (globally numbered across all phases, zero-padded)
 - Each task file has YAML frontmatter with: task slug, title, depends_on, wave number, and model tier (haiku/sonnet/opus)
 - Each task within a file specifies: files to create/modify, requirements, tests to write, skills to apply, and acceptance criteria
 - The agent assigns the lowest viable model tier to each task
@@ -215,7 +215,7 @@ The system must route tasks to the appropriate model tier based on task file met
 **Acceptance Criteria:**
 - Task files specify a `model` field in frontmatter with values `haiku`, `sonnet`, or `opus`
 - In Claude Code sessions, subagents are spawned with the specified model tier
-- The task filename includes the model suffix (e.g., `TASK-2026-03-22-db-schema-haiku.md`)
+- The task filename includes the model suffix (e.g., `TASK-01-db-schema-haiku.md`)
 - Model tier assignment follows the guidelines: haiku for scaffolding/config/boilerplate, sonnet for business logic/APIs/tests, opus for security/complex algorithms/architecture
 - `concert.jsonc` includes a `"model_tiers"` configuration with environment-specific tier availability:
   - `"claude_code"`: uses all three tiers (`haiku`, `sonnet`, `opus`) — haiku is cheaper than sonnet in CC
@@ -667,7 +667,7 @@ docs/concert/missions/YYYY-MM-DD-<slug>/
   CONCERT-IMPROVEMENT.md
   phases/
     01-<slug>/
-      TASK-YYYY-MM-DD-<slug>-<model>.md
+      TASK-<NN>-<slug>-<model>.md
       PHASE-SUMMARY-01.md
     02-<slug>/
       ...
@@ -677,7 +677,7 @@ docs/concert/missions/YYYY-MM-DD-<slug>/
 - Mission folders are created by the interviewer agent with the correct date and slug
 - All planning stage documents are written to the mission folder
 - Phase directories use zero-padded numbering (01, 02, ...) for sort order
-- Task files follow the naming convention: `TASK-YYYY-MM-DD-<slug>-<model>.md`
+- Task files follow the naming convention: `TASK-<NN>-<slug>-<model>.md` (globally numbered, zero-padded)
 - PHASE-SUMMARY files follow the naming convention: `PHASE-SUMMARY-NN.md`
 
 ### DR-004: Project-Level Spec Files (must)

@@ -328,7 +328,7 @@ Pushed to origin/concert/my-feature
     1. Continue in GitHub Agents UI:
        Agent:  concert-continue
        Model:  sonnet (matches current task tier)
-       The agent will resume from reviewer iteration 2 of TASK-2026-03-28-auth-middleware-sonnet.md
+       The agent will resume from reviewer iteration 2 of TASK-02-auth-middleware-sonnet.md
 ```
 
 **Nothing to push:**
@@ -551,7 +551,7 @@ Concert Status: my-feature
 
   Execution: Phase 2 of 4 — "API endpoints"
     Tasks: 8/22 completed (36%)
-    Current: TASK-2026-03-28-auth-middleware-sonnet.md (task 2/4)
+    Current: TASK-02-auth-middleware-sonnet.md (task 2/4)
     Quality loop: reviewer, iteration 2
 
   Branch: concert/my-feature
@@ -582,7 +582,7 @@ Concert Status: my-feature
 
   Execution: FAILED at Phase 1, Task 3
     Tasks: 2/12 completed (16%)
-    Failed: TASK-2026-03-28-payment-handler-sonnet.md (task 3)
+    Failed: TASK-03-payment-handler-sonnet.md (task 3)
     Error: test_failure — PaymentService.charge() returns undefined
     Failed at: 2026-03-28T14:32:00Z
     Last good commit: abc1234
@@ -612,7 +612,7 @@ When execution fails, the output provides structured diagnostic information:
 ```
 FAILED: Task 3 of Phase 1
 
-  Task:    payment-handler (TASK-2026-03-28-payment-handler-sonnet.md)
+  Task:    payment-handler (TASK-03-payment-handler-sonnet.md)
   Error:   test_failure
   Summary: PaymentService.charge() returns undefined — expected a
            PaymentResult object. The mock for StripeClient was not
@@ -1142,7 +1142,7 @@ Resuming from cross-environment handoff.
   Quality loop state: reviewer, iteration 2 of auth-middleware
 
   Continuing from: reviewer iteration 2 of
-  TASK-2026-03-28-auth-middleware-sonnet.md (task 2/4)
+  TASK-02-auth-middleware-sonnet.md (task 2/4)
 
   Prior findings from iteration 1:
     [MAJ] Missing input validation in auth.ts:42 — resolved
@@ -1157,13 +1157,13 @@ When execution involves tasks at different model tiers, the agent provides model
 Phase 2 has tasks at multiple model tiers:
 
   sonnet tasks (4):
-    TASK-2026-03-28-auth-middleware-sonnet.md
-    TASK-2026-03-28-user-routes-sonnet.md
-    TASK-2026-03-28-data-validation-sonnet.md
-    TASK-2026-03-28-error-handling-sonnet.md
+    TASK-02-auth-middleware-sonnet.md
+    TASK-04-user-routes-sonnet.md
+    TASK-05-data-validation-sonnet.md
+    TASK-06-error-handling-sonnet.md
 
   opus tasks (1):
-    TASK-2026-03-28-security-audit-opus.md
+    TASK-07-security-audit-opus.md
 
   In GitHub Agents UI, run concert-continue twice:
     1. First with sonnet selected (handles 4 tasks)

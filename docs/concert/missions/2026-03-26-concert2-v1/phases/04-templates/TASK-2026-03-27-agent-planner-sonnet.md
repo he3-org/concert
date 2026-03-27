@@ -48,6 +48,11 @@ The planner runs as a **single agent** (not subagents) to maximize prompt cache 
 1. Read state.json — verify all required stages are accepted (varies by workflow)
 2. Read all mission docs ONCE: VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX.md (if present)
 3. Read existing *-SPEC.md files and scan codebase structure
+4. **Discover available skills:** Scan for skill files in these locations (in priority order):
+   - `docs/concert/skills/*/SKILL.md` — Concert-managed skills (primary)
+   - `.claude/skills/**/*.md` — Claude Code user skills
+   - `.agents/skills/**/*.md` — GitHub Agents skills
+   Read each discovered skill's frontmatter/header to understand its domain (e.g., typescript standards, console UX guidelines, agent authoring). Build a skill inventory for matching to tasks in Pass 2.
 4. Produce a phase outline as a single text block (kept in context for Pass 2):
    ```
    Phase 01: Foundation (3 tasks)
@@ -66,6 +71,11 @@ The planner runs as a **single agent** (not subagents) to maximize prompt cache 
    - Name: `TASK-YYYY-MM-DD-<slug>-<model>.md`
    - YAML frontmatter: task, title, depends_on, wave, model
    - Body: Objective, Files (exact paths), Requirements (FR/NFR IDs), Tests (or Detailed Instructions for haiku), Acceptance Criteria, Skills
+   - **Skills section:** Match relevant skills from the inventory to each task based on domain. Skills provide standards and best practices that the coder must follow — agents have instructions for action, skills contain the details. Examples:
+     - TypeScript implementation tasks → `typescript-standards` skill
+     - Console/CLI output tasks → `cli-ux-guidelines` skill
+     - Agent template tasks → `agent-authoring` skill
+     - A task may reference multiple skills if it spans domains
    - Reference the outline for dependencies, not re-reading mission docs
 7. Write files sequentially — each Write tool call produces a file without accumulating output context
 8. Create `phases/` directory structure with numbered phase directories
@@ -116,6 +126,8 @@ The planner runs as a **single agent** (not subagents) to maximize prompt cache 
 - [ ] `concert-planner.md` includes detailed model tier assignment guidelines with downtierring rules
 - [ ] `concert-planner.md` includes task file format specification
 - [ ] `concert-planner.md` includes dependency DAG validation rules
+- [ ] `concert-planner.md` includes skill discovery (scanning `docs/concert/skills/`, `.claude/skills/`, `.agents/skills/`)
+- [ ] `concert-planner.md` includes skill-to-task matching guidance (agents have action instructions, skills have standards/details)
 - [ ] File follows the agent file format exactly
 - [ ] File starts with the managed header
 - [ ] File has complete boundaries section

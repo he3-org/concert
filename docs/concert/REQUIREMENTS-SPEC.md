@@ -105,7 +105,7 @@ The system must support executing task files through phases and waves with atomi
 - After each task commit, `state.json` is updated with: incremented `tasks_completed`, updated execution position, history entry, and telemetry record
 - Tests are run after each task implementation; all tests must pass (not just new ones)
 - Failed tests trigger up to 2 retries within the same context before stopping with a failure
-- After all tasks in a phase complete, a regression gate runs the full test suite
+- After all tasks in a phase complete, a documentation agent updates higher-level docs (README, API docs, guides)
 - `PHASE-SUMMARY-NN.md` is written/updated after each task file and finalized at phase completion
 - Execution stops immediately on failure with a failure block written to `state.json`
 
@@ -636,7 +636,7 @@ The system must define a user-editable configuration file.
 - `status_display`: string
 - `execution.mode`, `execution.max_tasks_per_file`, `execution.max_files_per_phase`, `execution.max_context_usage_percent`, `execution.max_review_iterations`: various
 - `review_triggers`: object — on_phase_complete, on_dependency_boundary, on_inferred_breakpoint, after_n_files, after_n_commits
-- `gates`: object — task_checker, regression, acceptance_testing
+- `gates`: object — task_checker, acceptance_testing
 - `model_profiles`: object — quality, balanced, budget model names
 - `task_models`: object — opus, sonnet, haiku model names
 - `skills`: object — auto_discover, enabled
@@ -825,7 +825,7 @@ Concert may integrate with GitHub Actions for automation.
 
 ### EC-010: Test Suite Does Not Exist
 
-**Expected Behavior:** If no test framework or test files are detected, the runner skips the test execution step but reports `confidence: "low"` and notes the absence of tests in telemetry. The regression gate is skipped with a warning.
+**Expected Behavior:** If no test framework or test files are detected, the runner skips the test execution step but reports `confidence: "low"` and notes the absence of tests in telemetry. The PR merge gate (CI) will also reflect the absence of tests.
 
 ### EC-011: Replan After Partial Execution
 

@@ -7,12 +7,12 @@
   "pr_number": 2,
   "status_display": "wip_pr",
   "feature_size": "large",
-  "stage": "ux",
+  "stage": "tasks",
   "pipeline": {
     "vision": "accepted",
     "requirements": "accepted",
     "architecture": "accepted",
-    "ux": "draft",
+    "ux": "accepted",
     "tasks": "pending"
   },
   "phases_completed": 0,
@@ -73,11 +73,20 @@
       "action": "ux_drafted",
       "timestamp": "2026-03-26",
       "details": "UX designed: 12 sections covering design principles, user flows (6 journeys), CLI output design (3 commands), agent conversation patterns (interview/review/status/failure/redirect), WIP PR body design, terminal output conventions, agent output structure, error recovery flows, accessibility, platform conventions, cross-environment consistency, key UX decisions summary"
+    },
+    {
+      "action": "ux_reviewed",
+      "timestamp": "2026-03-27",
+      "details": "UX reviewed: removed regression gate from execution flow (coders already run full tests, PR merge gate is the safety net), removed --force flag from init error output (intentionally omitted for v1), updated REQUIREMENTS.md and REQUIREMENTS-SPEC.md to match"
+    },
+    {
+      "action": "ux_accepted",
+      "timestamp": "2026-03-27",
+      "details": "UX accepted, UX-SPEC.md created, advancing to tasks. 12 sections: design principles, 6 user flows, CLI output for 3 commands, agent conversation patterns, WIP PR body design, terminal conventions, error recovery, accessibility, platform conventions, cross-environment consistency"
     }
   ],
   "next_steps": [
-    "Run /concert:review to review the UX draft",
-    "Run /concert:accept to accept UX and advance to tasks",
+    "Run /concert:plan to plan the tasks stage",
     "Run /concert:status to check current status"
   ]
 }

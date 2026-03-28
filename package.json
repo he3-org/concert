@@ -1,6 +1,6 @@
 {
   "name": "@he3-org/concert",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Opinionated agentic development lifecycle orchestrator",
   "type": "module",
   "bin": {
@@ -18,7 +18,12 @@
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit && vitest run"
   },
-  "keywords": ["concert", "agentic", "development", "orchestration"],
+  "keywords": [
+    "concert",
+    "agentic",
+    "development",
+    "orchestration"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

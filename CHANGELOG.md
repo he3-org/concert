@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/he3-org/concert/compare/v1.0.5...v1.0.6) (2026-03-28)
+
+
+### Bug Fixes
+
+* remove registry-url for OIDC publish test ([5bb0860](https://github.com/he3-org/concert/commit/5bb086060530e05b365c306c3ddf5f12ef75994b))
+
 ## [1.0.5](https://github.com/he3-org/concert/compare/v1.0.4...v1.0.5) (2026-03-28)
 
 

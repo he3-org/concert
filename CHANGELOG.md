@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/he3-org/concert/compare/v1.0.6...v1.0.7) (2026-03-28)
+
+
+### Bug Fixes
+
+* remove environment from publish job for OIDC test ([9721548](https://github.com/he3-org/concert/commit/9721548d82076ca190c98ec0199d182d2e6331a6))
+
 ## [1.0.6](https://github.com/he3-org/concert/compare/v1.0.5...v1.0.6) (2026-03-28)
 
 

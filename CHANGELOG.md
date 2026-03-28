@@ -7,6 +7,13 @@
 
 * remove registry-url from setup-node to prevent OIDC token conflict ([0b56781](https://github.com/he3-org/concert/commit/0b56781fdde9bf1f65256a1a24f44896a8d60b91))
 
+## [1.0.3](https://github.com/he3-org/concert/compare/v1.0.2...v1.0.3) (2026-03-28)
+
+
+### Bug Fixes
+
+* remove registry-url from setup-node to prevent OIDC token conflict ([0b56781](https://github.com/he3-org/concert/commit/0b56781fdde9bf1f65256a1a24f44896a8d60b91))
+
 ## [1.0.2](https://github.com/he3-org/concert/compare/v1.0.1...v1.0.2) (2026-03-28)
 
 

@@ -47,20 +47,19 @@ Before doing anything:
    Suggest `/concert:review` or `/concert:accept` for the draft stage.
 
    **If in execution stage:**
-   a. Parse `pipeline.execution` for exact position:
-      - phase, task_file, task_index, total_tasks
-   b. Determine continuation point:
+   The exact position is already in state.json: `current_phase`, `current_task_file`, `current_task_index`.
+   Read ONLY the current task file — do NOT read other task files or scan all phases.
+   Determine continuation point from state.json:
       - **Mid-task** (task_index > 0, task not in telemetry) → resume from last commit in that task
       - **Between tasks** (task just completed) → start next task in the file
       - **Between task files** (file just completed) → start next task file in the phase
-      - **Between phases** (phase just completed) → check if replanning needed, then start next phase
+      - **Between phases** (phase just completed) → start next phase
       - **All phases done** → run verification
-   c. Check for failure block:
+   Check for failure block:
       - If present → assess: can we retry, or does this need `/concert:debug`?
       - If retryable → clear failure, attempt the task again
       - If not retryable → report and suggest debugging
-   d. Execute the determined action following workflow rules
-   e. Update state.json continuously during execution
+   Execute the current task, then advance to the next. Do NOT read ahead into future tasks or phases.
 
    **If in verification stage:**
    → Run QA agent if not yet done, or report verification results
@@ -144,4 +143,5 @@ Example (resuming execution):
 - NEVER modify mission planning documents during execution
 - MUST use ONLY the agent files in `docs/concert/agents/` — never discover or use agents from other sources
 - MUST use the exact agent specified for each scenario in the execution flow above — no substitutions
+- MUST NOT read all task files or scan all phases before executing — state.json has the exact position, read only the current task file
 </boundaries>

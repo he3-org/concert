@@ -47,16 +47,18 @@ Entry point for all execution and continuation scenarios. Works with all mission
   - If `phase: "reviewer"`: spawn fresh reviewer using `docs/concert/agents/concert-code-reviewer.md`
 
 - **If mid-execution** (tasks_completed < tasks_total):
-  Determine current phase and task position. Resume execution using the orchestrator logic below.
+  The exact position is already in state.json: `current_phase`, `current_task_file`, `current_task_index`.
+  Read ONLY the current task file — do NOT read other task files or scan all phases.
+  Go directly to Step 3 to execute that task.
 
 - **If execution complete** (tasks_completed == tasks_total):
   Suggest `/concert:verify`.
 
-**Step 3: Execution orchestration (when executing tasks):**
+**Step 3: Execute the current task (one at a time):**
 
-For each task:
+Do NOT read ahead into future tasks or phases. Execute only the current task:
 
-a. Read task file frontmatter for model tier and dependencies.
+a. Read the current task file (from `current_task_file` in state.json) frontmatter for model tier and dependencies.
 
 b. Resolve model tier via `concert.jsonc` → `task_models`.
 
@@ -82,9 +84,12 @@ f. **Quality loop decision (always orchestrator logic):**
    - After max iterations with only MIN/NTH remaining: proceed with success
    - After max iterations with CRIT/MAJ remaining: stop with failure
 
-g. Update state.json: tasks_completed++, telemetry record, history entry
+g. Update state.json: tasks_completed++, current_task_index++, telemetry record, history entry.
+   If task file is complete, advance current_task_file. If phase is complete, advance current_phase.
 
-h. Update PHASE-SUMMARY after each task file completes
+h. Update PHASE-SUMMARY after each task file completes.
+
+i. Loop back to Step 3a for the next task. Do NOT re-read state detection (Step 2) between tasks.
 
 **Phase completion:**
 After all tasks in phase: read `docs/concert/agents/concert-documenter.md` and follow its instructions. Mark phase complete. Update WIP PR body.
@@ -163,4 +168,5 @@ Additional guidance:
 - Does NOT skip the quality loop for any task
 - MUST use ONLY the agent files listed in `docs/concert/agents/` — never discover or use agents from other sources
 - MUST use the exact agent specified for each scenario in the execution flow above — no substitutions
+- MUST NOT read all task files or scan all phases before executing — state.json has the exact position, read only the current task file
 </boundaries>

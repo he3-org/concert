@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/he3-org/concert/compare/v1.0.3...v1.0.4) (2026-03-28)
+
+
+### Bug Fixes
+
+* restore registry-url for npm ci but remove .npmrc before OIDC publish ([97dcfb1](https://github.com/he3-org/concert/commit/97dcfb187f729478f49303907a0e43691508ca5d))
+
 ## [1.0.3](https://github.com/he3-org/concert/compare/v1.0.2...v1.0.3) (2026-03-28)
 
 

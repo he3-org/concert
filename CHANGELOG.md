@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/he3-org/concert/compare/v1.0.1...v1.0.2) (2026-03-28)
+
+
+### Bug Fixes
+
+* bump publish job to Node 22 for OIDC compatibility ([9dd47a2](https://github.com/he3-org/concert/commit/9dd47a2a457d377925b39ee04b410641524191ed))
+
 ## [1.0.1](https://github.com/he3-org/concert/compare/v1.0.0...v1.0.1) (2026-03-28)
 
 

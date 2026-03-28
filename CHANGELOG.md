@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/he3-org/concert/compare/v1.0.4...v1.0.5) (2026-03-28)
+
+
+### Bug Fixes
+
+* restore pure OIDC publish without token ([87be2cd](https://github.com/he3-org/concert/commit/87be2cd88b31db490d2eaa2708e99437c2e823db))
+* use standard npm token + provenance publish approach ([3a0ab57](https://github.com/he3-org/concert/commit/3a0ab574d7317a7010ebdf15f954c31d4de01f5b))
+
 ## [1.0.4](https://github.com/he3-org/concert/compare/v1.0.3...v1.0.4) (2026-03-28)
 
 

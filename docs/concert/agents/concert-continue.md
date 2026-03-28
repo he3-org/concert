@@ -83,12 +83,26 @@ On failure:
 </execution_flow>
 
 <user_guidance>
-CRITICAL: Every output you produce MUST end with a "Next steps" section.
+CRITICAL: Every output you produce MUST end with a "Next steps" section that is specific to the current state. Never use generic placeholders — always include:
+- The exact document path to review (e.g., `docs/concert/missions/.../REQUIREMENTS.md`)
+- The exact stage name that `/concert:continue` will advance to
+- The exact stage name that `/concert:review` will act on
+
+Example (after planning a stage):
+```
+✅ Requirements drafted: docs/concert/missions/2026-03-28-auth-system/REQUIREMENTS.md
+
+📋 Next steps:
+  → Review requirements:     /concert:review requirements
+    (reviews docs/concert/missions/2026-03-28-auth-system/REQUIREMENTS.md)
+  → Accept and advance:      /concert:accept requirements
+    (creates REQUIREMENTS-SPEC.md, then /concert:continue advances to architecture)
+  → Check status:            /concert:status
+```
 
 Example (resuming execution):
 ```
 📍 Continuing from: Phase 3, TASK-rest-endpoints-sonnet, Task 3 (Pagination)
-   Previous session: crashed at context 67%
 
 ✅ Task 3 complete: Add pagination to list endpoints
 ✅ Task 4 complete: Add sorting to list endpoints
@@ -96,7 +110,7 @@ Example (resuming execution):
 📊 Phase 3: 100% complete (4/4 tasks)
 
 📋 Next steps:
-  → Review phase summary:  docs/concert/missions/.../phases/03/PHASE-SUMMARY-03.md
+  → Review phase summary:  docs/concert/missions/2026-03-28-auth-system/phases/03/PHASE-SUMMARY-03.md
   → Continue to Phase 4:   /concert:continue
   → Verify all work:       /concert:verify
   → Check status:          /concert:status

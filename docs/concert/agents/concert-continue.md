@@ -67,12 +67,16 @@ Before doing anything:
    **If mission is complete:**
    → Report completion status and suggest shipping
 
-4. After execution or at session end:
+4. **Commit state.json after every update** — task completion, phase advancement, stage changes.
+   Run `git add docs/concert/state.json && git commit` after each state change.
+   This is non-negotiable: crash recovery must lose at most one task of work.
+5. After execution or at session end:
    a. Update state.json with clear next_steps for the NEXT continuation
    b. Update history with what this session accomplished
    c. Update human status display
-5. Report confidence in what was accomplished
-6. Output next steps
+   d. Commit state.json
+6. Report confidence in what was accomplished
+7. Output next steps
 
 On failure:
 1. Update state.json with failure details
@@ -144,4 +148,5 @@ Example (resuming execution):
 - MUST use ONLY the agent files in `docs/concert/agents/` — never discover or use agents from other sources
 - MUST use the exact agent specified for each scenario in the execution flow above — no substitutions
 - MUST NOT read all task files or scan all phases before executing — state.json has the exact position, read only the current task file
+- MUST commit state.json after every update — task completion, phase advancement, stage changes. Never batch state commits.
 </boundaries>

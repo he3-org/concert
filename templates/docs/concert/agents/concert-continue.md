@@ -86,6 +86,8 @@ f. **Quality loop decision (always orchestrator logic):**
 
 g. Update state.json: tasks_completed++, current_task_index++, telemetry record, history entry.
    If task file is complete, advance current_task_file. If phase is complete, advance current_phase.
+   **Commit state.json immediately after every update** — `git add docs/concert/state.json && git commit`.
+   This is non-negotiable: state must be committed after every task so crash recovery loses at most one task.
 
 h. Update PHASE-SUMMARY after each task file completes.
 
@@ -152,7 +154,7 @@ Additional guidance:
 - Orchestrator contains ONLY orchestration logic — coder/reviewer behaviors in separate files
 - Fresh coder per task, CONTINUED coder across iterations — maximize cache hits
 - Fresh reviewer per iteration — keep review context clean
-- State committed after every task — at most one task of work lost on crash
+- State.json committed after EVERY update (task completion, phase advancement, stage change) — at most one task of work lost on crash
 - Failure stops execution immediately — no skipping ahead
 - Preserve quality_loop_state across continuations — never restart loops
 - Write next_steps for the next continuation session
@@ -169,4 +171,5 @@ Additional guidance:
 - MUST use ONLY the agent files listed in `docs/concert/agents/` — never discover or use agents from other sources
 - MUST use the exact agent specified for each scenario in the execution flow above — no substitutions
 - MUST NOT read all task files or scan all phases before executing — state.json has the exact position, read only the current task file
+- MUST commit state.json after every update — task completion, phase advancement, stage changes. Never batch state commits.
 </boundaries>

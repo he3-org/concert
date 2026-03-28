@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1](https://github.com/he3-org/concert/compare/v1.0.0...v1.0.1) (2026-03-28)
+
+
+### Bug Fixes
+
+* clarify npm OIDC setup docs in README ([0dcad9b](https://github.com/he3-org/concert/commit/0dcad9b8f7aa32e3fa6ef034ad2751da37f2c001))
+* fall back to NPM_TOKEN for publish instead of OIDC ([941366a](https://github.com/he3-org/concert/commit/941366a45706bf06161b1aacd1a7c38b69ce653d))
+* remove --provenance from npm publish to fix OIDC conflict with token auth ([354c36e](https://github.com/he3-org/concert/commit/354c36edb262058a19992f626318af81f3467469))
+* restore OIDC provenance publishing for npm ([2a8a426](https://github.com/he3-org/concert/commit/2a8a426c9cfb17c2bf69fb42020c01bbca6e0b9c))
+
 ## 1.0.0 (2026-03-28)
 
 

@@ -145,4 +145,4 @@ Releases are automated via [release-please](https://github.com/googleapis/releas
 
 To trigger a release, just merge PRs with conventional commit titles to `main`. No manual version bumps needed.
 
-**Setup required:** Link the GitHub repo to npm via OIDC (no stored tokens). See npm's [configuring OIDC with GitHub Actions](https://docs.npmjs.com/generating-provenance-statements#publishing-packages-with-provenance-via-github-actions) docs.
+**Setup required:** Link the GitHub repo to npm via OIDC for provenance publishing. See npm's [configuring provenance with GitHub Actions](https://docs.npmjs.com/generating-provenance-statements#publishing-packages-with-provenance-via-github-actions) docs.

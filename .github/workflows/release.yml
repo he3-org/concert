@@ -32,8 +32,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm run build
       - run: npm test
-      - run: npm publish --access public --provenance
+      - run: |
+          # Unset the variable that points to the runner's default .npmrc
+          unset NPM_CONFIG_USERCONFIG
+          npm publish --provenance

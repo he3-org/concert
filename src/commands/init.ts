@@ -21,7 +21,6 @@ This project uses [Concert](https://github.com/he3-org/concert) for agentic deve
 ### Commands
 
 - \`/concert:init\` — Start a new mission
-- \`/concert:plan\` — Plan a stage
 - \`/concert:review\` — Review a stage
 - \`/concert:accept\` — Accept a stage
 - \`/concert:status\` — Check current status

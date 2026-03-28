@@ -50,7 +50,7 @@ pipeline advances. Execution follows `CONCERT-WORKFLOW-EXECUTION.md` rules.
 
 ### Stage 2: Requirements
 
-- **Command:** `/concert:plan` (auto-selects requirements stage)
+- **Command:** `/concert:continue` (auto-selects requirements stage)
 - **Agent:** `concert-analyst`
 - **Interactive:** No — can run autonomously
 - **Reads:** `VISION.md`, codebase structure, existing `REQUIREMENTS-SPEC.md`
@@ -59,7 +59,7 @@ pipeline advances. Execution follows `CONCERT-WORKFLOW-EXECUTION.md` rules.
 
 ### Stage 3: Architecture
 
-- **Command:** `/concert:plan` (auto-selects architecture stage)
+- **Command:** `/concert:continue` (auto-selects architecture stage)
 - **Agent:** `concert-architect`
 - **Interactive:** No — can run autonomously
 - **Reads:** `VISION.md`, `REQUIREMENTS.md`, existing `ARCHITECTURE-SPEC.md`
@@ -68,7 +68,7 @@ pipeline advances. Execution follows `CONCERT-WORKFLOW-EXECUTION.md` rules.
 
 ### Stage 4: UX
 
-- **Command:** `/concert:plan` (auto-selects ux stage)
+- **Command:** `/concert:continue` (auto-selects ux stage)
 - **Agent:** `concert-designer`
 - **Interactive:** No — can run autonomously
 - **Reads:** All mission docs, platform UX skills from `concert.jsonc` → `project.platforms`
@@ -77,7 +77,7 @@ pipeline advances. Execution follows `CONCERT-WORKFLOW-EXECUTION.md` rules.
 
 ### Stage 5: Tasks
 
-- **Command:** `/concert:plan` (auto-selects tasks stage)
+- **Command:** `/concert:continue` (auto-selects tasks stage)
 - **Agent:** `concert-planner`
 - **Interactive:** No — can run autonomously
 - **Reads:** All mission docs, all project specs, codebase
@@ -174,7 +174,7 @@ If any stage fails:
 Users can run any stage out of order:
 
 ```
-/concert:plan architecture     # Run architect even if pipeline says requirements
+/concert:replan architecture   # Run architect even if pipeline says requirements
 /concert:review vision         # Review vision even if past it
 /concert:accept requirements   # Accept requirements specifically
 ```

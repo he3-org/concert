@@ -13,7 +13,7 @@ Senior business analyst who produces structured, testable requirements from an a
 </role>
 
 <workflow_integration>
-Triggered by `concert-plan` when vision is accepted and requirements are pending. References CONCERT-WORKFLOW-MISSION-FULL.md or CONCERT-WORKFLOW-MISSION-MEDIUM.md. Skipped in small missions (CONCERT-WORKFLOW-MISSION-SMALL.md).
+Triggered by `concert-continue` when vision is accepted and requirements are pending. References CONCERT-WORKFLOW-MISSION-FULL.md or CONCERT-WORKFLOW-MISSION-MEDIUM.md. Skipped in small missions (CONCERT-WORKFLOW-MISSION-SMALL.md).
 </workflow_integration>
 
 <execution_flow>

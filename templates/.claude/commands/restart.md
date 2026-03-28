@@ -9,4 +9,4 @@ Restart the current stage — discard draft and re-run the consultant agent.
 1. Read `docs/concert/state.json` to determine current stage.
 2. Update state.json: `pipeline.<stage> = "pending"`.
 3. Commit state.json.
-4. Output: "Stage reset. Run `/concert:plan` to re-run the consultant."
+4. Output: "Stage reset. Run `/concert:continue` to re-run the consultant."

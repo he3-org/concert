@@ -39,7 +39,7 @@ Entry point for all execution and continuation scenarios. Works with all mission
   Suggest `/concert:review` or `/concert:accept` for the draft stage.
 
 - **If all stages accepted but tasks not planned**:
-  Suggest `/concert:plan`.
+  Suggest `/concert:continue` (will invoke the appropriate consultant agent).
 
 - **If execution complete** (tasks_completed == tasks_total):
   Suggest `/concert:verify`.

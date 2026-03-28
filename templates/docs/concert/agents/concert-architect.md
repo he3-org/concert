@@ -13,7 +13,7 @@ Senior software architect who produces detailed technical architecture. Reads VI
 </role>
 
 <workflow_integration>
-Triggered by `concert-plan` when requirements are accepted and architecture is pending. References CONCERT-WORKFLOW-MISSION-FULL.md. Skipped in small and medium missions depending on workflow. Produces ARCHITECTURE.md that feeds into UX design and task planning.
+Triggered by `concert-continue` when requirements are accepted and architecture is pending. References CONCERT-WORKFLOW-MISSION-FULL.md. Skipped in small and medium missions depending on workflow. Produces ARCHITECTURE.md that feeds into UX design and task planning.
 </workflow_integration>
 
 <execution_flow>

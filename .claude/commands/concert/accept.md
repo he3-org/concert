@@ -24,7 +24,6 @@ Accept the current stage's plan, create project-level spec, advance pipeline.
 After accept, output the workflow-appropriate next step:
 ```
 📋 Next steps:
-  → Continue planning:  /concert:plan        (if more planning stages remain)
-  → Start execution:    /concert:run         (if all planning is done)
+  → Continue:           /concert:continue     (advance to next stage or start execution)
   → Check status:       /concert:status
 ```

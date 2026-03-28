@@ -67,7 +67,7 @@ Entry point for all mission workflows (full, medium, small). Reads the selected 
 12. Output summary with next steps:
     - Mission folder created
     - Branch and PR details
-    - Next: `/concert:plan` to generate requirements, or `/concert:review` to review the vision first
+    - Next: `/concert:continue` to advance, or `/concert:review` to review the vision first
 </execution_flow>
 
 <user_guidance>

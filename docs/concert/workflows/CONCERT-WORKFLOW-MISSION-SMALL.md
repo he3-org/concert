@@ -19,8 +19,8 @@ Small features rely on the existing project specs (`REQUIREMENTS-SPEC.md`,
 `ARCHITECTURE-SPEC.md`, `UX-SPEC.md`) for context. The pipeline goes directly
 from vision to task planning to execution.
 
-If any skipped stage is later needed, the user can run `/concert:plan <stage>`
-(e.g., `/concert:plan architecture`) to add it back.
+If any skipped stage is later needed, the user can run `/concert:replan <stage>`
+(e.g., `/concert:replan architecture`) to add it back.
 
 ---
 
@@ -49,7 +49,7 @@ If any skipped stage is later needed, the user can run `/concert:plan <stage>`
 
 ### Stage 2: Tasks
 
-- **Command:** `/concert:plan` (auto-selects tasks stage)
+- **Command:** `/concert:continue` (auto-selects tasks stage)
 - **Agent:** `concert-planner`
 - **Interactive:** No — can run autonomously
 - **Reads:** `VISION.md`, all existing project specs, codebase
@@ -93,11 +93,11 @@ This workflow skips dedicated requirements, architecture, and UX stages. The rat
 - Existing project specs provide sufficient context for the planner and coders
 - The cost of full analysis exceeds the benefit for small changes
 
-**To add a skipped stage back:** Run `/concert:plan <stage>` at any point before execution:
+**To add a skipped stage back:** Run `/concert:replan <stage>` at any point before execution:
 ```
-/concert:plan requirements    # Add requirements analysis
-/concert:plan architecture    # Add architecture planning
-/concert:plan ux              # Add UX design
+/concert:replan requirements    # Add requirements analysis
+/concert:replan architecture    # Add architecture planning
+/concert:replan ux              # Add UX design
 ```
 
 ---

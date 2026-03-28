@@ -8,7 +8,7 @@ Resume from where the last session stopped.
 2. Read the active workflow file (from `workflow_path`)
 3. Assess the current state and determine the next action:
    - If no mission exists → output "No active mission. Start one with `/concert:init`"
-   - If in planning stages → check stage status, suggest review/accept/plan
+   - If in planning stages → check stage status, invoke consultant or suggest review/accept
    - If mid-task → resume that task from the last commit
    - If between tasks → start the next task
    - If between task files → start the next task file

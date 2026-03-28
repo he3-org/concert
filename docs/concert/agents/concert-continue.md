@@ -38,7 +38,7 @@ Before doing anything:
    **If in planning stages (vision/requirements/architecture/ux/tasks):**
    a. Check which stage is current and its status
    b. If stage has a draft → suggest review or accept
-   c. If stage needs to be run → invoke the appropriate consultant agent
+   c. If stage needs to be planned → invoke the appropriate consultant agent
    d. Follow the workflow's stage transition rules
 
    **If in execution stage:**

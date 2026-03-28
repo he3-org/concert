@@ -100,8 +100,7 @@ When a planning stage completes, the user is prompted to review:
 5. Commit the spec file and state.json update
 6. Update human status display (WIP PR body or STATUS.md)
 7. Output next steps:
-   → If more planning stages remain: suggest /concert:plan (next stage)
-   → If all planning done: suggest /concert:run
+   → Suggest /concert:continue (advances to next stage or starts execution)
 ```
 
 ### The `/concert:restart` Command
@@ -195,5 +194,5 @@ If the review cycle encounters an error (e.g., plan file missing, state corrupti
    📋 Next steps:
      → Check state:        /concert:status
      → Restart the stage:  /concert:restart
-     → Re-generate plan:   /concert:plan <stage>
+     → Restart the stage:  /concert:restart <stage>
    ```

@@ -44,6 +44,6 @@ The review cycle applies to all planning stages (vision, requirements, architect
 
 1. Update state.json: `pipeline.<stage> = "pending"`
 2. Commit state.json
-3. Output: "Stage reset. Run `/concert:plan` to re-run the consultant."
+3. Output: "Stage reset. Run `/concert:continue` to re-run the consultant."
 4. The previous draft remains in the mission folder (overwritten by the new run)
 5. No code rollback — restart only affects planning documents

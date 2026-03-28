@@ -47,8 +47,7 @@ Concert interviews you to capture a vision, then advances through the pipeline.
 Concert moves through stages sequentially: **vision → requirements → architecture → UX → tasks → execution**. At each stage:
 
 ```
-/concert:plan          # Draft the current stage
-/concert:review        # Review the draft
+/concert:review        # Review the current stage draft
 /concert:accept        # Accept and advance to next stage
 ```
 

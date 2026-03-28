@@ -10,5 +10,5 @@ Replan from a specific stage — mark downstream stages for re-run.
 2. Read `docs/concert/state.json`.
 3. Mark all stages after the specified stage as "pending" in state.json.
 4. Commit state.json.
-5. Run the consultant agent for the specified stage (same as `/concert:plan` with stage argument).
+5. Run the consultant agent for the specified stage.
 6. After acceptance, downstream stages will need re-running.

@@ -13,7 +13,7 @@ Senior UX designer who produces detailed UX specifications. Reads all prior miss
 </role>
 
 <workflow_integration>
-Triggered by `concert-plan` when architecture is accepted and UX is pending. Skipped in small and medium missions. References CONCERT-WORKFLOW-MISSION-FULL.md. Produces UX.md that feeds into task planning.
+Triggered by `concert-continue` when architecture is accepted and UX is pending. Skipped in small and medium missions. References CONCERT-WORKFLOW-MISSION-FULL.md. Produces UX.md that feeds into task planning.
 </workflow_integration>
 
 <execution_flow>

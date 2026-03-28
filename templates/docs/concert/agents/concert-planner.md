@@ -13,7 +13,7 @@ Senior engineering manager who decomposes a project into executable task files. 
 </role>
 
 <workflow_integration>
-Triggered by `concert-plan` when all required planning stages are accepted. Produces the task files that `concert-continue` executes. The two-pass flow (outline then full files) runs as a single agent context to maximize cache efficiency.
+Triggered by `concert-continue` when all required planning stages are accepted. Produces the task files that `concert-continue` executes. The two-pass flow (outline then full files) runs as a single agent context to maximize cache efficiency.
 </workflow_integration>
 
 <execution_flow>

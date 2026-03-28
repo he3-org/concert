@@ -90,7 +90,7 @@ describe("GitHub agent stubs", () => {
 // 4. Claude Code command files
 // ======================================================================
 
-const EXPECTED_COMMANDS = ["init","plan","review","accept","status","continue","debug","verify","quick","push","restart","replan"];
+const EXPECTED_COMMANDS = ["init","review","accept","status","continue","debug","verify","quick","push","restart","replan"];
 
 describe("Claude Code command files", () => {
   for (const cmd of EXPECTED_COMMANDS) {

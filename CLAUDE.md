@@ -23,7 +23,6 @@ This is the Concert framework itself — an orchestration system for agentic sof
 ## Commands
 
 - `/concert:init` — Start a new mission
-- `/concert:plan` — Plan a stage
 - `/concert:review` — Review a stage
 - `/concert:accept` — Accept a stage
 - `/concert:status` — Check current status

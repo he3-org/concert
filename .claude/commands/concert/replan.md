@@ -9,7 +9,7 @@ Go back to a specific pipeline stage during execution.
 3. Validate the target stage is earlier than the current stage
 4. Interview the user about what needs to change and why
 5. Mark all stages after the target as "needs re-run" in `state.json`
-6. Re-run the specified consultant (same as `/concert:plan` for that stage)
+6. Re-run the specified consultant agent for that stage
 7. After the consultant completes, the user reviews and accepts
 8. Re-run all downstream consultants in sequence
 9. The planner regenerates TASK files, accounting for already-completed work

@@ -18,7 +18,7 @@ when `/concert:init` classifies a feature as **medium**.
 Compared to the full pipeline, this workflow **skips the UX stage** (stage 4).
 The existing project UX specs (`UX-SPEC.md`) provide sufficient UX guidance for
 the coder and reviewer agents. If UX design is later needed, the user can run
-`/concert:plan ux` to add it back.
+`/concert:replan ux` to add it back.
 
 Each planning stage (1–4) triggers the review cycle defined in
 `CONCERT-WORKFLOW-REVIEW-CYCLE.md`. Execution follows `CONCERT-WORKFLOW-EXECUTION.md`.
@@ -52,7 +52,7 @@ Each planning stage (1–4) triggers the review cycle defined in
 
 ### Stage 2: Requirements
 
-- **Command:** `/concert:plan` (auto-selects requirements stage)
+- **Command:** `/concert:continue` (auto-selects requirements stage)
 - **Agent:** `concert-analyst`
 - **Interactive:** No — can run autonomously
 - **Reads:** `VISION.md`, codebase structure, existing `REQUIREMENTS-SPEC.md`
@@ -61,7 +61,7 @@ Each planning stage (1–4) triggers the review cycle defined in
 
 ### Stage 3: Architecture
 
-- **Command:** `/concert:plan` (auto-selects architecture stage)
+- **Command:** `/concert:continue` (auto-selects architecture stage)
 - **Agent:** `concert-architect`
 - **Interactive:** No — can run autonomously
 - **Reads:** `VISION.md`, `REQUIREMENTS.md`, existing `ARCHITECTURE-SPEC.md`
@@ -70,7 +70,7 @@ Each planning stage (1–4) triggers the review cycle defined in
 
 ### Stage 4: Tasks
 
-- **Command:** `/concert:plan` (auto-selects tasks stage)
+- **Command:** `/concert:continue` (auto-selects tasks stage)
 - **Agent:** `concert-planner`
 - **Interactive:** No — can run autonomously
 - **Reads:** All mission docs, all project specs, codebase
@@ -114,7 +114,7 @@ This workflow does **not** include a dedicated UX design stage. The rationale:
 - The existing `UX-SPEC.md` (if present) provides sufficient guidance
 - UX skills (loaded per `concert.jsonc` → `project.platforms`) are still available to coders and reviewers
 
-**To add UX design back:** Run `/concert:plan ux` at any point before execution.
+**To add UX design back:** Run `/concert:replan ux` at any point before execution.
 This triggers `concert-designer` and inserts the UX stage into the pipeline.
 
 ---

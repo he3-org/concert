@@ -21,25 +21,33 @@ Entry point for all execution and continuation scenarios. Works with all mission
 
 **Step 2: Detect current state and determine action:**
 
+- **If no mission exists:**
+  Output: "No active mission. Start one with `/concert:init`"
+
+- **If a stage needs planning** (stage is pending, no draft exists):
+  Read and invoke the specific consultant agent for the current stage:
+  - `requirements` → read `docs/concert/agents/concert-analyst.md`, follow its instructions
+  - `architecture` → read `docs/concert/agents/concert-architect.md`, follow its instructions
+  - `ux` → read `docs/concert/agents/concert-designer.md`, follow its instructions
+  - `tasks` → read `docs/concert/agents/concert-planner.md`, follow its instructions
+  No other agent may be used for these stages.
+
+- **If in planning stage with a draft** (pipeline has a "draft" stage):
+  Suggest `/concert:review` or `/concert:accept` for the draft stage.
+
 - **If a stage was just accepted** (pipeline has an accepted stage with no next stage started):
   Advance `stage` to the next pipeline stage per the workflow. Output status and next steps for the new stage.
 
 - **If failure block exists**:
-  Assess whether to retry the failed task or suggest debugging. If retrying: clear failure block, resume from the failed task. If complex: suggest `concert-debug`.
+  Assess whether to retry the failed task or suggest debugging. If retrying: clear failure block, resume from the failed task. If complex: suggest `/concert:debug`.
 
 - **If quality_loop_state exists**:
   Resume the code quality loop at the exact position. Preserve prior_findings and coder_commits — do NOT restart the loop.
-  - If `phase: "coder"`: spawn/continue coder with prior_findings from previous iterations
-  - If `phase: "reviewer"`: spawn fresh reviewer for the current iteration
+  - If `phase: "coder"`: spawn/continue coder using `docs/concert/agents/concert-coder.md`
+  - If `phase: "reviewer"`: spawn fresh reviewer using `docs/concert/agents/concert-code-reviewer.md`
 
 - **If mid-execution** (tasks_completed < tasks_total):
   Determine current phase and task position. Resume execution using the orchestrator logic below.
-
-- **If in planning stage** (pipeline has a "draft" stage):
-  Suggest `/concert:review` or `/concert:accept` for the draft stage.
-
-- **If all stages accepted but tasks not planned**:
-  Suggest `/concert:continue` (will invoke the appropriate consultant agent).
 
 - **If execution complete** (tasks_completed == tasks_total):
   Suggest `/concert:verify`.
@@ -55,14 +63,16 @@ b. Resolve model tier via `concert.jsonc` → `task_models`.
 c. Identify applicable skill file paths from task's Skills section.
 
 d. **Enter coder mode:**
-   - **Claude Code**: Spawn coder subagent with task file content, skill file paths, model tier, and instruction to read `concert-coder.md`
-   - **GitHub**: Read `concert-coder.md`, then implement following those instructions
+   - **Claude Code**: Spawn coder subagent with task file content, skill file paths, model tier, and instruction to read `docs/concert/agents/concert-coder.md`
+   - **GitHub**: Read `docs/concert/agents/concert-coder.md`, then implement following those instructions
    - Coder returns: commit SHA, confidence level, files changed
+   - No other agent file may be used for coding.
 
 e. **Enter reviewer mode (fresh each iteration):**
-   - **Claude Code**: Spawn fresh reviewer subagent with task file content, diff, and instruction to read `concert-code-reviewer.md`
-   - **GitHub**: Read `concert-code-reviewer.md`, then review the diff
+   - **Claude Code**: Spawn fresh reviewer subagent with task file content, diff, and instruction to read `docs/concert/agents/concert-code-reviewer.md`
+   - **GitHub**: Read `docs/concert/agents/concert-code-reviewer.md`, then review the diff
    - Reviewer returns structured findings
+   - No other agent file may be used for code review.
 
 f. **Quality loop decision (always orchestrator logic):**
    - PASS (zero findings): proceed to next task
@@ -77,7 +87,7 @@ g. Update state.json: tasks_completed++, telemetry record, history entry
 h. Update PHASE-SUMMARY after each task file completes
 
 **Phase completion:**
-After all tasks in phase: spawn/invoke concert-documenter. Mark phase complete. Update WIP PR body.
+After all tasks in phase: read `docs/concert/agents/concert-documenter.md` and follow its instructions. Mark phase complete. Update WIP PR body.
 
 **On failure:** Write failure block to state.json, stop immediately.
 
@@ -119,4 +129,6 @@ After all tasks in phase: spawn/invoke concert-documenter. Mark phase complete. 
 - Does NOT plan tasks — only executes planned tasks
 - Does NOT modify task files
 - Does NOT skip the quality loop for any task
+- MUST use ONLY the agent files listed in `docs/concert/agents/` — never discover or use agents from other sources
+- MUST use the exact agent specified for each scenario in the execution flow above — no substitutions
 </boundaries>

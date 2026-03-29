@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/he3-org/concert/compare/v1.1.0...v1.1.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* install commands to .claude/commands/concert/ not root level ([ec4e01d](https://github.com/he3-org/concert/commit/ec4e01d49d473da9caf847ab60f008915c88d7ce))
+
 ## [1.1.0](https://github.com/he3-org/concert/compare/v1.0.10...v1.1.0) (2026-03-29)
 
 

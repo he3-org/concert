@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/he3-org/concert/compare/v1.2.0...v1.3.0) (2026-03-29)
+
+
+### Features
+
+* move agents and skills from docs/concert/ to .claude/ to prevent auto-discovery bloat loading ([#21](https://github.com/he3-org/concert/issues/21)) ([39dccda](https://github.com/he3-org/concert/commit/39dccda57b83fff695c1c1159c36a04f6f315aea))
+
 ## [1.2.0](https://github.com/he3-org/concert/compare/v1.1.1...v1.2.0) (2026-03-29)
 
 

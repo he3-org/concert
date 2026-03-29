@@ -51,8 +51,8 @@ The agent MUST read all of these before generating its analysis:
 | `COST-REPORT.md` | Aggregated model tier effectiveness and confidence accuracy data |
 | `PHASE-SUMMARY-*.md` files | Phase-level completion context and complexity indicators |
 | `TASK-*.md` files | Original task definitions and model tier assignments |
-| `docs/concert/agents/` | Current agent definitions (to suggest prompt improvements) |
-| `docs/concert/skills/` | Current skill definitions (to suggest additions or changes) |
+| `.claude/agents/` | Current agent definitions (to suggest prompt improvements) |
+| `.claude/skills/` | Current skill definitions (to suggest additions or changes) |
 | `docs/concert/workflows/` | Current workflow definitions (to suggest process improvements) |
 
 ---

@@ -7,4 +7,4 @@ description: "Requirements analyst — generates comprehensive requirements from
 
 Read the full agent definition and follow its instructions exactly:
 
-Read docs/concert/agents/concert-analyst.md
+Read .claude/agents/concert-analyst.md

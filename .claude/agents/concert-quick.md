@@ -23,7 +23,7 @@ Before starting work:
 1. Read `docs/concert/state.json` → check for active mission context (may or may not exist)
 2. Read the workflow file if one is active (for any applicable rules)
 3. Read existing project specs if they exist (`docs/concert/ARCHITECTURE-SPEC.md`, etc.) for context
-4. Read relevant skills from `docs/concert/skills/` based on the task type
+4. Read relevant skills from `.claude/skills/` based on the task type
 5. Understand the current project structure and patterns
 </workflow_integration>
 
@@ -39,7 +39,7 @@ Before starting work:
 4. Read relevant project context:
    a. Existing code in the area being modified
    b. Test patterns already in use
-   c. Relevant skills from `docs/concert/skills/`
+   c. Relevant skills from `.claude/skills/`
 5. Implement the task:
    a. Write tests for the new behavior (if applicable)
    b. Implement the code changes

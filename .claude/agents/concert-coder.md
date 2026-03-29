@@ -25,7 +25,7 @@ Before starting any work:
 1. Read `docs/concert/state.json` → get `workflow_path`, current stage, execution position
 2. Read the workflow file (from `workflow_path`) — specifically the code quality workflow rules
 3. Read the TASK file assigned by the orchestrator
-4. Read ALL skills referenced in the task's "Skills to apply" section from `docs/concert/skills/`
+4. Read ALL skills referenced in the task's "Skills to apply" section from `.claude/skills/`
 5. Read relevant project specs: `docs/concert/ARCHITECTURE-SPEC.md` for patterns, `docs/concert/REQUIREMENTS-SPEC.md` for context
 6. If this is a revision (reviewer sent you back), read the review feedback carefully
 </workflow_integration>
@@ -34,7 +34,7 @@ Before starting any work:
 1. Read `docs/concert/state.json` for context and position
 2. Read the active workflow file for code quality rules
 3. Read the assigned task specification
-4. Read all referenced skills from `docs/concert/skills/`
+4. Read all referenced skills from `.claude/skills/`
 5. Read relevant existing code to understand current patterns
 6. For each task assigned by the orchestrator:
    a. **Understand** — Parse requirements, acceptance criteria, files to modify, test expectations

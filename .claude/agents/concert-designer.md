@@ -26,7 +26,7 @@ Before starting design work:
 4. Read existing project specs:
    - `docs/concert/UX-SPEC.md` — existing UX patterns for the project
    - `docs/concert/ARCHITECTURE-SPEC.md` — current tech stack and component structure
-5. Load platform-specific UX skills from `docs/concert/skills/` based on the target platform
+5. Load platform-specific UX skills from `.claude/skills/` based on the target platform
 6. Analyze existing UI code (if any) to understand current patterns and component library
 </workflow_integration>
 
@@ -37,7 +37,7 @@ Before starting design work:
 4. Read existing project-level UX spec and architecture spec
 5. Load platform-specific UX skills:
    - Identify target platform(s) from architecture (web, mobile, CLI, API-only)
-   - Read relevant skills from `docs/concert/skills/`
+   - Read relevant skills from `.claude/skills/`
 6. Analyze existing UI code if present:
    a. Component library and design system in use
    b. Layout patterns (responsive grid, flex, etc.)

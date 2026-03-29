@@ -185,7 +185,7 @@ function countRecursive(
 
 /**
  * Skills excluded from shipping. These are specific to the Concert repo
- * and not useful for target repos. Everything else in docs/concert/skills/ ships.
+ * and not useful for target repos. Everything else in .claude/skills/ ships.
  */
 export const EXCLUDED_SKILLS: readonly string[] = [];
 
@@ -195,7 +195,7 @@ export const EXCLUDED_SKILLS: readonly string[] = [];
  * directory (relative to user's project root).
  */
 export const LIVE_FILE_SOURCES = [
-  { src: "docs/concert/agents", target: "docs/concert/agents" },
+  { src: ".claude/agents", target: ".claude/agents" },
   { src: "docs/concert/workflows", target: "docs/concert/workflows" },
   { src: ".claude/commands/concert", target: ".claude/commands/concert" },
   { src: ".github/agents", target: ".github/agents", pattern: /^concert-.*\.agent\.md$/ },
@@ -206,13 +206,13 @@ export const LIVE_FILE_SOURCES = [
  * Discover all skill directories that should ship, excluding EXCLUDED_SKILLS.
  */
 export function discoverSkills(packageRoot: string): Array<{ src: string; target: string }> {
-  const skillsDir = path.join(packageRoot, "docs", "concert", "skills");
+  const skillsDir = path.join(packageRoot, ".claude", "skills");
   if (!fs.existsSync(skillsDir)) return [];
   return fs.readdirSync(skillsDir, { withFileTypes: true })
     .filter((e) => e.isDirectory() && !EXCLUDED_SKILLS.includes(e.name))
     .map((e) => ({
-      src: `docs/concert/skills/${e.name}`,
-      target: `docs/concert/skills/${e.name}`,
+      src: `.claude/skills/${e.name}`,
+      target: `.claude/skills/${e.name}`,
     }));
 }
 

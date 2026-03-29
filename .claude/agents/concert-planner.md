@@ -55,7 +55,7 @@ Before starting planning:
       - Files to create or modify (exact paths)
       - Requirements with testable acceptance criteria
       - Tests to write (specific test cases)
-      - Skills to apply (references to `docs/concert/skills/`)
+      - Skills to apply (references to `.claude/skills/`)
       - Acceptance criteria (copied/refined from REQUIREMENTS.md)
 7. Create the phase directory structure:
    ```

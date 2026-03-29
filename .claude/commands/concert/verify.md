@@ -7,7 +7,7 @@ Acceptance testing of completed work.
 1. Read `docs/concert/state.json` → get mission_path, workflow_path
 2. Read `docs/concert/REQUIREMENTS-SPEC.md` + completed `PHASE-SUMMARY-*.md` files
 3. Extract testable deliverables from requirements
-4. Spawn the `concert-qa` agent (see `docs/concert/agents/concert-qa.md`)
+4. Spawn the `concert-qa` agent (see `.claude/agents/concert-qa.md`)
 5. QA agent checks: "what must be TRUE?" against actual implementation
 6. If issues found: spawn debugger, auto-create gap-closure task files
 7. Write `VERIFICATION.md` in the last phase directory

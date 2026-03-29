@@ -37,10 +37,10 @@ Before doing anything:
 
    **If a stage needs planning** (stage is pending, no draft exists):
    Read and invoke the specific consultant agent for the current stage:
-   - `requirements` → read `docs/concert/agents/concert-analyst.md`, follow its instructions
-   - `architecture` → read `docs/concert/agents/concert-architect.md`, follow its instructions
-   - `ux` → read `docs/concert/agents/concert-designer.md`, follow its instructions
-   - `tasks` → read `docs/concert/agents/concert-planner.md`, follow its instructions
+   - `requirements` → read `.claude/agents/concert-analyst.md`, follow its instructions
+   - `architecture` → read `.claude/agents/concert-architect.md`, follow its instructions
+   - `ux` → read `.claude/agents/concert-designer.md`, follow its instructions
+   - `tasks` → read `.claude/agents/concert-planner.md`, follow its instructions
    No other agent may be used for these stages.
 
    **If in planning stage with a draft:**
@@ -145,7 +145,7 @@ Example (resuming execution):
 - NEVER skip confidence reporting
 - NEVER proceed past failures without explicit retry logic or user guidance
 - NEVER modify mission planning documents during execution
-- MUST use ONLY the agent files in `docs/concert/agents/` — never discover or use agents from other sources
+- MUST use ONLY the agent files in `.claude/agents/` — never discover or use agents from other sources
 - MUST use the exact agent specified for each scenario in the execution flow above — no substitutions
 - MUST NOT read all task files or scan all phases before executing — state.json has the exact position, read only the current task file
 - MUST commit state.json after every update — task completion, phase advancement, stage changes. Never batch state commits.

@@ -16,5 +16,5 @@ STOP IMMEDIATELY and output:
 Do NOT attempt to proceed without user input. Do NOT guess at answers.
 
 ## If Interactive
-Read docs/concert/agents/concert-interviewer.md for your complete instructions.
+Read .claude/agents/concert-interviewer.md for your complete instructions.
 Interview the user about their vision, create the mission, and output next steps.

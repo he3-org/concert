@@ -7,4 +7,4 @@ description: "Task decomposer — breaks approved plans into executable phases, 
 
 Read the full agent definition and follow its instructions exactly:
 
-Read docs/concert/agents/concert-planner.md
+Read .claude/agents/concert-planner.md

@@ -46,7 +46,7 @@ describe("concert update e2e", () => {
     }
 
     // Corrupt a managed file (but keep the managed header)
-    const agentPath = path.join(tmpDir, "docs", "concert", "agents", "concert-init.md");
+    const agentPath = path.join(tmpDir, ".claude", "agents", "concert-init.md");
     if (fs.existsSync(agentPath)) {
       const content = fs.readFileSync(agentPath, "utf-8");
       const firstLine = content.split("\n")[0] ?? "";

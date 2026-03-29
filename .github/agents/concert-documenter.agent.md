@@ -7,4 +7,4 @@ description: "Phase-level documentation updater — updates higher-level docs af
 
 Read the full agent definition and follow its instructions exactly:
 
-Read docs/concert/agents/concert-documenter.md
+Read .claude/agents/concert-documenter.md

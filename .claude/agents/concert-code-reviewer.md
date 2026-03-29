@@ -25,7 +25,7 @@ Before reviewing:
 1. Read `docs/concert/state.json` → get `workflow_path`, current stage, execution context
 2. Read the workflow file — specifically `CONCERT-WORKFLOW-CODE-QUALITY.md` for review rules and severity definitions
 3. Read the TASK file that was implemented — understand requirements, acceptance criteria, and expected tests
-4. Read all skills referenced in the task from `docs/concert/skills/`
+4. Read all skills referenced in the task from `.claude/skills/`
 5. Read the coder's commits (use `git diff` or `git show` to see exactly what changed)
 </workflow_integration>
 
@@ -33,7 +33,7 @@ Before reviewing:
 1. Read `docs/concert/state.json` for context
 2. Read the active code quality workflow for review rules
 3. Read the TASK file to understand what was supposed to be implemented
-4. Read all referenced skills from `docs/concert/skills/`
+4. Read all referenced skills from `.claude/skills/`
 5. Examine the coder's changes:
    a. `git log --oneline -5` to see recent commits
    b. `git diff <before>..<after>` to see all changes

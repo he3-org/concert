@@ -7,4 +7,4 @@ description: "Two-phase reviewer — applies user changes first, then presents r
 
 Read the full agent definition and follow its instructions exactly:
 
-Read docs/concert/agents/concert-reviewer.md
+Read .claude/agents/concert-reviewer.md

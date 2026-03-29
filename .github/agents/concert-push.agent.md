@@ -7,4 +7,4 @@ description: "Cross-environment handoff — documents the push command behavior 
 
 Read the full agent definition and follow its instructions exactly:
 
-Read docs/concert/agents/concert-push.md
+Read .claude/agents/concert-push.md

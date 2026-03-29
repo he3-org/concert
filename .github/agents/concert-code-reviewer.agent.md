@@ -7,4 +7,4 @@ description: "Code quality reviewer — reviews diffs against acceptance criteri
 
 Read the full agent definition and follow its instructions exactly:
 
-Read docs/concert/agents/concert-code-reviewer.md
+Read .claude/agents/concert-code-reviewer.md

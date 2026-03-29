@@ -7,4 +7,4 @@ description: "Architecture planner — designs system architecture from accepted
 
 Read the full agent definition and follow its instructions exactly:
 
-Read docs/concert/agents/concert-architect.md
+Read .claude/agents/concert-architect.md

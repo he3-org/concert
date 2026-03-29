@@ -27,11 +27,12 @@ When an agent needs to consume external content (specs, docs, review feedback):
 ### Stable Prefix Ordering
 
 Place durable, unchanging content at the top of the agent definition:
-1. Role and identity (never changes)
-2. Operating principles and boundaries (rarely change)
-3. Workflow integration / boot sequence (changes when architecture changes)
-4. Execution flow (changes when behavior changes)
-5. User guidance / output format (most likely to be tuned)
+1. `<role>` — identity (never changes)
+2. `<operating_principles>` — constraints table (rarely changes)
+3. `<boundaries>` — scope limits (rarely changes)
+4. `<workflow_integration>` — boot sequence (changes when architecture changes)
+5. `<execution_flow>` — step-by-step instructions (changes when behavior changes)
+6. `<user_guidance>` — output format (most likely to be tuned)
 
 This ordering maximizes prompt cache hits — changes to output format don't invalidate the cached role and principles.
 

@@ -29,15 +29,17 @@ Use XML-style tags to structure the agent body. Each section serves a specific p
 
 **`<role>`** — Who the agent is. 2-4 sentences covering identity, responsibilities, and working style. This sets the behavioral frame.
 
+**`<operating_principles>`** — Table of constraints: `| # | Principle | Constraint |`. Use `ALWAYS` or `NEVER` — no `SOMETIMES`.
+
+**`<boundaries>`** — Explicit list of what the agent does NOT do. Prevents scope creep. Use `NEVER` statements.
+
 **`<workflow_integration>`** — What the agent reads before starting. Numbered list of files to load: state files, specs, task files, skills. This is the agent's "boot sequence."
 
 **`<execution_flow>`** — Step-by-step numbered instructions for the agent's primary task. This is the core of the definition. Each step must be unambiguous — if you can't tell what the agent should do next, the step is too vague. Include explicit failure handling (see `references/tools-and-error-recovery.md`).
 
 **`<user_guidance>`** — How to communicate output. Format templates, required sections in output (e.g., "every response ends with Next Steps"), examples of good output.
 
-**`<operating_principles>`** — Table of constraints: `| # | Principle | Constraint |`. Use `ALWAYS` or `NEVER` — no `SOMETIMES`.
-
-**`<boundaries>`** — Explicit list of what the agent does NOT do. Prevents scope creep. Use `NEVER` statements.
+Section ordering rationale: role, principles, and boundaries are stable content that rarely changes — placing them first maximizes prompt cache hits. Workflow integration and execution flow are more volatile and belong lower.
 
 ### GitHub Agent Stub
 

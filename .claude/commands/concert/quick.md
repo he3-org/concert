@@ -7,7 +7,7 @@ Quick task execution without the full pipeline.
 1. Read `docs/concert/state.json` to check for active missions (warn if one exists)
 2. Read `docs/concert/concert.jsonc` for project configuration and skills
 3. Parse the user's task description
-4. Spawn the `concert-quick` agent (see `docs/concert/agents/concert-quick.md`):
+4. Spawn the `concert-quick` agent (see `.claude/agents/concert-quick.md`):
    - Load applicable skills based on file patterns
    - Implement the task directly (no planning phase)
    - Run tests

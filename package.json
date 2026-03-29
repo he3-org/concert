@@ -9,9 +9,10 @@
   "files": [
     "dist",
     "templates",
-    "docs/concert/agents",
+    ".claude/agents",
     "docs/concert/workflows",
-    "docs/concert/skills",
+    ".claude/skills",
+    ".claude/rules",
     ".claude/commands/concert",
     ".github/agents",
     ".github/workflows/concert-ci.yml",

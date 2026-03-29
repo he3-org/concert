@@ -21,7 +21,7 @@ Skills should layer cleanly:
 
 - **Language skills** (typescript-standards, go-standards) — apply to all files of that language
 - **Domain skills** (cli-ux-guidelines, security-review) — apply to specific subsystems
-- **Workflow skills** (skill-design-guidelines, changelog-generator) — apply to specific tasks
+- **Workflow skills** (skill-authoring, changelog-generator) — apply to specific tasks
 
 An agent working on a CLI command in TypeScript would activate `typescript-standards` (language layer) + `cli-ux-guidelines` (domain layer). The language skill governs type safety; the domain skill governs UX patterns. No overlap.
 

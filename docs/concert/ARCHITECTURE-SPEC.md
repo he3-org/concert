@@ -6,7 +6,7 @@ Concert 2 has two distinct layers with fundamentally different roles:
 
 **The npm package (`@he3-org/concert`)** is an installer/updater CLI. It copies files into a repository, merges configuration, and pushes branches. It contains zero orchestration logic, zero LLM calls, and zero pipeline intelligence. It is a file-copying tool with a merge strategy.
 
-**The markdown agents** are the brain. Agent definitions (`docs/concert/agents/*.md`), workflow definitions (`docs/concert/workflows/*.md`), and skill files (`docs/concert/skills/*/SKILL.md`) contain all pipeline logic, orchestration rules, review criteria, and execution behavior. These files are interpreted by Claude (via GitHub Agents UI or Claude Code) at runtime.
+**The markdown agents** are the brain. Agent definitions (`.claude/agents/*.md`), workflow definitions (`docs/concert/workflows/*.md`), and skill files (`.claude/skills/*/SKILL.md`) contain all pipeline logic, orchestration rules, review criteria, and execution behavior. These files are interpreted by Claude (via GitHub Agents UI or Claude Code) at runtime.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -214,9 +214,9 @@ The `update` command reads these headers to determine which files need updating.
 
 Each agent is defined in two places:
 
-1. **Full definition:** `docs/concert/agents/concert-<name>.md` — contains the complete agent instructions, role, workflow integration, execution flow, operating principles, and boundaries.
+1. **Full definition:** `.claude/agents/concert-<name>.md` — contains the complete agent instructions, role, workflow integration, execution flow, operating principles, and boundaries.
 
-2. **GitHub stub:** `.github/agents/concert-<name>.agent.md` — a minimal file that GitHub Agents UI discovers, containing only `name` and `description` frontmatter and a `Read docs/concert/agents/concert-<name>.md` instruction to load the full definition.
+2. **GitHub stub:** `.github/agents/concert-<name>.agent.md` — a minimal file that GitHub Agents UI discovers, containing only `name` and `description` frontmatter and a `Read .claude/agents/concert-<name>.md` instruction to load the full definition.
 
 3. **Claude Code command:** `.claude/commands/<name>.md` — a skill file that Claude Code discovers via `/concert:<name>`, containing steps that reference the full agent definition.
 
@@ -264,7 +264,7 @@ Workflows reference agents by name. Agents read workflows by path. This indirect
 ### Skill Files
 
 ```
-docs/concert/skills/<skill-name>/
+.claude/skills/<skill-name>/
 └── SKILL.md
 ```
 
@@ -277,7 +277,7 @@ applies_to: ["**/*.ts", "**/*.tsx"]
 ---
 ```
 
-Auto-discovery: when `skills.auto_discover` is true in `concert.jsonc`, agents scan `docs/concert/skills/` for SKILL.md files and match their `applies_to` patterns against the files being modified by the current task. Matching skills are loaded into context.
+Auto-discovery: when `skills.auto_discover` is true in `concert.jsonc`, agents scan `.claude/skills/` for SKILL.md files and match their `applies_to` patterns against the files being modified by the current task. Matching skills are loaded into context.
 
 ---
 

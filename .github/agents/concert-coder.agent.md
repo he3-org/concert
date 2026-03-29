@@ -7,4 +7,4 @@ description: "TDD implementer — writes tests first, implements, verifies all t
 
 Read the full agent definition and follow its instructions exactly:
 
-Read docs/concert/agents/concert-coder.md
+Read .claude/agents/concert-coder.md

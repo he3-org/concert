@@ -7,7 +7,7 @@ Scientific-method debugging with persistent state.
 1. Read `docs/concert/state.json` for current mission context
 2. Read `docs/concert/concert.jsonc` for project configuration
 3. Parse the user's bug description
-4. Spawn the `concert-debugger` agent (see `docs/concert/agents/concert-debugger.md`):
+4. Spawn the `concert-debugger` agent (see `.claude/agents/concert-debugger.md`):
    - Form hypotheses about the root cause
    - Design and execute tests to narrow the cause
    - Isolate the root cause

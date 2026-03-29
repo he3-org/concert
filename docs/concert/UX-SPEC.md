@@ -231,9 +231,9 @@ All CLI output follows this structure:
 Concert initialized in /home/user/my-project
 
   Created:
-    docs/concert/agents/          (14 agent definitions)
+    .claude/agents/          (14 agent definitions)
     docs/concert/workflows/       (8 workflow files)
-    docs/concert/skills/          (7 skill files)
+    .claude/skills/          (7 skill files)
     docs/concert/state.json       (empty state)
     .github/agents/               (14 GitHub agent stubs)
     .github/workflows/            (2 workflow files)
@@ -281,12 +281,12 @@ Warning: Concert files already exist in this repository
 Concert updated to v0.4.0 (was v0.3.0)
 
   Updated managed files:
-    docs/concert/agents/concert-continue.md  (v0.3.0 -> v0.4.0)
-    docs/concert/agents/concert-reviewer.md  (v0.3.0 -> v0.4.0)
+    .claude/agents/concert-continue.md  (v0.3.0 -> v0.4.0)
+    .claude/agents/concert-reviewer.md  (v0.3.0 -> v0.4.0)
     docs/concert/workflows/CONCERT-WORKFLOW-EXECUTION.md  (v0.3.0 -> v0.4.0)
 
   Skipped (already current):
-    docs/concert/agents/concert-init.md      (v0.4.0)
+    .claude/agents/concert-init.md      (v0.4.0)
     ... (11 more files)
 
   Configuration merged (concert.jsonc):
@@ -769,7 +769,7 @@ _Updated by Concert at 2026-03-28T14:30:00Z_
 | Error header | `Error:` prefix | `Error: not a git repository` |
 | Warning header | `Warning:` prefix | `Warning: Concert files already exist` |
 | Section label | Indented, colon-terminated | `  Created:` |
-| List items | Indented with spaces | `    docs/concert/agents/  (14 files)` |
+| List items | Indented with spaces | `    .claude/agents/  (14 files)` |
 | Next steps | Numbered list under `Next steps:` | `  1. Review concert.jsonc` |
 | File paths | Absolute or repo-relative | `docs/concert/state.json` |
 | Commands | Inline, unquoted | `npx @he3-org/concert update` |

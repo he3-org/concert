@@ -17,7 +17,7 @@ Resume from where the last session stopped.
    - If there's a `failure` block → assess if continuable or needs debugging
    - If there are `blockers[]` → report them and suggest resolution
 4. Execute the determined action following workflow rules
-5. Spawn the appropriate agent (see `docs/concert/agents/concert-continue.md`)
+5. Spawn the appropriate agent (see `.claude/agents/concert-continue.md`)
 6. Update `state.json` continuously
 7. On completion or session end, update state with clear next steps
 

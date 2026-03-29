@@ -6,12 +6,15 @@ This directory contains Concert's orchestration files.
 
 ```
 docs/concert/
-├── agents/       — Agent definitions (the brains of Concert)
 ├── workflows/    — Workflow definitions (orchestration rules)
-├── skills/       — Skill files (domain-specific coding guidance)
 ├── missions/     — Mission folders (one per mission)
 ├── state.json    — Current mission state
 └── README.md     — This file
+
+.claude/
+├── agents/       — Agent definitions (the brains of Concert)
+├── skills/       — Skill files (domain-specific coding guidance)
+└── commands/     — Concert slash commands
 ```
 
 ## Getting Started
@@ -22,7 +25,7 @@ docs/concert/
 
 ## Managed Files
 
-Files in `agents/`, `workflows/`, and `skills/` are managed by Concert. They carry a "DO NOT EDIT" header and will be overwritten on `concert update`. If you need custom behavior, create separate files outside these directories.
+Files in `.claude/agents/`, `docs/concert/workflows/`, and `.claude/skills/` are managed by Concert. They carry a "DO NOT EDIT" header and will be overwritten on `concert update`. If you need custom behavior, create separate files outside these directories.
 
 ## Mission Files
 

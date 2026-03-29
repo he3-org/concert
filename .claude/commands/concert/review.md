@@ -12,7 +12,7 @@ Interactive review of the current stage's plan document.
    - `architecture` → `ARCHITECTURE.md`
    - `ux` → `UX.md`
    - `tasks` → phase/TASK files
-4. Spawn the `concert-reviewer` agent (see `docs/concert/agents/concert-reviewer.md`)
+4. Spawn the `concert-reviewer` agent (see `.claude/agents/concert-reviewer.md`)
 5. The reviewer presents the document and asks: "Accept, add changes, or ask questions?"
 6. Open conversation loop — user provides feedback, reviewer incorporates it
 7. When user is satisfied, update the plan file with all changes

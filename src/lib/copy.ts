@@ -185,9 +185,17 @@ function countRecursive(
 
 /**
  * Skills excluded from shipping. These are specific to the Concert repo
- * and not useful for target repos. Everything else in docs/concert/skills/ ships.
+ * and not useful for target repos. Everything else in .claude/skills/ ships.
  */
 export const EXCLUDED_SKILLS: readonly string[] = [];
+
+/**
+ * Rules excluded from shipping. These are specific to the Concert repo
+ * and not useful for target repos. Everything else in .claude/rules/ ships.
+ */
+export const EXCLUDED_RULES: readonly string[] = [
+  "concert-repo-managed-files.md",
+];
 
 /**
  * Live file sources that ship directly from the package (not templates).
@@ -195,7 +203,7 @@ export const EXCLUDED_SKILLS: readonly string[] = [];
  * directory (relative to user's project root).
  */
 export const LIVE_FILE_SOURCES = [
-  { src: "docs/concert/agents", target: "docs/concert/agents" },
+  { src: ".claude/agents", target: ".claude/agents" },
   { src: "docs/concert/workflows", target: "docs/concert/workflows" },
   { src: ".claude/commands/concert", target: ".claude/commands/concert" },
   { src: ".github/agents", target: ".github/agents", pattern: /^concert-.*\.agent\.md$/ },
@@ -206,13 +214,28 @@ export const LIVE_FILE_SOURCES = [
  * Discover all skill directories that should ship, excluding EXCLUDED_SKILLS.
  */
 export function discoverSkills(packageRoot: string): Array<{ src: string; target: string }> {
-  const skillsDir = path.join(packageRoot, "docs", "concert", "skills");
+  const skillsDir = path.join(packageRoot, ".claude", "skills");
   if (!fs.existsSync(skillsDir)) return [];
   return fs.readdirSync(skillsDir, { withFileTypes: true })
     .filter((e) => e.isDirectory() && !EXCLUDED_SKILLS.includes(e.name))
     .map((e) => ({
-      src: `docs/concert/skills/${e.name}`,
-      target: `docs/concert/skills/${e.name}`,
+      src: `.claude/skills/${e.name}`,
+      target: `.claude/skills/${e.name}`,
+    }));
+}
+
+/**
+ * Discover all rule files that should ship, excluding EXCLUDED_RULES.
+ */
+export function discoverRules(packageRoot: string): Array<{ src: string; target: string; file: string }> {
+  const rulesDir = path.join(packageRoot, ".claude", "rules");
+  if (!fs.existsSync(rulesDir)) return [];
+  return fs.readdirSync(rulesDir, { withFileTypes: true })
+    .filter((e) => e.isFile() && e.name.endsWith(".md") && !EXCLUDED_RULES.includes(e.name))
+    .map((e) => ({
+      src: ".claude/rules",
+      target: ".claude/rules",
+      file: e.name,
     }));
 }
 
@@ -229,6 +252,32 @@ export function copyLiveFiles(
 
   // Combine static sources with dynamically discovered skills
   const allSources = [...LIVE_FILE_SOURCES, ...discoverSkills(packageRoot)];
+
+  // Copy individual rule files (not a full directory copy)
+  const rules = discoverRules(packageRoot);
+  if (rules.length > 0) {
+    const rulesTargetDir = path.join(targetDir, ".claude", "rules");
+    if (!fs.existsSync(rulesTargetDir)) {
+      fs.mkdirSync(rulesTargetDir, { recursive: true });
+    }
+    for (const rule of rules) {
+      const srcFile = path.join(packageRoot, rule.src, rule.file);
+      const destFile = path.join(rulesTargetDir, rule.file);
+      const relPath = path.join(rule.target, rule.file);
+
+      if (fs.existsSync(destFile)) {
+        if (overwrite) {
+          fs.copyFileSync(srcFile, destFile);
+          result.overwritten.push(relPath);
+        } else {
+          result.skipped.push(relPath);
+        }
+      } else {
+        fs.copyFileSync(srcFile, destFile);
+        result.created.push(relPath);
+      }
+    }
+  }
 
   for (const source of allSources) {
     const srcDir = path.join(packageRoot, source.src);
@@ -291,6 +340,11 @@ export function countLiveFiles(packageRoot: string): Record<string, number> {
   const skills = discoverSkills(packageRoot);
   if (skills.length > 0) {
     counts["skills"] = skills.length;
+  }
+  // Count rules
+  const rules = discoverRules(packageRoot);
+  if (rules.length > 0) {
+    counts["rules"] = rules.length;
   }
   return counts;
 }

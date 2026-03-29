@@ -7,4 +7,4 @@ description: "Acceptance tester — verifies completed work against requirements
 
 Read the full agent definition and follow its instructions exactly:
 
-Read docs/concert/agents/concert-verifier.md
+Read .claude/agents/concert-verifier.md

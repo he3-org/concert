@@ -161,7 +161,7 @@ describe("concert init e2e", () => {
     } finally {
       restore();
     }
-    const agentsDir = path.join(tmpDir, "docs", "concert", "agents");
+    const agentsDir = path.join(tmpDir, ".claude", "agents");
     if (!fs.existsSync(agentsDir)) return;
     const agents = fs.readdirSync(agentsDir).filter((f) => f.endsWith(".md"));
     expect(agents.length).toBeGreaterThan(0);

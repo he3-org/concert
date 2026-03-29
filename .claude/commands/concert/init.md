@@ -7,7 +7,7 @@ Create a new Concert mission.
 1. Check if `docs/concert/state.json` exists and has an active mission — if so, warn the user
 2. Check if project-level specs exist (`docs/concert/*-SPEC.md`) to detect new project vs. new feature
 3. Read `docs/concert/concert.jsonc` for project configuration
-4. Spawn the `concert-interviewer` agent (see `docs/concert/agents/concert-interviewer.md`):
+4. Spawn the `concert-interviewer` agent (see `.claude/agents/concert-interviewer.md`):
    - Interview the user about their vision
    - Classify feature size (small/medium/large)
    - Propose a workflow (user can override)

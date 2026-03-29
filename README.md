@@ -7,7 +7,7 @@ Opinionated agentic development lifecycle orchestrator. Concert manages missions
 No global install needed. Run Concert commands directly with `npx`:
 
 ```bash
-npx @he3-org/concert init
+npx @he3-org/concert@latest init
 ```
 
 ## Update
@@ -15,7 +15,7 @@ npx @he3-org/concert init
 To update Concert's managed files in an existing project:
 
 ```bash
-npx @he3-org/concert update
+npx @he3-org/concert@latest update
 ```
 
 This pulls the latest templates, agents, and workflows while preserving your customizations to `concert.jsonc` and `state.json`.
@@ -27,7 +27,7 @@ This pulls the latest templates, agents, and workflows while preserving your cus
 In any git repository with at least one commit:
 
 ```bash
-npx @he3-org/concert init
+npx @he3-org/concert@latest init
 ```
 
 This creates `docs/concert/`, `concert.jsonc`, and adds Concert commands to your `CLAUDE.md`.
@@ -72,7 +72,7 @@ If you need to switch machines or CI:
 On the new machine, ensure Concert is up to date:
 
 ```bash
-npx @he3-org/concert update
+npx @he3-org/concert@latest update
 ```
 
 Then on the other side:

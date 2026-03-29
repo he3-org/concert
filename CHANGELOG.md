@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/he3-org/concert/compare/v1.1.1...v1.2.0) (2026-03-29)
+
+
+### Features
+
+* add skill-design-guidelines skill and refactor all skills to progressive disclosure format ([6ba0144](https://github.com/he3-org/concert/commit/6ba01441f799a7fa61fc60f6047b9f82f43446ee))
+
 ## [1.1.1](https://github.com/he3-org/concert/compare/v1.1.0...v1.1.1) (2026-03-29)
 
 

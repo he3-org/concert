@@ -29,7 +29,7 @@ Tools and schemas must remain identical across requests. Mandate a fixed alphabe
 
 ### Cache Key Routing
 
-Use `prompt_cache_key` to increase routing stickiness. Set key granularity to keep traffic below **15 Requests Per Minute (RPM)** per machine. Higher traffic per key causes load-balancer-induced cache misses.
+Use `prompt_cache_key` to increase routing stickiness. Set key granularity to keep traffic below approximately **15 Requests Per Minute (RPM)** per machine — higher traffic per key can cause load-balancer-induced cache misses. Adjust this threshold based on your provider's infrastructure.
 
 ### Context Compaction
 

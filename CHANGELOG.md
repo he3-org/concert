@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.10](https://github.com/he3-org/concert/compare/v1.0.9...v1.0.10) (2026-03-28)
+
+
+### Bug Fixes
+
+* switch to NPM_TOKEN auth for publishing, drop OIDC ([d378c08](https://github.com/he3-org/concert/commit/d378c0826b9d842252ad3615c7e0e1157a3b7a0f))
+
 ## [1.0.9](https://github.com/he3-org/concert/compare/v1.0.8...v1.0.9) (2026-03-28)
 
 

@@ -7,12 +7,13 @@
   "pr_number": 24,
   "status_display": "wip_pr",
   "feature_size": "medium",
-  "stage": "tasks",
+  "stage": "execution",
   "pipeline": {
     "vision": "accepted",
     "requirements": "accepted",
     "architecture": "accepted",
-    "tasks": "planned"
+    "tasks": "accepted",
+    "execution": "in_progress"
   },
   "phases_completed": 0,
   "phases_total": 3,
@@ -55,7 +56,6 @@
     }
   ],
   "next_steps": [
-    "Review task plan: /concert:review",
-    "Accept and execute: /concert:accept"
+    "Continue execution: /concert:continue"
   ]
 }

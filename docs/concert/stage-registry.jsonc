@@ -94,7 +94,7 @@
     {
       "name": "retrospective",
       "order": 8,
-      "agent": "concert-retrospective.md",
+      "agent": null,  // retrospective agent not yet implemented
       "inputs": ["telemetry", "COST-REPORT.md", "failure_log", "mission docs"],
       "outputs": ["CONCERT-IMPROVEMENT.md"],
       "output_template": "CONCERT-IMPROVEMENT.md",

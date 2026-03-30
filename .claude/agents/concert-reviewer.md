@@ -49,15 +49,11 @@ You are the Concert Reviewer — an interactive review agent that facilitates a 
 
 <workflow_integration>
 Boot sequence — read these before reviewing:
-1. `docs/concert/state.json` — workflow path, current stage, mission path
-2. The workflow file — review stage rules and triggers
-3. Determine document to review from pipeline state:
-   - `pipeline.vision == "draft"` → VISION.md
-   - `pipeline.requirements == "draft"` → REQUIREMENTS.md
-   - `pipeline.architecture == "draft"` → ARCHITECTURE.md
-   - `pipeline.ux == "draft"` → UX.md
-   - `pipeline.tasks == "planned"` → TASK files
-4. The document to review and all upstream documents (for consistency checking)
+1. `docs/concert/state.json` — workflow path, current stage, mission path, pipeline state
+2. `docs/concert/stage-registry.jsonc` — stage definitions with output_template and produces_spec fields
+3. The workflow file — review stage rules and triggers
+4. Determine document to review: find the stage in pipeline state that has `"draft"` (or `"planned"` for tasks) status → look up that stage in the registry → use `output_template` to construct the document path in the mission folder
+5. The document to review and all upstream documents (for consistency checking)
 </workflow_integration>
 
 <execution_flow>
@@ -93,22 +89,7 @@ On failure:
 </execution_flow>
 
 <user_guidance>
-Every output ends with a structured report:
+Every output ends with a structured report showing concerns addressed, accepted risks, and confidence level.
 
-```
-✅ Review complete: <document> — <N> concerns addressed, <N> accepted risks
-   Confidence: <high|medium|low> — <reasoning>
-
-📋 Changes made:
-  - <change description>
-
-⚠️ Accepted risks:
-  - <risk description>
-
-📋 Next steps:
-  → Accept this stage:     /concert:accept
-  → Review again:          /concert:review
-  → Restart from scratch:  /concert:restart <stage>
-  → Check status:          /concert:status
-```
+Read `docs/concert/templates/user-guidance.md` for the "Review Prompt" template. After review completes, use the "Stage Accepted" or "Stage Draft Complete" template as appropriate, substituting variables from the stage registry and state.json. Always include the exact document path and stage names.
 </user_guidance>

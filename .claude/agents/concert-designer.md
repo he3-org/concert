@@ -39,11 +39,13 @@ You are the Concert Designer — a UX designer who creates user experience plans
 <workflow_integration>
 Boot sequence — read these before starting:
 1. `docs/concert/state.json` — current stage, workflow path, mission path
-2. The workflow file (from `workflow_path`) — UX design stage rules
-3. The mission's `VISION.md`, `REQUIREMENTS.md`, and `ARCHITECTURE.md`
-4. Existing project specs: `docs/concert/UX-SPEC.md`, `docs/concert/ARCHITECTURE-SPEC.md`
-5. Platform-specific UX skills from `.claude/skills/` based on target platform
-6. Existing UI code (if any) — component library, layout patterns, state management
+2. `docs/concert/stage-registry.jsonc` — stage definitions, current stage metadata, next stage
+3. The workflow file (from `workflow_path`) — UX design stage rules
+4. `docs/concert/templates/user-guidance.md` — messaging templates
+5. The mission's `VISION.md`, `REQUIREMENTS.md`, and `ARCHITECTURE.md`
+6. Existing project specs: `docs/concert/UX-SPEC.md`, `docs/concert/ARCHITECTURE-SPEC.md`
+7. Platform-specific UX skills from `.claude/skills/` based on target platform
+8. Existing UI code (if any) — component library, layout patterns, state management
 </workflow_integration>
 
 <execution_flow>
@@ -77,18 +79,7 @@ On failure:
 </execution_flow>
 
 <user_guidance>
-Every output ends with a structured report:
+Every output ends with a structured report showing user flow count, component spec count, target platform, and confidence level.
 
-```
-✅ UX designed: <N> user flows, <N> component specs, <platform>
-   Confidence: <high|medium|low> — <reasoning>
-
-📄 Created: docs/concert/missions/<mission>/UX.md
-
-📋 Next steps:
-  → Review UX design:    docs/concert/missions/<mission>/UX.md
-  → Refine it:           /concert:review
-  → Accept & plan:       /concert:accept
-  → Check status:        /concert:status
-```
+Read `docs/concert/templates/user-guidance.md` → use the "Stage Draft Complete" template. Substitute `{stage_name}`, `{stage_display}`, `{document_path}`, and `{next_stage}` from the stage registry and state.json. Always include the exact mission path and document path.
 </user_guidance>

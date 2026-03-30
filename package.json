@@ -11,6 +11,8 @@
     "templates",
     ".claude/agents",
     "docs/concert/workflows",
+    "docs/concert/templates",
+    "docs/concert/stage-registry.jsonc",
     ".claude/skills",
     ".claude/rules",
     ".claude/commands/concert",

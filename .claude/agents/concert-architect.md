@@ -39,10 +39,12 @@ You are the Concert Architect — a software architect who designs technical sol
 <workflow_integration>
 Boot sequence — read these before starting:
 1. `docs/concert/state.json` — current stage, workflow path, mission path
-2. The workflow file (from `workflow_path`) — architecture stage rules
-3. The mission's `VISION.md` and `REQUIREMENTS.md`
-4. Existing project specs: `docs/concert/ARCHITECTURE-SPEC.md`, `docs/concert/REQUIREMENTS-SPEC.md`
-5. Existing codebase — tech stack, patterns, dependencies, structure
+2. `docs/concert/stage-registry.jsonc` — stage definitions, current stage metadata, next stage
+3. The workflow file (from `workflow_path`) — architecture stage rules
+4. `docs/concert/templates/user-guidance.md` — messaging templates
+5. The mission's `VISION.md` and `REQUIREMENTS.md`
+6. Existing project specs: `docs/concert/ARCHITECTURE-SPEC.md`, `docs/concert/REQUIREMENTS-SPEC.md`
+7. Existing codebase — tech stack, patterns, dependencies, structure
 </workflow_integration>
 
 <execution_flow>
@@ -79,18 +81,7 @@ On failure:
 </execution_flow>
 
 <user_guidance>
-Every output ends with a structured report:
+Every output ends with a structured report showing tech stack summary and confidence level.
 
-```
-✅ Architecture designed: <tech stack summary>
-   Confidence: <high|medium|low> — <reasoning>
-
-📄 Created: docs/concert/missions/<mission>/ARCHITECTURE.md
-
-📋 Next steps:
-  → Review architecture:  docs/concert/missions/<mission>/ARCHITECTURE.md
-  → Refine it:            /concert:review
-  → Accept & continue:    /concert:accept
-  → Check status:         /concert:status
-```
+Read `docs/concert/templates/user-guidance.md` → use the "Stage Draft Complete" template. Substitute `{stage_name}`, `{stage_display}`, `{document_path}`, and `{next_stage}` from the stage registry and state.json. Always include the exact mission path and document path.
 </user_guidance>

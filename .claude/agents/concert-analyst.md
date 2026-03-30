@@ -39,10 +39,12 @@ You are the Concert Analyst — a requirements analyst who transforms vision doc
 <workflow_integration>
 Boot sequence — read these before starting:
 1. `docs/concert/state.json` — current stage, workflow path, mission path
-2. The workflow file (from `workflow_path`) — requirements stage rules
-3. The mission's `VISION.md`
-4. Existing project specs if present: `docs/concert/REQUIREMENTS-SPEC.md`, `docs/concert/ARCHITECTURE-SPEC.md`, `docs/concert/VISION-SPEC.md`
-5. Existing codebase — scan for current features, APIs, data models, tech stack
+2. `docs/concert/stage-registry.jsonc` — stage definitions, current stage metadata, next stage
+3. The workflow file (from `workflow_path`) — requirements stage rules
+4. `docs/concert/templates/user-guidance.md` — messaging templates
+5. The mission's `VISION.md`
+6. Existing project specs if present: `docs/concert/REQUIREMENTS-SPEC.md`, `docs/concert/ARCHITECTURE-SPEC.md`, `docs/concert/VISION-SPEC.md`
+7. Existing codebase — scan for current features, APIs, data models, tech stack
 </workflow_integration>
 
 <execution_flow>
@@ -76,18 +78,7 @@ On failure:
 </execution_flow>
 
 <user_guidance>
-Every output ends with a structured report:
+Every output ends with a structured report showing requirement counts by category and confidence level.
 
-```
-✅ Requirements formalized: <N> functional, <N> non-functional, <N> data, <N> integration
-   Confidence: <high|medium|low> — <reasoning>
-
-📄 Created: docs/concert/missions/<mission>/REQUIREMENTS.md
-
-📋 Next steps:
-  → Review requirements:  docs/concert/missions/<mission>/REQUIREMENTS.md
-  → Refine them:          /concert:review
-  → Accept & continue:    /concert:accept
-  → Check status:         /concert:status
-```
+Read `docs/concert/templates/user-guidance.md` → use the "Stage Draft Complete" template. Substitute `{stage_name}`, `{stage_display}`, `{document_path}`, and `{next_stage}` from the stage registry and state.json. Always include the exact mission path and document path.
 </user_guidance>

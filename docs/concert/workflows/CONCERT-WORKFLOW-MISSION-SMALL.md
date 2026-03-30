@@ -26,62 +26,9 @@ If any skipped stage is later needed, the user can run `/concert:replan <stage>`
 
 ## Stages
 
-| # | Stage | Agent | Input | Output | Next |
-|---|-------|-------|-------|--------|------|
-| 1 | vision | concert-interviewer | user input, existing specs | VISION.md | 2 |
-| 2 | tasks | concert-planner | VISION.md, all existing specs, codebase | phases/ with model-tiered TASK files | 3 |
-| 3 | execution | concert-runner | TASK files (model per file) | code + PHASE-SUMMARY files | 4 |
-| 4 | verification | concert-qa | REQUIREMENTS-SPEC.md, PHASE-SUMMARY files | VERIFICATION.md + COST-REPORT.md | 5 |
-| 5 | retrospective | concert-retrospective | telemetry[], COST-REPORT.md, failure_log, mission docs | CONCERT-IMPROVEMENT.md | done |
+Stages: vision, tasks, execution, verification, retrospective
 
----
-
-## Stage Details
-
-### Stage 1: Vision
-
-- **Command:** `/concert:init`
-- **Agent:** `concert-interviewer`
-- **Interactive:** Yes — interviews the user (tuned for small features)
-- **Reads:** Existing project specs if they exist
-- **Produces:** `VISION.md` in the mission folder
-- **On complete:** Triggers review cycle
-
-### Stage 2: Tasks
-
-- **Command:** `/concert:continue` (auto-selects tasks stage)
-- **Agent:** `concert-planner`
-- **Interactive:** No — can run autonomously
-- **Reads:** `VISION.md`, all existing project specs, codebase
-- **Produces:** `phases/` directory with model-tiered `TASK-*.md` files
-- **Note:** The planner uses existing specs as context — no separate requirements/architecture needed
-- **On complete:** Triggers review cycle
-
-### Stage 3: Execution
-
-- **Command:** `/concert:run`
-- **Agent:** `concert-runner` (spawns subagents per task model tier)
-- **Interactive:** No — can run autonomously
-- **Reads:** `TASK-*.md` files, `CONCERT-WORKFLOW-EXECUTION.md`
-- **Produces:** Committed code, `PHASE-SUMMARY-NN.md` files, telemetry records
-- **On complete:** Advances to verification
-
-### Stage 4: Verification
-
-- **Command:** `/concert:verify`
-- **Agent:** `concert-qa`
-- **Interactive:** Yes in Claude Code, autonomous in GitHub Agents UI
-- **Reads:** `REQUIREMENTS-SPEC.md`, `PHASE-SUMMARY-*.md` files
-- **Produces:** `VERIFICATION.md`, `COST-REPORT.md`
-- **On complete:** If clean → advances to retrospective. If issues → spawns gap-closure tasks.
-
-### Stage 5: Retrospective
-
-- **Triggered by:** Successful verification (if `self_improvement.enabled` is `true`)
-- **Agent:** `concert-retrospective`
-- **Interactive:** No — runs autonomously
-- **Produces:** `CONCERT-IMPROVEMENT.md` in the mission folder
-- **On complete:** Mission is done
+→ See `docs/concert/stage-registry.jsonc` for stage details (agent, inputs, outputs, transitions).
 
 ---
 

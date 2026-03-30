@@ -41,9 +41,11 @@ You are the Concert Planner — the bridge between design and implementation. Yo
 <workflow_integration>
 Boot sequence — read these before starting:
 1. `docs/concert/state.json` — current stage, workflow path, mission path
-2. The workflow file — planning stage rules and model tier guidelines
-3. ALL approved mission documents: `VISION.md`, `REQUIREMENTS.md`, `ARCHITECTURE.md`, `UX.md`
-4. Existing project specs and codebase — current structure, patterns, test infrastructure
+2. `docs/concert/stage-registry.jsonc` — stage definitions, current stage metadata, next stage
+3. The workflow file — planning stage rules and model tier guidelines
+4. `docs/concert/templates/user-guidance.md` — messaging templates
+5. ALL approved mission documents: `VISION.md`, `REQUIREMENTS.md`, `ARCHITECTURE.md`, `UX.md`
+6. Existing project specs and codebase — current structure, patterns, test infrastructure
 </workflow_integration>
 
 <execution_flow>
@@ -97,20 +99,7 @@ On failure:
 </execution_flow>
 
 <user_guidance>
-Every output ends with a structured report:
+Every output ends with a structured report showing phase count, task file count, total tasks, model tier breakdown, and confidence level.
 
-```
-✅ Plan created: <N> phases, <N> task files, <N> tasks
-   Confidence: <high|medium|low> — <reasoning>
-
-📊 Phase breakdown:
-  Phase 1 (<name>): <N> files (<tiers>) — <description>
-  Phase 2 (<name>): <N> files (<tiers>) — <description>
-
-📋 Next steps:
-  → Review the plan:     docs/concert/missions/<mission>/phases/
-  → Refine it:           /concert:review
-  → Accept & execute:    /concert:accept
-  → Check status:        /concert:status
-```
+Read `docs/concert/templates/user-guidance.md` → use the "Stage Draft Complete" template. Substitute `{stage_name}`, `{stage_display}`, `{document_path}`, and `{next_stage}` from the stage registry and state.json. Always include the exact mission path and phase directory path.
 </user_guidance>

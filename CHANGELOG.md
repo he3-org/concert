@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/he3-org/concert/compare/v1.3.0...v1.4.0) (2026-03-30)
+
+
+### Features
+
+* centralize workflow stage definitions ([#24](https://github.com/he3-org/concert/issues/24)) ([a7f3061](https://github.com/he3-org/concert/commit/a7f3061eeeda82c7ca33111d3bfa8f68f9aa5057))
+
+
+### Bug Fixes
+
+* correct concert-debug stub to reference concert-debug.md not concert-debugger.md ([8caed2d](https://github.com/he3-org/concert/commit/8caed2d6705aa8eab48f01b9a495be4e0d0932cb))
+
 ## [1.3.0](https://github.com/he3-org/concert/compare/v1.2.0...v1.3.0) (2026-03-29)
 
 

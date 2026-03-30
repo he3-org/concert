@@ -7,16 +7,17 @@
   "pr_number": 24,
   "status_display": "wip_pr",
   "feature_size": "medium",
-  "stage": "architecture",
+  "stage": "tasks",
   "pipeline": {
     "vision": "accepted",
     "requirements": "accepted",
-    "architecture": "draft"
+    "architecture": "accepted",
+    "tasks": "planned"
   },
   "phases_completed": 0,
-  "phases_total": 0,
+  "phases_total": 3,
   "tasks_completed": 0,
-  "tasks_total": 0,
+  "tasks_total": 9,
   "commits": 0,
   "cost": {
     "estimated_remaining": "",
@@ -41,9 +42,20 @@
       "action": "requirements_accepted",
       "timestamp": "2026-03-29T18:15:00Z",
       "details": "Requirements reviewed and accepted — R1-R6 covering registry, agent decoupling, templates, workflow simplification, backwards compat, testing"
+    },
+    {
+      "action": "architecture_accepted",
+      "timestamp": "2026-03-29T18:30:00Z",
+      "details": "Architecture reviewed and accepted — stage-registry.jsonc as single source of truth, agent decoupling via registry lookup, user guidance templates"
+    },
+    {
+      "action": "tasks_planned",
+      "timestamp": "2026-03-29T18:45:00Z",
+      "details": "3 phases, 3 task files, 9 tasks — all sonnet tier. Phase 1: registry+templates, Phase 2: agent decoupling, Phase 3: workflow simplification+tests"
     }
   ],
   "next_steps": [
-    "Continue to architecture: /concert:continue"
+    "Review task plan: /concert:review",
+    "Accept and execute: /concert:accept"
   ]
 }

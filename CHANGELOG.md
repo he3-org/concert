@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/he3-org/concert/compare/v1.5.0...v1.6.0) (2026-04-02)
+
+
+### Features
+
+* add /concert:fix command with TDD-first agent, workflow, and skill ([#29](https://github.com/he3-org/concert/issues/29)) ([f2ea0ff](https://github.com/he3-org/concert/commit/f2ea0ff3cbf17bd788e40a8f082d7abea9a0f8c9))
+
 ## [1.5.0](https://github.com/he3-org/concert/compare/v1.4.0...v1.5.0) (2026-04-02)
 
 

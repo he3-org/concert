@@ -25,6 +25,7 @@ Create a new Concert mission.
 ## Next Steps
 
 After init completes, output:
+
 ```
 📋 Next steps:
   → Review vision:    /concert:review

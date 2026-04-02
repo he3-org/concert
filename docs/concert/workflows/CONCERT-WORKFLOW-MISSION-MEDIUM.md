@@ -3,10 +3,13 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: mission-medium
 description: Medium mission pipeline — skips UX stage for mid-sized features
 triggers:
-  - feature_size: medium
+
+- feature_size: medium
+
 ---
 
 ## Overview
@@ -53,6 +56,7 @@ After each planning stage (stages 1–4), the review cycle runs automatically:
 → **Refer to:** `CONCERT-WORKFLOW-REVIEW-CYCLE.md`
 
 The review cycle allows the user to:
+
 1. **Accept** the stage output → creates `*-SPEC.md` and advances
 2. **Revise** the stage output → refine via conversation, then re-review
 3. **Restart** the stage → discards output and re-runs the consultant
@@ -86,6 +90,7 @@ If any stage fails:
 3. **Stop immediately** — Do NOT proceed to the next stage or task
 4. **Leave working tree dirty** — Do NOT roll back partial work
 5. **Output recovery guidance:**
+
    ```
    ❌ Concert stopped: <stage> failed (<error_type>)
 

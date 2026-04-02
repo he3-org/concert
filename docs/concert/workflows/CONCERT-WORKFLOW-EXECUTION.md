@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: execution
 description: Phase/wave/task execution loop — defines how tasks are executed within a mission
+
 ---
 
 ## Overview
@@ -101,12 +103,12 @@ For each wave in order (wave 1, wave 2, ... wave N):
 Each task file specifies a model tier in its frontmatter (`model: haiku | sonnet | opus`).
 The filename also includes the model suffix (e.g., `TASK-2026-03-22-db-schema-haiku.md`).
 
-| Environment | Model Selection | Behavior |
-|-------------|----------------|----------|
-| **Claude Code** (CLI/web) | Automatic | Runner reads `model` frontmatter, spawns subagent with that model via Task tool |
-| **Copilot CLI** | Auto mode recommended | Copilot auto-selects; user can override by filename suffix |
-| **GitHub Agents UI** | User selects at launch | Use Sonnet for haiku+sonnet tasks, Opus only for opus tasks |
-| **GitHub Actions** | Configured per run | Group haiku+sonnet tasks (Sonnet) and opus tasks (Opus) separately |
+| Environment               | Model Selection        | Behavior                                                                        |
+| ------------------------- | ---------------------- | ------------------------------------------------------------------------------- |
+| **Claude Code** (CLI/web) | Automatic              | Runner reads `model` frontmatter, spawns subagent with that model via Task tool |
+| **Copilot CLI**           | Auto mode recommended  | Copilot auto-selects; user can override by filename suffix                      |
+| **GitHub Agents UI**      | User selects at launch | Use Sonnet for haiku+sonnet tasks, Opus only for opus tasks                     |
+| **GitHub Actions**        | Configured per run     | Group haiku+sonnet tasks (Sonnet) and opus tasks (Opus) separately              |
 
 ---
 
@@ -115,6 +117,7 @@ The filename also includes the model suffix (e.g., `TASK-2026-03-22-db-schema-ha
 ### In Claude Code Sessions
 
 Tasks within the same wave CAN run in parallel:
+
 - Each task gets a fresh subagent via the Task tool
 - Each subagent gets a clean context window
 - Tasks in the same wave have no dependencies on each other
@@ -137,17 +140,18 @@ When a task fails, Concert follows the **crash hard, learn fast** philosophy (v1
 
 2. **Classify the error** using the error taxonomy:
 
-   | Error Type | Description |
-   |-----------|-------------|
-   | `test_failure` | Tests fail after implementation |
-   | `build_error` | Code doesn't compile or build |
-   | `context_exhaustion` | Agent hit context window limit |
-   | `dependency_missing` | Required dependency unavailable |
+   | Error Type                  | Description                         |
+   | --------------------------- | ----------------------------------- |
+   | `test_failure`              | Tests fail after implementation     |
+   | `build_error`               | Code doesn't compile or build       |
+   | `context_exhaustion`        | Agent hit context window limit      |
+   | `dependency_missing`        | Required dependency unavailable     |
    | `model_capability_exceeded` | Task too complex for assigned model |
-   | `timeout` | Session timed out before completion |
-   | `unknown` | Unclassified failure |
+   | `timeout`                   | Session timed out before completion |
+   | `unknown`                   | Unclassified failure                |
 
 3. **Write failure block** to `state.json`:
+
    ```json
    {
      "failure": {
@@ -171,6 +175,7 @@ When a task fails, Concert follows the **crash hard, learn fast** philosophy (v1
 5. **Leave working tree dirty** — Do NOT roll back partial work
 
 6. **Output clear recovery guidance:**
+
    ```
    ❌ Concert stopped: Task <N> of <task_file> failed (<error_type>)
 
@@ -187,6 +192,7 @@ When a task fails, Concert follows the **crash hard, learn fast** philosophy (v1
 ### On Phase Failure (Regression Gate)
 
 If the full test suite fails after a phase completes:
+
 1. Identify which tests broke (diff against pre-phase test results)
 2. Write failure block with `error_type: "test_failure"`
 3. Output the failing tests and which tasks may have caused them
@@ -210,11 +216,11 @@ Reviews trigger at natural breakpoints, not on timers:
 
 As phases complete, context is compacted via PHASE-SUMMARY files:
 
-| Phase Status | What Agent Reads |
-|-------------|-----------------|
-| Current phase (in progress) | TASK files + PHASE-SUMMARY (for completed tasks within phase) |
-| Recent completed phase (N-1) | PHASE-SUMMARY only |
-| Older completed phases (N-2 and earlier) | Skip unless specifically relevant |
+| Phase Status                             | What Agent Reads                                              |
+| ---------------------------------------- | ------------------------------------------------------------- |
+| Current phase (in progress)              | TASK files + PHASE-SUMMARY (for completed tasks within phase) |
+| Recent completed phase (N-1)             | PHASE-SUMMARY only                                            |
+| Older completed phases (N-2 and earlier) | Skip unless specifically relevant                             |
 
 This tiered reading strategy ensures agents focus context on current work while
 maintaining access to historical data when needed.
@@ -249,6 +255,7 @@ crash loses at most one task of work.
 ## Telemetry
 
 After each task completes, log telemetry per `CONCERT-WORKFLOW-OBSERVABILITY.md`:
+
 - task_file, task_index, phase, model_assigned, confidence
 - review_result, revision_count, skills_loaded, files_changed, completed_at
 
@@ -258,9 +265,9 @@ After each task completes, log telemetry per `CONCERT-WORKFLOW-OBSERVABILITY.md`
 
 The orchestrator MUST guard against these:
 
-| Guard | Mechanism |
-|-------|-----------|
+| Guard                  | Mechanism                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------- |
 | **Analysis paralysis** | If agent makes 5+ consecutive reads without writing, force action or report blocked |
-| **Stub detection** | Multi-level: exists → substantive → wired → data-flowing |
-| **Context overflow** | Monitor context usage, spawn continuation agent before limit |
-| **Deviation** | 4-tier: auto-fix bugs, auto-add security, auto-fix blockers, ask about architecture |
+| **Stub detection**     | Multi-level: exists → substantive → wired → data-flowing                            |
+| **Context overflow**   | Monitor context usage, spawn continuation agent before limit                        |
+| **Deviation**          | 4-tier: auto-fix bugs, auto-add security, auto-fix blockers, ask about architecture |

@@ -186,6 +186,12 @@ export const EXCLUDED_SKILLS: readonly string[] = [];
 export const EXCLUDED_RULES: readonly string[] = ['concert-repo-managed-files.md'];
 
 /**
+ * Workflow files excluded from shipping. These are specific to the Concert repo
+ * and not useful for target repos. Everything else matching concert-*.yml ships.
+ */
+export const EXCLUDED_WORKFLOWS: readonly string[] = ['concert-ci.yml'];
+
+/**
  * Live file sources that ship directly from the package (not templates).
  * Each entry maps a source directory (relative to package root) to a target
  * directory (relative to user's project root).
@@ -321,6 +327,9 @@ export function copyLiveFiles(
       if ('pattern' in source && source.pattern && !source.pattern.test(entry.name)) {
         continue;
       }
+      if (source.src === '.github/workflows' && EXCLUDED_WORKFLOWS.includes(entry.name)) {
+        continue;
+      }
       const srcFile = path.join(srcDir, entry.name);
       const destFile = path.join(targetPath, entry.name);
       const relPath = path.join(source.target, entry.name);
@@ -363,6 +372,7 @@ export function countLiveFiles(packageRoot: string): Record<string, number> {
     for (const entry of entries) {
       if (entry.isDirectory()) continue;
       if ('pattern' in source && source.pattern && !source.pattern.test(entry.name)) continue;
+      if (source.src === '.github/workflows' && EXCLUDED_WORKFLOWS.includes(entry.name)) continue;
       counts[category] = (counts[category] ?? 0) + 1;
     }
   }

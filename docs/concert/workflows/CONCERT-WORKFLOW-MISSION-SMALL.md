@@ -3,10 +3,13 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: mission-small
 description: Small mission pipeline — vision straight to tasks for small features
 triggers:
-  - feature_size: small
+
+- feature_size: small
+
 ---
 
 ## Overview
@@ -41,6 +44,7 @@ This workflow skips dedicated requirements, architecture, and UX stages. The rat
 - The cost of full analysis exceeds the benefit for small changes
 
 **To add a skipped stage back:** Run `/concert:replan <stage>` at any point before execution:
+
 ```
 /concert:replan requirements    # Add requirements analysis
 /concert:replan architecture    # Add architecture planning
@@ -56,6 +60,7 @@ After each planning stage (stages 1–2), the review cycle runs automatically:
 → **Refer to:** `CONCERT-WORKFLOW-REVIEW-CYCLE.md`
 
 The review cycle allows the user to:
+
 1. **Accept** the stage output → creates `*-SPEC.md` (vision only) and advances
 2. **Revise** the stage output → refine via conversation, then re-review
 3. **Restart** the stage → discards output and re-runs the consultant
@@ -87,6 +92,7 @@ If any stage fails:
 3. **Stop immediately** — Do NOT proceed to the next stage or task
 4. **Leave working tree dirty** — Do NOT roll back partial work
 5. **Output recovery guidance:**
+
    ```
    ❌ Concert stopped: <stage> failed (<error_type>)
 

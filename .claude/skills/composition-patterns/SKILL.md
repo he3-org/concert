@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: composition-patterns
 description: Enforces React component composition patterns including compound components, context-based dependency injection, custom hooks, and slot-based layouts. Use when writing, reviewing, or refactoring React components, hooks, or providers. Do not use for non-React projects, global state management, or server-side rendering logic.
+
 ---
 
 ## Composition Patterns

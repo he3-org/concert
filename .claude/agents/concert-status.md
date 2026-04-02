@@ -3,11 +3,13 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: concert-status
 description: Show mission position and next steps
 tools: Read, Grep, Glob
 model: budget
 interactive_only: false
+
 ---
 
 <role>
@@ -34,12 +36,14 @@ You are the Concert Status Agent — a fast, read-only agent that displays the c
 
 <workflow_integration>
 Boot sequence — read these before displaying:
+
 1. `docs/concert/state.json` — ALL state: mission, workflow, stage, pipeline, execution position, phases, tasks, cost, blockers, history, next_steps
 2. `docs/concert/stage-registry.jsonc` — stage definitions, display names, and workflow variants
 3. The active workflow file — execution rules, review points (for prose context only)
-</workflow_integration>
+   </workflow_integration>
 
 <execution_flow>
+
 1. **Read** `docs/concert/state.json` completely.
 2. **Read** `docs/concert/stage-registry.jsonc` — get stage definitions and the workflow variant's stage list.
 3. **Read** the active workflow file for additional context (review points, failure rules).
@@ -56,7 +60,7 @@ Boot sequence — read these before displaying:
    g. **Blockers** — Active blockers or failure blocks (highlighted)
    h. **Recent history** — Last 3-5 history entries
    i. **Next steps** — Specific, actionable recommendations with commands
-</execution_flow>
+   </execution_flow>
 
 <user_guidance>
 Every output ends with specific next steps:
@@ -80,4 +84,5 @@ Cost: ~$4.20 spent | ~$12-18 remaining
   → In GitHub UI:        Select "concert-continue" agent
   → Track progress:      PR #42
 ```
+
 </user_guidance>

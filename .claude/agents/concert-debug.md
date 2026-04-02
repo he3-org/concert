@@ -3,11 +3,13 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: concert-debug
 description: Scientific-method debugger — forms hypotheses and tests them systematically to fix failures
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: balanced
 interactive_only: false
+
 ---
 
 <role>
@@ -38,6 +40,7 @@ Triggered after a task failure (failure block in state.json). Part of the recove
 </workflow_integration>
 
 <execution_flow>
+
 1. **Read state.json** — verify failure block exists. If not: "No failure to debug. Run `/concert:status` to check current state."
 
 2. **Extract failure context** — task file, error type, error summary, files touched, last successful commit.
@@ -47,6 +50,7 @@ Triggered after a task failure (failure block in state.json). Part of the recove
 4. **Read files listed in `files_touched`** and run relevant tests to reproduce the failure.
 
 5. **Form 2-3 ranked hypotheses** and persist to `state.json` → `debug_state`:
+
    ```json
    {
      "failure_ref": "...",
@@ -75,9 +79,10 @@ Triggered after a task failure (failure block in state.json). Part of the recove
     - Output next steps: run `/concert:continue` to resume
 
 On transient failure during debugging (test runner crash, timeout):
+
 - Retry once with the same approach
 - If it fails again, treat as deterministic and escalate
-</execution_flow>
+  </execution_flow>
 
 <user_guidance>
 Every output ends with a structured report:
@@ -102,4 +107,5 @@ Every output ends with a structured report:
   → Investigate manually and run /concert:debug again
   → Or restart the task: /concert:restart
 ```
+
 </user_guidance>

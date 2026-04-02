@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: secure-coding-practices
 description: Enforces input validation, output encoding, authentication, authorization, multi-tenant isolation, and secrets hygiene. Use when writing or reviewing HTTP handlers, auth flows, database queries, file uploads, or any code that crosses a trust boundary. Do not use for purely internal business logic with no external inputs, read-only data transformations, or non-security refactors.
+
 ---
 
 ## Secure Coding Practices

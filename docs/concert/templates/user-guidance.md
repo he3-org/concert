@@ -8,6 +8,7 @@ Templates for agent output messaging. Agents read this file and substitute varia
 from `stage-registry.jsonc` and `state.json`. Use `{variable}` syntax.
 
 **Variables:**
+
 - `{stage_name}` — stage name from registry (e.g., "requirements")
 - `{stage_display}` — display name from registry (e.g., "Requirements")
 - `{document_path}` — full path to the stage output document
@@ -34,6 +35,7 @@ Use when a planning agent finishes drafting its output document.
 ```
 
 **With GitHub UI option** (when `user_guidance.show_both_cli_and_ui_options` is true):
+
 ```
   → In GitHub UI:            Select "concert-reviewer" agent on PR #{pr_number}
 ```
@@ -53,6 +55,7 @@ Use when a stage is accepted and the pipeline advances.
 ```
 
 **With GitHub UI option:**
+
 ```
   → In GitHub UI:             Select "concert-continue" agent on PR #{pr_number}
 ```

@@ -24,6 +24,7 @@ Every agent must verify its own output before reporting success. The type of ver
 ### The "Never Trust First Pass" Rule
 
 After completing the primary task, the agent must re-read its own output with a critical eye:
+
 - Did I actually do what was asked, or did I do what I assumed was asked?
 - Are there edge cases I didn't handle that the task mentioned?
 - Did I introduce changes outside the scope of the task?
@@ -33,6 +34,7 @@ This self-review step catches the most common agent failure: confidently complet
 ### Confidence Reporting
 
 Every agent should report a confidence level with reasoning:
+
 - **High** — all acceptance criteria met, tests pass, no ambiguity in requirements
 - **Medium** — requirements had ambiguity, or some edge cases weren't fully testable
 - **Low** — partial implementation, blocked by external dependency, or requirements unclear

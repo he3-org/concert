@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: skill-authoring
 description: Guides agents on how to design, structure, and write professional-grade skills for AI agents. Use when asked to create a new skill, structure a skill directory, or write a SKILL.md file. Do not use for agent definition files (.claude/agents/), general coding guidelines, or standard documentation tasks.
+
 ---
 
 ## Skill Authoring
@@ -32,6 +34,7 @@ Read `references/frontmatter-rules.md` for guidelines on trigger-optimized descr
 
 **Step 3: Draft the SKILL.md Body**
 Write the `SKILL.md` file as an operational runbook for an agent.
+
 - Keep SKILL.md under 500 lines. Keep each reference file under 300 lines.
 - Total skill footprint when fully expanded (SKILL.md + all referenced files loaded during a single invocation) must stay under 4000 tokens. This is the hard ceiling — exceeding it degrades agent performance by crowding out working memory.
 - Use step-by-step numbering.
@@ -47,6 +50,7 @@ If the skill requires fragile or repetitive operations (like complex parsing), d
 
 **Step 6: Validate the Skill**
 Before considering the skill complete:
+
 1. Verify SKILL.md has valid YAML frontmatter with `name` and `description`.
 2. Verify every `Read` instruction in SKILL.md points to a file that exists (check relative paths).
 3. Verify total line count: SKILL.md under 500 lines, each reference under 300 lines.

@@ -29,11 +29,7 @@ class StripeAdapter implements PaymentAdapter {
 Transient failures (network timeouts, 503 responses) must be retried. Use exponential backoff (`baseDelay * 2^attempt`) with random jitter to avoid thundering herds. Set a maximum retry count (typically 3–5). Never retry non-idempotent operations without an idempotency key.
 
 ```typescript
-async function withRetry<T>(
-  fn: () => Promise<T>,
-  maxAttempts = 3,
-  baseDelayMs = 100,
-): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 3, baseDelayMs = 100): Promise<T> {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
       return await fn();
@@ -43,7 +39,7 @@ async function withRetry<T>(
       await sleep(delay);
     }
   }
-  throw new Error("unreachable");
+  throw new Error('unreachable');
 }
 ```
 
@@ -52,11 +48,11 @@ async function withRetry<T>(
 When a dependency fails repeatedly, open the circuit to stop sending requests and allow the dependency to recover. Use a library (e.g., `gobreaker`, `opossum`, `resilience4j`). Configure sensible thresholds: failure rate, minimum request volume, and recovery timeout.
 
 ```typescript
-import CircuitBreaker from "opossum";
+import CircuitBreaker from 'opossum';
 
 const breaker = new CircuitBreaker(callExternalService, {
-  threshold: 50,       // open when 50% of requests fail
-  timeout: 5000,       // calls taking longer than 5s are failures
+  threshold: 50, // open when 50% of requests fail
+  timeout: 5000, // calls taking longer than 5s are failures
   resetTimeout: 30000, // attempt recovery after 30s
 });
 
@@ -89,7 +85,7 @@ class IntegrationError extends Error {
     public readonly operation: string,
     public readonly cause: unknown,
     public readonly retryable: boolean,
-    public readonly correlationId: string,
+    public readonly correlationId: string
   ) {
     super(`Integration error in ${operation} [${correlationId}]`);
   }
@@ -101,17 +97,14 @@ class IntegrationError extends Error {
 Every service must expose a health endpoint (`/healthz` or `/health`) that checks connectivity to its critical dependencies (database, cache, message broker). Health checks must be lightweight and not trigger heavy operations.
 
 ```typescript
-app.get("/healthz", async (req, res) => {
-  const checks = await Promise.allSettled([
-    db.query("SELECT 1"),
-    cache.ping(),
-  ]);
-  const healthy = checks.every((c) => c.status === "fulfilled");
+app.get('/healthz', async (req, res) => {
+  const checks = await Promise.allSettled([db.query('SELECT 1'), cache.ping()]);
+  const healthy = checks.every((c) => c.status === 'fulfilled');
   res.status(healthy ? 200 : 503).json({
-    status: healthy ? "ok" : "degraded",
+    status: healthy ? 'ok' : 'degraded',
     checks: checks.map((c, i) => ({
-      name: ["db", "cache"][i],
-      ok: c.status === "fulfilled",
+      name: ['db', 'cache'][i],
+      ok: c.status === 'fulfilled',
     })),
   });
 });
@@ -126,7 +119,7 @@ async function getRecommendations(userId: UserId): Promise<Recommendation[]> {
   try {
     return await recommendationService.fetch(userId);
   } catch {
-    logger.warn("recommendations unavailable, serving defaults");
+    logger.warn('recommendations unavailable, serving defaults');
     return DEFAULT_RECOMMENDATIONS;
   }
 }
@@ -187,10 +180,7 @@ async function processMessage(msg: Message): Promise<void> {
 Every external call must emit: latency (histogram), success/failure count (counter), and a distributed trace span. Use OpenTelemetry or your observability stack's SDK. Tag spans with the service name, operation, and response status.
 
 ```typescript
-async function callWithTracing<T>(
-  spanName: string,
-  fn: (span: Span) => Promise<T>,
-): Promise<T> {
+async function callWithTracing<T>(spanName: string, fn: (span: Span) => Promise<T>): Promise<T> {
   return tracer.startActiveSpan(spanName, async (span) => {
     try {
       const result = await fn(span);
@@ -232,7 +222,7 @@ export const integrationConfig = {
 Do not trust that an external API returns the expected schema. Validate response shape and types before using the data. Handle unexpected fields gracefully and log schema violations for investigation.
 
 ```typescript
-import { z } from "zod";
+import { z } from 'zod';
 
 const UserSchema = z.object({
   id: z.string(),
@@ -244,8 +234,8 @@ async function fetchUser(id: string): Promise<User> {
   const raw = await httpClient.get(`/users/${id}`);
   const parsed = UserSchema.safeParse(raw);
   if (!parsed.success) {
-    logger.warn("unexpected user schema", { errors: parsed.error.issues });
-    throw new IntegrationError("fetchUser", parsed.error, false, correlationId());
+    logger.warn('unexpected user schema', { errors: parsed.error.issues });
+    throw new IntegrationError('fetchUser', parsed.error, false, correlationId());
   }
   return parsed.data;
 }

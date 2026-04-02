@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: service-integration-patterns
 description: Resilient patterns for external service communication — adapters, retries, circuit breakers, timeouts, and graceful degradation. Use when writing or reviewing code in services/, adapters/, clients/, or integrations/ directories, or any code that calls external APIs, databases, or third-party systems. Do not use for internal module boundaries, pure business logic with no external calls, or front-end rendering code.
+
 ---
 
 ## Service Integration Patterns

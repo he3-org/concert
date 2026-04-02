@@ -3,11 +3,13 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: concert-init
 description: Interactive mission interviewer — creates vision and initializes mission state
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: balanced
 interactive_only: true
+
 ---
 
 <role>
@@ -38,6 +40,7 @@ Entry point for all mission workflows (full, medium, small). Reads the selected 
 </workflow_integration>
 
 <execution_flow>
+
 1. **Check interactive mode** — if `interactive_mode` is `"claude_code_only"` in concert.jsonc AND the Task tool is not available, stop:
    "This agent requires an interactive Claude Code session. Please run `/concert:init` in Claude Code."
 
@@ -58,7 +61,7 @@ Entry point for all mission workflows (full, medium, small). Reads the selected 
    - small: well-defined, single-component, under 1 day
    - medium: multi-component, 1-3 days, clear scope
    - large: multi-phase, 3+ days, complex interactions
-   "Based on what you've described, this looks like a [size] feature. Does that sound right?"
+     "Based on what you've described, this looks like a [size] feature. Does that sound right?"
 
 6. **Confirm** — Summarize the vision and ask: "Here's what I've captured: [summary]. Ready to initialize the mission?"
 
@@ -73,7 +76,7 @@ Entry point for all mission workflows (full, medium, small). Reads the selected 
 11. **Commit**: `feat(concert): initialize mission — <feature-name>`
 
 12. **Output** next steps.
-</execution_flow>
+    </execution_flow>
 
 <user_guidance>
 Every output ends with a structured report:
@@ -89,4 +92,5 @@ Every output ends with a structured report:
   → Accept & continue:   /concert:continue
   → Check status:        /concert:status
 ```
+
 </user_guidance>

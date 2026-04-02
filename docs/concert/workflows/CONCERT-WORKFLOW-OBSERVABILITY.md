@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: observability
 description: Defines what telemetry agents log per task, per phase, and per mission
+
 ---
 
 ## Overview
@@ -15,6 +17,7 @@ follow. It is referenced by `CONCERT-WORKFLOW-EXECUTION.md` and
 feeds into `COST-REPORT.md` generation and `CONCERT-IMPROVEMENT.md` analysis.
 
 **Design principles:**
+
 - **No external services** — All telemetry is stored in git (`state.json` + report files)
 - **Minimal overhead** — Agents log a few structured fields, not verbose traces
 - **Actionable** — Data answers: "Is haiku good enough for this task type?" and "Where did the mission spend the most credits?"
@@ -43,30 +46,30 @@ record to `state.json` → `telemetry[]`:
 
 ### Field Definitions
 
-| Field | Type | Source | Required | Description |
-|-------|------|--------|----------|-------------|
-| `task_file` | string | Current task file name | Yes | Task file name without `.md` extension |
-| `task_index` | number | Current task position | Yes | Which task within the file (1-indexed) |
-| `phase` | number | Current phase | Yes | Phase number (1-indexed) |
-| `model_assigned` | string | Task frontmatter → `model` | Yes | Model tier from the task file |
-| `confidence` | string | Agent self-assessment | Yes | Agent's confidence: `high`, `medium`, or `low` |
-| `review_result` | string | Code review outcome | Yes | Highest severity found, or `"none"` if no review |
-| `revision_count` | number | Review-fix cycles | Yes | How many times the task was sent back for fixes |
-| `skills_loaded` | array | Skills read before implementing | Yes | Skill names the agent loaded for this task |
-| `files_changed` | number | Git diff | Yes | Number of source files modified in the commit(s) |
-| `completed_at` | string | System clock | Yes | ISO 8601 timestamp of task completion |
+| Field            | Type   | Source                          | Required | Description                                      |
+| ---------------- | ------ | ------------------------------- | -------- | ------------------------------------------------ |
+| `task_file`      | string | Current task file name          | Yes      | Task file name without `.md` extension           |
+| `task_index`     | number | Current task position           | Yes      | Which task within the file (1-indexed)           |
+| `phase`          | number | Current phase                   | Yes      | Phase number (1-indexed)                         |
+| `model_assigned` | string | Task frontmatter → `model`      | Yes      | Model tier from the task file                    |
+| `confidence`     | string | Agent self-assessment           | Yes      | Agent's confidence: `high`, `medium`, or `low`   |
+| `review_result`  | string | Code review outcome             | Yes      | Highest severity found, or `"none"` if no review |
+| `revision_count` | number | Review-fix cycles               | Yes      | How many times the task was sent back for fixes  |
+| `skills_loaded`  | array  | Skills read before implementing | Yes      | Skill names the agent loaded for this task       |
+| `files_changed`  | number | Git diff                        | Yes      | Number of source files modified in the commit(s) |
+| `completed_at`   | string | System clock                    | Yes      | ISO 8601 timestamp of task completion            |
 
 ### Confidence Assessment Rules
 
 Agents MUST assess confidence based on these signals:
 
-| Signal | High | Medium | Low |
-|--------|------|--------|-----|
-| **Test coverage** | Main paths + edge cases | Main paths covered | Happy path only |
-| **Requirements clarity** | Unambiguous | Some interpretation needed | Significant guesswork |
-| **Pattern familiarity** | Well-known pattern | Familiar with variations | Novel or unfamiliar |
-| **Complexity vs model tier** | Task felt easy | Task felt appropriately scoped | Task felt too complex |
-| **Acceptance criteria** | All clearly met | Most met, some partially | Several unclear or partial |
+| Signal                       | High                    | Medium                         | Low                        |
+| ---------------------------- | ----------------------- | ------------------------------ | -------------------------- |
+| **Test coverage**            | Main paths + edge cases | Main paths covered             | Happy path only            |
+| **Requirements clarity**     | Unambiguous             | Some interpretation needed     | Significant guesswork      |
+| **Pattern familiarity**      | Well-known pattern      | Familiar with variations       | Novel or unfamiliar        |
+| **Complexity vs model tier** | Task felt easy          | Task felt appropriately scoped | Task felt too complex      |
+| **Acceptance criteria**      | All clearly met         | Most met, some partially       | Several unclear or partial |
 
 ---
 
@@ -78,6 +81,7 @@ After all tasks in a phase finish, the runner MUST:
 
    ```markdown
    ## Phase Summary
+
    - **Total tasks:** <count>
    - **Files created/modified:** <count>
    - **Tests added:** <count>
@@ -89,6 +93,7 @@ After all tasks in a phase finish, the runner MUST:
 
    ```markdown
    ### TASK-2026-03-22-db-schema-haiku (3 tasks)
+
    - **Model:** haiku | **Confidence:** high | **Review:** PASS | **Revisions:** 0
    - Created: src/db/schema.ts, src/db/migrations/001_initial.ts
    - Tests: 5 passing
@@ -112,8 +117,10 @@ After `/concert:verify` completes, the `concert-qa` agent MUST generate
 The report MUST include these sections:
 
 #### 1. Summary
+
 ```markdown
 ## Summary
+
 - **Total tasks:** <count>
 - **Total revision cycles:** <count>
 - **Phases:** <count>
@@ -121,34 +128,39 @@ The report MUST include these sections:
 ```
 
 #### 2. Model Tier Effectiveness
+
 ```markdown
 ## Model Tier Effectiveness
 
-| Model | Tasks | PASS | NTH/MIN | MAJ | CRIT | Avg Revisions | Assessment |
-|-------|-------|------|---------|-----|------|---------------|------------|
-| haiku | ... | ... | ... | ... | ... | ... | ✅/⚠️ assessment |
-| sonnet | ... | ... | ... | ... | ... | ... | ✅/⚠️ assessment |
-| opus | ... | ... | ... | ... | ... | ... | ✅/⚠️ assessment |
+| Model  | Tasks | PASS | NTH/MIN | MAJ | CRIT | Avg Revisions | Assessment       |
+| ------ | ----- | ---- | ------- | --- | ---- | ------------- | ---------------- |
+| haiku  | ...   | ...  | ...     | ... | ...  | ...           | ✅/⚠️ assessment |
+| sonnet | ...   | ...  | ...     | ... | ...  | ...           | ✅/⚠️ assessment |
+| opus   | ...   | ...  | ...     | ... | ...  | ...           | ✅/⚠️ assessment |
 ```
 
 #### 3. Confidence Accuracy
+
 ```markdown
 ## Confidence Accuracy
 
-| Confidence | Tasks | Actual PASS Rate | Avg Revisions | Assessment |
-|------------|-------|-----------------|---------------|------------|
-| high | ... | ... | ... | ✅/⚠️ assessment |
-| medium | ... | ... | ... | ✅/⚠️ assessment |
-| low | ... | ... | ... | ✅/⚠️ assessment |
+| Confidence | Tasks | Actual PASS Rate | Avg Revisions | Assessment       |
+| ---------- | ----- | ---------------- | ------------- | ---------------- |
+| high       | ...   | ...              | ...           | ✅/⚠️ assessment |
+| medium     | ...   | ...              | ...           | ✅/⚠️ assessment |
+| low        | ...   | ...              | ...           | ✅/⚠️ assessment |
 ```
 
 #### 4. Per-Phase Breakdown
+
 List each phase with task-level outcomes.
 
 #### 5. Recommendations
+
 Data-driven suggestions for model tier assignment improvements.
 
 #### 6. Raw Data Reference
+
 Point to `state.json` → `telemetry[]` for complete records.
 
 ---
@@ -192,6 +204,7 @@ Verification passes → retrospective (if enabled)
 ### Appending to telemetry[]
 
 When appending a telemetry record:
+
 1. Read `state.json`
 2. Parse the `telemetry` array (create it if it doesn't exist)
 3. Append the new record

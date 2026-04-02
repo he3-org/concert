@@ -24,6 +24,7 @@ Go back to a specific pipeline stage during execution.
 ## Next Steps
 
 After replan, output:
+
 ```
 📋 Next steps:
   → Review the updated plan:  /concert:review

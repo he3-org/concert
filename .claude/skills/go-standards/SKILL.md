@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: go-standards
 description: Enforces idiomatic Go patterns for error handling, interfaces, context propagation, testing, and project structure. Use when writing, reviewing, or refactoring .go files, or editing go.mod/go.sum. Do not use for non-Go languages, runtime configuration unrelated to Go source, or general project scaffolding outside a Go codebase.
+
 ---
 
 ## Go Standards

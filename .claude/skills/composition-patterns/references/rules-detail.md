@@ -7,11 +7,7 @@ When a component has multiple related sub-parts that share state or behavior, mo
 ```tsx
 const Tabs = ({ children, defaultTab }: TabsProps) => {
   const [active, setActive] = React.useState(defaultTab);
-  return (
-    <TabsContext.Provider value={{ active, setActive }}>
-      {children}
-    </TabsContext.Provider>
-  );
+  return <TabsContext.Provider value={{ active, setActive }}>{children}</TabsContext.Provider>;
 };
 
 Tabs.List = TabList;
@@ -26,7 +22,7 @@ Tabs.Panel = TabPanel;
   </Tabs.List>
   <Tabs.Panel id="overview">...</Tabs.Panel>
   <Tabs.Panel id="details">...</Tabs.Panel>
-</Tabs>
+</Tabs>;
 ```
 
 ### 2. Use context for dependency injection, not global state
@@ -42,15 +38,17 @@ const AnalyticsContext = React.createContext<AnalyticsService | null>(null);
 
 const useAnalytics = (): AnalyticsService => {
   const ctx = React.useContext(AnalyticsContext);
-  if (!ctx) throw new Error("useAnalytics must be used within AnalyticsProvider");
+  if (!ctx) throw new Error('useAnalytics must be used within AnalyticsProvider');
   return ctx;
 };
 
-const AnalyticsProvider = ({ service, children }: { service: AnalyticsService; children: React.ReactNode }) => (
-  <AnalyticsContext.Provider value={service}>
-    {children}
-  </AnalyticsContext.Provider>
-);
+const AnalyticsProvider = ({
+  service,
+  children,
+}: {
+  service: AnalyticsService;
+  children: React.ReactNode;
+}) => <AnalyticsContext.Provider value={service}>{children}</AnalyticsContext.Provider>;
 ```
 
 ### 3. Extract shared stateful logic into custom hooks
@@ -124,13 +122,9 @@ const PageLayout = ({ header, sidebar, actions, children }: PageLayoutProps) => 
 );
 
 // Usage
-<PageLayout
-  header={<h1>Dashboard</h1>}
-  sidebar={<NavMenu />}
-  actions={<Button>Export</Button>}
->
+<PageLayout header={<h1>Dashboard</h1>} sidebar={<NavMenu />} actions={<Button>Export</Button>}>
   <DashboardContent />
-</PageLayout>
+</PageLayout>;
 ```
 
 ### 6. Place provider boundaries at the route level, not the app root
@@ -171,9 +165,7 @@ const FeatureShell = ({ children }: { children: React.ReactNode }) => (
   <AuthProvider>
     <FeatureFlagsProvider>
       <PermissionsProvider>
-        <NotificationsProvider>
-          {children}
-        </NotificationsProvider>
+        <NotificationsProvider>{children}</NotificationsProvider>
       </PermissionsProvider>
     </FeatureFlagsProvider>
   </AuthProvider>
@@ -189,7 +181,7 @@ const FeatureProviders = composeProviders(
   AuthProvider,
   FeatureFlagsProvider,
   PermissionsProvider,
-  NotificationsProvider,
+  NotificationsProvider
 );
 
 const FeatureShell = ({ children }: { children: React.ReactNode }) => (
@@ -228,9 +220,7 @@ A component's props should express only what it needs to render or respond to us
 
 ```tsx
 // Avoid: wide interface coupling the component to a domain model
-const UserCard = ({ user }: { user: User }) => (
-  <div>{user.profile.displayName}</div>
-);
+const UserCard = ({ user }: { user: User }) => <div>{user.profile.displayName}</div>;
 
 // Prefer: narrow interface
 const UserCard = ({ displayName, avatarUrl }: { displayName: string; avatarUrl: string }) => (
@@ -270,7 +260,8 @@ Higher-order components add an invisible layer to the component tree, obscure th
 
 ```tsx
 // Avoid: HOC for auth guard
-const withAuth = <P extends object>(Component: React.ComponentType<P>) =>
+const withAuth =
+  <P extends object>(Component: React.ComponentType<P>) =>
   (props: P) => {
     const { isAuthenticated } = useAuth();
     if (!isAuthenticated) return <Redirect to="/login" />;
@@ -282,7 +273,7 @@ const useRequireAuth = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   React.useEffect(() => {
-    if (!isAuthenticated) navigate("/login");
+    if (!isAuthenticated) navigate('/login');
   }, [isAuthenticated, navigate]);
   return isAuthenticated;
 };

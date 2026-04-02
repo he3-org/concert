@@ -14,6 +14,7 @@ Discard the current stage's plan and re-run the consultant from scratch.
 ## Next Steps
 
 After restart, output:
+
 ```
 📋 Next steps:
   → Review the new plan:  /concert:review

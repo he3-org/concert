@@ -13,6 +13,7 @@ npx @he3-org/concert push
 ```
 
 The `concert push` command:
+
 1. Saves any uncommitted state.json changes
 2. Commits with "chore: concert-push handoff"
 3. Pushes the current branch to origin

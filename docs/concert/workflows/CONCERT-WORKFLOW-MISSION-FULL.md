@@ -3,10 +3,13 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: mission-full
 description: Full mission pipeline for large features — vision through retrospective
 triggers:
-  - feature_size: large
+
+- feature_size: large
+
 ---
 
 ## Overview
@@ -37,6 +40,7 @@ After each planning stage (stages 1–5), the review cycle runs automatically:
 → **Refer to:** `CONCERT-WORKFLOW-REVIEW-CYCLE.md`
 
 The review cycle allows the user to:
+
 1. **Accept** the stage output → creates the corresponding `*-SPEC.md` and advances
 2. **Revise** the stage output → open conversation to refine, then re-review
 3. **Restart** the stage → discards the output and re-runs the consultant from scratch
@@ -74,6 +78,7 @@ If any stage fails:
 3. **Stop immediately** — Do NOT proceed to the next stage or task
 4. **Leave working tree dirty** — Do NOT roll back partial work
 5. **Output recovery guidance:**
+
    ```
    ❌ Concert stopped: <stage> failed (<error_type>)
 

@@ -1,13 +1,17 @@
 ## CLI UX Rules — Full Detail
 
 ### 1. Progressive disclosure
+
 Commands must work with minimal arguments. Sensible defaults cover the common case. Advanced behavior is accessed through optional flags. The zero-argument invocation should either do the most useful thing or print help — never fail silently.
 
 ### 2. Respect `NO_COLOR` and TTY detection
+
 Check the `NO_COLOR` environment variable (any non-empty value disables color). Detect whether stdout is a TTY — if not (output is piped), disable colors, spinners, and progress bars automatically.
 
 ### 3. Use structured error messages
+
 Errors must include: what went wrong, why it happened (if known), and what the user can do to fix it.
+
 ```
 Error: could not connect to database
 Cause: connection refused at localhost:5432
@@ -15,41 +19,54 @@ Hint: ensure the database is running with `docker compose up -d`
 ```
 
 ### 4. Use meaningful exit codes
+
 Exit `0` for success, `1` for general errors, `2` for usage errors (bad arguments). Define additional codes for domain-specific failures and document them in `--help` output. Never exit `0` on failure.
 
 ### 5. Provide help text on every command
+
 Every command and subcommand must support `--help` / `-h`. Help text must include: a one-line description, usage syntax, a list of flags with defaults, and at least one example.
 
 ### 6. Consistent flag naming conventions
+
 Use long flags with double dashes and kebab-case (`--output-format`, not `--outputFormat`). Standard flags across all commands:
+
 - `--verbose` / `-v` — increase output detail
 - `--quiet` / `-q` — suppress non-essential output
 - `--json` — output machine-readable JSON
 - `--no-color` — disable colored output
 
 ### 7. Show spinners or progress indicators for long operations
+
 Any operation taking more than 1 second must display a spinner, progress bar, or status message. Update the indicator with the current step when possible. Hide spinners when stdout is not a TTY.
 
 ### 8. Use table output for lists
+
 When displaying multiple items, format as an aligned table with headers. Support `--json` as an alternative. When piped (non-TTY), switch to tab-separated values or JSON automatically.
 
 ### 9. Prompt for confirmation before destructive actions
+
 Commands that delete data, overwrite files, or make irreversible changes must prompt for confirmation unless `--yes` / `-y` or `--force` is passed. In non-interactive mode (no TTY on stdin), abort with an error.
 
 ### 10. Support `--json` output for scripting
+
 Every command that produces output must support a `--json` flag for structured JSON. JSON output must include the same information as the human-readable output.
 
 ### 11. Version flag
+
 Every CLI must support `--version` / `-V` that prints the version, commit hash, and build date.
 
 ### 12. Use stderr for diagnostic messages
+
 Progress indicators, warnings, and debug logs go to stderr. Only the primary output (data, results) goes to stdout. This ensures piping captures only the intended output.
 
 ### 13. Autocomplete support
+
 Generate shell completion scripts for Bash, Zsh, Fish, and PowerShell. Expose a `completion` subcommand.
 
 ### 14. Idempotent commands where possible
+
 Commands that set configuration, create resources, or apply state should be idempotent — running them multiple times produces the same result. Report when no changes are needed.
 
 ### 15. Respect XDG directory conventions
+
 Store configuration in `$XDG_CONFIG_HOME` (default `~/.config/<app>/`), cache in `$XDG_CACHE_HOME` (default `~/.cache/<app>/`), and data in `$XDG_DATA_HOME` (default `~/.local/share/<app>/`). Never create dotfiles directly in `$HOME` without good reason.

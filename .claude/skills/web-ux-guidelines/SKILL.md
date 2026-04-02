@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: web-ux-guidelines
 description: Enforces accessibility, keyboard navigation, responsive design, dark mode, and inclusive interaction patterns for web UI. Use when writing, reviewing, or refactoring .tsx, .jsx, .css, or .scss files, or working in components/ or styles/ directories. Do not use for server-only code, API routes, or non-UI TypeScript/JavaScript files.
+
 ---
 
 ## Web UX Guidelines

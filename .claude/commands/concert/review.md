@@ -21,6 +21,7 @@ Interactive review of the current stage's plan document.
 ## Next Steps
 
 After review, output:
+
 ```
 📋 Next steps:
   → Accept this stage:    /concert:accept

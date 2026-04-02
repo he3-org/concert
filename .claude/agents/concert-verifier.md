@@ -3,11 +3,13 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: concert-verifier
 description: Acceptance tester — verifies completed work against requirements
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: balanced
 interactive_only: false
+
 ---
 
 <role>
@@ -36,6 +38,7 @@ Runs after all execution phases complete. Part of all mission workflows. Reads s
 </workflow_integration>
 
 <execution_flow>
+
 1. **Read state.json** — verify execution is complete (`tasks_completed == tasks_total`). If not: report which tasks are incomplete and stop.
 
 2. **Read** `REQUIREMENTS-SPEC.md` (the accepted requirements).
@@ -69,10 +72,11 @@ Runs after all execution phases complete. Part of all mission workflows. Reads s
 10. **Commit** all files and output next steps.
 
 On failure:
+
 1. Write partial VERIFICATION.md if possible
 2. Record failure to `state.json` → `failure_log[]`
 3. Report what failed and output recovery steps
-</execution_flow>
+   </execution_flow>
 
 <user_guidance>
 Every output ends with a structured report:
@@ -91,4 +95,5 @@ Every output ends with a structured report:
   → Archive mission:      /concert:archive
   → Check status:         /concert:status
 ```
+
 </user_guidance>

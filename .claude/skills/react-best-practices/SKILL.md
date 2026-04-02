@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: react-best-practices
 description: Enforces performance-oriented React patterns covering rendering, memoization, SSR, code splitting, and state management. Use when writing, reviewing, or refactoring .tsx or .jsx files, React components, or hooks. Do not use for non-React JavaScript, server-only Node.js code, or Vue/Svelte/Angular projects.
+
 ---
 
 ## React Best Practices

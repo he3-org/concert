@@ -25,17 +25,20 @@ On failure:
 ### Retry Strategy
 
 Agents should retry only when:
+
 - The failure is transient (network timeout, flaky test, rate limit)
 - The retry has a different approach (not identical re-execution)
 - A maximum retry count is defined (typically 2-3 attempts)
 
 Agents should NOT retry when:
+
 - The failure is deterministic (type error, missing file, invalid config)
 - The error message indicates a logic problem, not an environment problem
 
 ### Escalation
 
 When an agent cannot resolve a failure after retries:
+
 1. Write current state to `state.json` so the next session has full context
 2. Commit any partial work that is valid (don't lose progress)
 3. Output a clear message: what failed, what was tried, what the user should do
@@ -44,6 +47,7 @@ When an agent cannot resolve a failure after retries:
 ### Script Delegation
 
 For deterministic operations (data transforms, file validation, complex parsing), delegate to scripts rather than LLM reasoning:
+
 - Place scripts in the skill's `scripts/` directory or the project's standard script location
 - Scripts must return human-readable error messages on stderr — not just exit codes
 - Bad: `exit 1`

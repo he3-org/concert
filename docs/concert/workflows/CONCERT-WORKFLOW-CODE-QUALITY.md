@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: code-quality
 description: Orchestrator-coder-reviewer loop for complex task execution
+
 ---
 
 ## Overview
@@ -21,12 +23,12 @@ and the **orchestrator** decides what happens next based on the review outcome.
 
 ## When to Use This Workflow
 
-| Condition | Execution Mode |
-|-----------|---------------|
-| Task file has ≤3 tasks | **Simple mode** — single runner handles everything |
+| Condition              | Execution Mode                                      |
+| ---------------------- | --------------------------------------------------- |
+| Task file has ≤3 tasks | **Simple mode** — single runner handles everything  |
 | Task file has >3 tasks | **Full loop** — orchestrator-coder-reviewer pattern |
-| Claude Code session | Full loop available (supports subagent spawning) |
-| GitHub Agents UI | Simple mode only (no subagent spawning) |
+| Claude Code session    | Full loop available (supports subagent spawning)    |
+| GitHub Agents UI       | Simple mode only (no subagent spawning)             |
 
 The orchestrator reads the task file's complexity and the current environment
 to decide which mode to use. In environments that don't support subagent spawning,
@@ -38,11 +40,11 @@ the runner acts as both coder and self-reviewer.
 
 ### Agents Involved
 
-| Agent | Role | Model |
-|-------|------|-------|
-| `concert-runner` (orchestrator) | Coordinates execution, reads task files, manages state | Per workflow |
-| `concert-coder` | Implements code following TDD, reads skills | Per task file `model` field |
-| `concert-code-reviewer` | Reviews code changes with severity ratings | balanced |
+| Agent                           | Role                                                   | Model                       |
+| ------------------------------- | ------------------------------------------------------ | --------------------------- |
+| `concert-runner` (orchestrator) | Coordinates execution, reads task files, manages state | Per workflow                |
+| `concert-coder`                 | Implements code following TDD, reads skills            | Per task file `model` field |
+| `concert-code-reviewer`         | Reviews code changes with severity ratings             | balanced                    |
 
 ### Flow Per Task
 
@@ -105,25 +107,25 @@ When a task fails review (MAJ or CRIT findings):
 
 The reviewer rates each finding using structured severity levels:
 
-| Level | Meaning | Action Required |
-|-------|---------|----------------|
-| **CRIT** | Blocks deployment — security issue, data loss risk | Must fix before proceeding |
-| **MAJ** | Significant quality issue — performance, missing error handling | Must fix before task completion |
-| **MIN** | Style issue, minor improvement | Fix if time permits (optional) |
-| **NTH** | Nice-to-have, suggestion for future | Log only, do not fix now |
-| **PASS** | No issues found | Proceed |
+| Level    | Meaning                                                         | Action Required                 |
+| -------- | --------------------------------------------------------------- | ------------------------------- |
+| **CRIT** | Blocks deployment — security issue, data loss risk              | Must fix before proceeding      |
+| **MAJ**  | Significant quality issue — performance, missing error handling | Must fix before task completion |
+| **MIN**  | Style issue, minor improvement                                  | Fix if time permits (optional)  |
+| **NTH**  | Nice-to-have, suggestion for future                             | Log only, do not fix now        |
+| **PASS** | No issues found                                                 | Proceed                         |
 
 ### Review Outcome
 
 The overall review result is the **highest severity found**:
 
-| Highest Finding | Outcome | Next Action |
-|----------------|---------|-------------|
-| CRIT | FAIL | Send back to coder — all CRIT + MAJ must be fixed |
-| MAJ | FAIL | Send back to coder — all MAJ must be fixed |
-| MIN | PASS | Commit — MIN items optionally fixed |
-| NTH | PASS | Commit — NTH items logged for future |
-| (none) | PASS | Commit — no issues |
+| Highest Finding | Outcome | Next Action                                       |
+| --------------- | ------- | ------------------------------------------------- |
+| CRIT            | FAIL    | Send back to coder — all CRIT + MAJ must be fixed |
+| MAJ             | FAIL    | Send back to coder — all MAJ must be fixed        |
+| MIN             | PASS    | Commit — MIN items optionally fixed               |
+| NTH             | PASS    | Commit — NTH items logged for future              |
+| (none)          | PASS    | Commit — no issues                                |
 
 ---
 
@@ -158,16 +160,19 @@ The reviewer agent MUST follow these rules:
 ### Findings
 
 #### [CRIT] SQL injection in user lookup
+
 - **File:** src/api/routes/users.ts:42
 - **Issue:** User input passed directly to query without parameterization
 - **Fix:** Use parameterized query: `db.query('SELECT * FROM users WHERE id = $1', [userId])`
 
 #### [MAJ] Missing error handling on database call
+
 - **File:** src/api/routes/products.ts:28
 - **Issue:** `await db.query(...)` has no try/catch — unhandled rejection on DB errors
 - **Fix:** Wrap in try/catch, return appropriate error response
 
 #### [NTH] Consider extracting pagination helper
+
 - **File:** src/api/middleware/pagination.ts
 - **Note:** Pagination logic duplicated across 3 routes — could be a shared helper
 - **Not blocking:** Works correctly as-is
@@ -210,6 +215,7 @@ If the code quality loop encounters an unrecoverable error:
 2. **Append to failure_log**
 3. **Stop immediately**
 4. **Output recovery guidance:**
+
    ```
    ❌ Code quality loop failed: <error_description>
 

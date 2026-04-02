@@ -11,6 +11,7 @@ Structure the agent's context loading in tiers to minimize token footprint:
 ### Assume Intelligence
 
 Do not explain concepts the model already knows from training data. Include only:
+
 - **Project-specific conventions** — naming patterns, directory structure, commit format
 - **State that changes** — current branch, active mission, task assignments
 - **Relationships the model can't infer** — "the reviewer agent sends findings back to the coder agent," "state.json is the handoff mechanism between sessions"
@@ -20,6 +21,7 @@ Omit: standard library APIs, common design patterns, language syntax, well-known
 ### Compression Patterns
 
 When an agent needs to consume external content (specs, docs, review feedback):
+
 - Instruct it to extract structured key-value pairs or bullet lists, not to read and summarize prose
 - Strip headers, boilerplate, and repeated definitions before injecting into working context
 - If a file is over 200 lines, instruct the agent to read only the relevant section (use line ranges or grep first)
@@ -27,6 +29,7 @@ When an agent needs to consume external content (specs, docs, review feedback):
 ### Stable Prefix Ordering
 
 Place durable, unchanging content at the top of the agent definition:
+
 1. `<role>` — identity (never changes)
 2. `<operating_principles>` — constraints table (rarely changes)
 3. `<boundaries>` — scope limits (rarely changes)

@@ -17,6 +17,7 @@ Quick task execution without the full pipeline.
 ## Next Steps
 
 After quick completes, output:
+
 ```
 📋 Next steps:
   → Review changes:  git diff HEAD~1

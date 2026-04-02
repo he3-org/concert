@@ -19,6 +19,7 @@ Acceptance testing of completed work.
 ## Next Steps
 
 After verify, output:
+
 ```
 📋 Next steps:
   → Review verification:  docs/concert/missions/.../VERIFICATION.md

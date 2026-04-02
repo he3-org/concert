@@ -7,7 +7,13 @@ Wrapping a component in `React.memo` prevents re-renders when props are shallowl
 ```tsx
 // Before: wrap only after profiling confirms wasted renders
 const ExpensiveList = React.memo(function ExpensiveList({ items }: Props) {
-  return <ul>{items.map(i => <li key={i.id}>{i.label}</li>)}</ul>;
+  return (
+    <ul>
+      {items.map((i) => (
+        <li key={i.id}>{i.label}</li>
+      ))}
+    </ul>
+  );
 });
 ```
 
@@ -17,15 +23,18 @@ Object and array literals created inline in JSX produce a new reference on every
 
 ```tsx
 // Bad — new object reference every render
-<Chart options={{ color: "blue", grid: true }} />
+<Chart options={{ color: 'blue', grid: true }} />;
 
 // Good — stable reference
-const CHART_OPTIONS = { color: "blue", grid: true };
-<Chart options={CHART_OPTIONS} />
+const CHART_OPTIONS = { color: 'blue', grid: true };
+<Chart options={CHART_OPTIONS} />;
 
 // Good — memoized when derived from props
-const options = useMemo(() => ({ color: theme.primary, grid: showGrid }), [theme.primary, showGrid]);
-<Chart options={options} />
+const options = useMemo(
+  () => ({ color: theme.primary, grid: showGrid }),
+  [theme.primary, showGrid]
+);
+<Chart options={options} />;
 ```
 
 ### 3. Keys must be stable, unique identifiers — never array indices
@@ -34,10 +43,14 @@ React uses the `key` prop to reconcile list items across renders. Using the arra
 
 ```tsx
 // Bad — index key breaks state on reorder/insert
-{items.map((item, index) => <Card key={index} {...item} />)}
+{
+  items.map((item, index) => <Card key={index} {...item} />);
+}
 
 // Good — stable ID key
-{items.map(item => <Card key={item.id} {...item} />)}
+{
+  items.map((item) => <Card key={item.id} {...item} />);
+}
 ```
 
 ### 4. Lazy-load routes and heavy components with `React.lazy` and `Suspense`
@@ -45,9 +58,9 @@ React uses the `key` prop to reconcile list items across renders. Using the arra
 Bundling every route and heavy dependency into the initial chunk increases time-to-interactive. Use `React.lazy` to split components into separate chunks loaded on demand, and wrap them with `Suspense` to provide a fallback UI while the chunk loads. Apply at route boundaries first; descend to individual heavy components (rich text editors, chart libraries, map SDKs) where bundle impact justifies it.
 
 ```tsx
-import { lazy, Suspense } from "react";
+import { lazy, Suspense } from 'react';
 
-const ReportPage = lazy(() => import("./ReportPage"));
+const ReportPage = lazy(() => import('./ReportPage'));
 
 function App() {
   return (
@@ -71,7 +84,9 @@ function Banner() {
 // Good — access browser API only after mount
 function Banner() {
   const [width, setWidth] = useState(0);
-  useEffect(() => { setWidth(window.innerWidth); }, []);
+  useEffect(() => {
+    setWidth(window.innerWidth);
+  }, []);
   return <div style={{ width }}>...</div>;
 }
 ```
@@ -83,11 +98,11 @@ State that lives higher than necessary causes more components to re-render when 
 ```tsx
 // Bad — search state lives in the page, forcing re-render of siblings
 function Page() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   return (
     <>
       <SearchBar query={query} onChange={setQuery} />
-      <HeavySidebar />   {/* re-renders on every keystroke */}
+      <HeavySidebar /> {/* re-renders on every keystroke */}
     </>
   );
 }
@@ -97,7 +112,7 @@ function Page() {
   return (
     <>
       <SearchBar />
-      <HeavySidebar />   {/* unaffected by search state */}
+      <HeavySidebar /> {/* unaffected by search state */}
     </>
   );
 }
@@ -110,8 +125,8 @@ A controlled component derives its displayed value from React state, making the 
 ```tsx
 // Controlled — value driven by state
 function NameField() {
-  const [name, setName] = useState("");
-  return <input value={name} onChange={e => setName(e.target.value)} />;
+  const [name, setName] = useState('');
+  return <input value={name} onChange={(e) => setName(e.target.value)} />;
 }
 
 // Uncontrolled — appropriate for file input
@@ -129,15 +144,17 @@ Every `useEffect` that starts an async operation, subscribes to an external sour
 ```tsx
 // Bad — no cleanup; setState may fire after unmount
 useEffect(() => {
-  fetchUser(id).then(user => setUser(user));
+  fetchUser(id).then((user) => setUser(user));
 }, [id]);
 
 // Good — aborted on unmount or when id changes
 useEffect(() => {
   const controller = new AbortController();
   fetchUser(id, { signal: controller.signal })
-    .then(user => setUser(user))
-    .catch(err => { if (err.name !== "AbortError") setError(err); });
+    .then((user) => setUser(user))
+    .catch((err) => {
+      if (err.name !== 'AbortError') setError(err);
+    });
   return () => controller.abort();
 }, [id]);
 
@@ -156,14 +173,14 @@ Using `useEffect` to copy or transform state into another state variable introdu
 // Bad — extra render cycle, flicker risk
 const [filtered, setFiltered] = useState(items);
 useEffect(() => {
-  setFiltered(items.filter(i => i.active));
+  setFiltered(items.filter((i) => i.active));
 }, [items]);
 
 // Good — derived synchronously during render
-const filtered = items.filter(i => i.active);
+const filtered = items.filter((i) => i.active);
 
 // Good — memoized when computation is expensive
-const filtered = useMemo(() => items.filter(i => i.active), [items]);
+const filtered = useMemo(() => items.filter((i) => i.active), [items]);
 ```
 
 ### 10. Avoid prop drilling past 2 levels — use context or composition
@@ -178,7 +195,7 @@ Passing props through intermediate components that do not use them (prop drillin
       <NavItem theme={theme} />
     </Sidebar>
   </Layout>
-</Page>
+</Page>;
 
 // Good — context eliminates the drilling
 const ThemeContext = createContext<Theme>(defaultTheme);
@@ -202,7 +219,7 @@ function NavItem() {
 An unhandled render error anywhere in the React tree unmounts the entire application. Error boundaries catch render-phase errors in their subtree and display a fallback, keeping the rest of the app functional. Place an error boundary at the application root and at every major independent section (route, sidebar, widget panel). Use a library such as `react-error-boundary` to avoid writing the class component boilerplate by hand.
 
 ```tsx
-import { ErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary } from 'react-error-boundary';
 
 function App() {
   return (

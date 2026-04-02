@@ -3,11 +3,13 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: concert-documenter
 description: Phase-level documentation updater — updates higher-level docs after each phase completes
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: balanced
 interactive_only: false
+
 ---
 
 <role>
@@ -35,6 +37,7 @@ Spawned by `concert-continue` after all tasks in a phase complete. Part of `CONC
 </workflow_integration>
 
 <execution_flow>
+
 1. **Read** the PHASE-SUMMARY file for the completed phase.
 
 2. **Read** all commits from the phase via `git log` (scoped to the phase's date range or commit range from state.json).
@@ -51,10 +54,11 @@ Spawned by `concert-continue` after all tasks in a phase complete. Part of `CONC
 5. **Commit**: `docs: update documentation for phase NN — <phase-name>`
 
 On failure:
+
 1. Write partial updates if possible
 2. Report which docs were updated and which failed
 3. Output recovery steps — the commit can be retried safely
-</execution_flow>
+   </execution_flow>
 
 <user_guidance>
 Every output ends with a structured report:
@@ -68,4 +72,5 @@ Every output ends with a structured report:
   → Continue execution:  /concert:continue
   → Check status:        /concert:status
 ```
+
 </user_guidance>

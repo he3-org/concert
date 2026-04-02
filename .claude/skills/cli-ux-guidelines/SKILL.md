@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: cli-ux-guidelines
 description: Enforces command-line UX best practices including output formatting, error handling, flag conventions, and terminal compatibility. Use when building, reviewing, or refactoring CLI commands, shell scripts, or terminal output. Do not use for web UIs, REST APIs, or GUI applications.
+
 ---
 
 ## CLI UX Guidelines

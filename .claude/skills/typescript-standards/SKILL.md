@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: typescript-standards
 description: Enforces strict TypeScript type safety patterns, boundary typing, and idiomatic conventions. Use when writing, reviewing, or refactoring .ts or .tsx files, or configuring tsconfig.json. Do not use for JavaScript-only projects, runtime validation, or non-TypeScript languages.
+
 ---
 
 ## TypeScript Standards

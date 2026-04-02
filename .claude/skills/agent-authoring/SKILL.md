@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: agent-authoring
-description: Guides creation of AI agent definition files (.claude/agents/*.md) and their GitHub agent stubs (.github/agents/*.agent.md). Use when asked to create, review, or improve an agent definition. Do not use for skill files (use skill-authoring), general documentation, or application code.
+description: Guides creation of AI agent definition files (.claude/agents/_.md) and their GitHub agent stubs (.github/agents/_.agent.md). Use when asked to create, review, or improve an agent definition. Do not use for skill files (use skill-authoring), general documentation, or application code.
+
 ---
 
 ## Agent Authoring
@@ -47,6 +49,7 @@ Read `references/verification.md` for practical verification patterns for coding
 ### Step 6: Validate the Agent
 
 Before considering the agent complete:
+
 1. Verify the definition file has valid YAML frontmatter with all required fields (`name`, `description`, `tools`, `model`, `interactive_only`).
 2. Verify the GitHub stub exists at `.github/agents/<agent-name>.agent.md` with correct redirect path.
 3. Verify the stub contains `name` and `description` in frontmatter but does NOT contain `tools:` or `model:` (stubs are metadata-only).

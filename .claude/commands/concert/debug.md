@@ -20,6 +20,7 @@ Scientific-method debugging with persistent state.
 ## Next Steps
 
 After debug completes, output:
+
 ```
 📋 Next steps:
   → Review the fix:    git diff HEAD~1

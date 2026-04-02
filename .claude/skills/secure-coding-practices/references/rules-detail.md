@@ -5,15 +5,15 @@
 Every value that crosses a trust boundary — HTTP request bodies, query parameters, headers, message queue payloads, file contents, CLI arguments — must be validated before use. Reject invalid input immediately with a 400-level error and a clear message. Do not attempt to sanitize malformed data and continue; reject it. Internal functions may assume their inputs are already valid if the boundary validation is enforced consistently at the entry point.
 
 ```typescript
-import { z } from "zod";
+import { z } from 'zod';
 
 const CreateUserSchema = z.object({
   email: z.string().email(),
   age: z.number().int().min(0).max(150),
-  role: z.enum(["user", "admin"]),
+  role: z.enum(['user', 'admin']),
 });
 
-app.post("/users", (req, res) => {
+app.post('/users', (req, res) => {
   const result = CreateUserSchema.safeParse(req.body);
   if (!result.success) {
     return res.status(400).json({ error: result.error.flatten() });
@@ -29,15 +29,10 @@ Never build SQL, NoSQL, LDAP, or any other query language strings by concatenati
 
 ```typescript
 // Wrong — SQL injection risk
-const rows = await db.query(
-  `SELECT * FROM orders WHERE user_id = '${userId}'`
-);
+const rows = await db.query(`SELECT * FROM orders WHERE user_id = '${userId}'`);
 
 // Correct — parameterized
-const rows = await db.query(
-  "SELECT * FROM orders WHERE user_id = $1",
-  [userId]
-);
+const rows = await db.query('SELECT * FROM orders WHERE user_id = $1', [userId]);
 
 // Correct — ORM
 const orders = await Order.findAll({ where: { userId } });
@@ -55,7 +50,7 @@ element.innerHTML = userSuppliedContent;
 element.textContent = userSuppliedContent;
 
 // Correct — when HTML is required, sanitize first
-import DOMPurify from "dompurify";
+import DOMPurify from 'dompurify';
 element.innerHTML = DOMPurify.sanitize(userSuppliedContent);
 ```
 
@@ -67,20 +62,20 @@ Authentication (who are you?) and authorization (what are you allowed to do?) mu
 // Attach auth middleware to all routes in the group
 const router = express.Router();
 router.use(requireAuth);
-router.use(requireRole("admin"));
+router.use(requireRole('admin'));
 
-router.get("/admin/users", listUsers);
-router.delete("/admin/users/:id", deleteUser);
+router.get('/admin/users', listUsers);
+router.delete('/admin/users/:id', deleteUser);
 
 // requireAuth middleware
 function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Unauthorized" });
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
   try {
     req.user = verifyJwt(token);
     next();
   } catch {
-    res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({ error: 'Invalid token' });
   }
 }
 ```
@@ -95,11 +90,11 @@ Secrets — API keys, database passwords, JWT signing keys, OAuth client secrets
 
 ```typescript
 // Wrong — secret in source
-const client = new StripeClient("sk_live_abc123...");
+const client = new StripeClient('sk_live_abc123...');
 
 // Correct — loaded from environment
 const stripeKey = process.env.STRIPE_SECRET_KEY;
-if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+if (!stripeKey) throw new Error('STRIPE_SECRET_KEY is not set');
 const client = new StripeClient(stripeKey);
 ```
 
@@ -108,18 +103,18 @@ const client = new StripeClient(stripeKey);
 Cross-Site Request Forgery attacks trick authenticated users into submitting state-changing requests from a malicious origin. Protect all state-mutating endpoints (POST, PUT, PATCH, DELETE) with a CSRF token or enforce the `SameSite=Strict` (or `Lax`) cookie attribute. For APIs consumed exclusively by JavaScript clients, requiring a custom header (e.g., `X-Requested-With`) is an acceptable alternative because browsers do not send custom headers in cross-origin requests without a CORS preflight.
 
 ```typescript
-import csrf from "csurf";
+import csrf from 'csurf';
 
 const csrfProtection = csrf({ cookie: true });
 
 // Apply to all state-mutating routes
-app.post("/transfer", csrfProtection, (req, res) => {
+app.post('/transfer', csrfProtection, (req, res) => {
   // handler only reached if CSRF token is valid
 });
 
 // Include token in responses for form rendering
-app.get("/transfer", csrfProtection, (req, res) => {
-  res.render("transfer", { csrfToken: req.csrfToken() });
+app.get('/transfer', csrfProtection, (req, res) => {
+  res.render('transfer', { csrfToken: req.csrfToken() });
 });
 ```
 
@@ -128,18 +123,18 @@ app.get("/transfer", csrfProtection, (req, res) => {
 Brute-force and credential-stuffing attacks target login, password reset, and token exchange endpoints. Apply rate limiting to these endpoints keyed on client IP and, where applicable, on the targeted account identifier. Use exponential back-off or lockout after a threshold of failures. Distinguish rate-limit responses (429) from authentication failures (401/403) so clients can handle them correctly without leaking information about account existence.
 
 ```typescript
-import rateLimit from "express-rate-limit";
+import rateLimit from 'express-rate-limit';
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: "Too many attempts, please try again later." },
+  message: { error: 'Too many attempts, please try again later.' },
 });
 
-app.post("/auth/login", authLimiter, loginHandler);
-app.post("/auth/reset-password", authLimiter, resetPasswordHandler);
+app.post('/auth/login', authLimiter, loginHandler);
+app.post('/auth/reset-password', authLimiter, resetPasswordHandler);
 ```
 
 ### 9. Validate file uploads
@@ -147,19 +142,19 @@ app.post("/auth/reset-password", authLimiter, resetPasswordHandler);
 File upload handlers are a common attack surface for storing malicious content or overwhelming server resources. Validate the MIME type from the file's magic bytes (not the `Content-Type` header, which is user-controlled), enforce a maximum file size, and restrict allowed extensions. Store uploaded files outside the web root or in object storage; never execute them. Rename uploaded files to server-generated names to prevent path traversal via the original filename.
 
 ```typescript
-import { fromBuffer } from "file-type";
-import { randomUUID } from "crypto";
+import { fromBuffer } from 'file-type';
+import { randomUUID } from 'crypto';
 
 async function handleUpload(buffer: Buffer, originalName: string) {
   const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
   if (buffer.length > MAX_BYTES) {
-    throw new ValidationError("File exceeds maximum size");
+    throw new ValidationError('File exceeds maximum size');
   }
 
   const type = await fromBuffer(buffer);
-  const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"]);
+  const ALLOWED = new Set(['image/jpeg', 'image/png', 'image/webp']);
   if (!type || !ALLOWED.has(type.mime)) {
-    throw new ValidationError("File type not permitted");
+    throw new ValidationError('File type not permitted');
   }
 
   // Store under a server-generated name, not the original

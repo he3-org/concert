@@ -3,11 +3,13 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: concert-push
 description: Cross-environment handoff — documents the push command behavior for agents
 tools: Read
 model: budget
 interactive_only: false
+
 ---
 
 <role>
@@ -44,6 +46,7 @@ The `concert push` CLI command performs:
 7. Output next steps for continuing in the other environment.
 
 **Usage:**
+
 ```
 npx @he3-org/concert push
 ```
@@ -52,7 +55,8 @@ This is a CLI command, NOT a `/concert:push` agent command. It works without an 
 </execution_flow>
 
 <user_guidance>
+
 - Run `npx @he3-org/concert push` from the terminal — not as an agent command
 - Safe to run at any point — never loses work
 - Output tells you exactly which agent to run and what model to select in the other environment
-</user_guidance>
+  </user_guidance>

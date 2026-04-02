@@ -3,8 +3,10 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: review-cycle
 description: Review → accept/revise/restart pattern for pipeline planning stages
+
 ---
 
 ## Overview
@@ -24,13 +26,13 @@ document before it becomes a project-level spec.
 
 The review cycle is triggered automatically after any planning stage completes:
 
-| Stage | Plan Document | Triggers Review |
-|-------|--------------|-----------------|
-| vision | `VISION.md` | Yes |
-| requirements | `REQUIREMENTS.md` | Yes |
-| architecture | `ARCHITECTURE.md` | Yes |
-| ux | `UX.md` | Yes |
-| tasks | `phases/` with TASK files | Yes |
+| Stage        | Plan Document             | Triggers Review |
+| ------------ | ------------------------- | --------------- |
+| vision       | `VISION.md`               | Yes             |
+| requirements | `REQUIREMENTS.md`         | Yes             |
+| architecture | `ARCHITECTURE.md`         | Yes             |
+| ux           | `UX.md`                   | Yes             |
+| tasks        | `phases/` with TASK files | Yes             |
 
 The review cycle is NOT triggered for execution, verification, or retrospective stages.
 
@@ -161,11 +163,11 @@ runs `/concert:replan <stage>`.
 
 Each mission workflow defines which stages trigger reviews:
 
-| Workflow | Review After Stages |
-|----------|-------------------|
-| `CONCERT-WORKFLOW-MISSION-FULL.md` | 1 (vision), 2 (requirements), 3 (architecture), 4 (ux), 5 (tasks) |
-| `CONCERT-WORKFLOW-MISSION-MEDIUM.md` | 1 (vision), 2 (requirements), 3 (architecture), 4 (tasks) |
-| `CONCERT-WORKFLOW-MISSION-SMALL.md` | 1 (vision), 2 (tasks) |
+| Workflow                             | Review After Stages                                               |
+| ------------------------------------ | ----------------------------------------------------------------- |
+| `CONCERT-WORKFLOW-MISSION-FULL.md`   | 1 (vision), 2 (requirements), 3 (architecture), 4 (ux), 5 (tasks) |
+| `CONCERT-WORKFLOW-MISSION-MEDIUM.md` | 1 (vision), 2 (requirements), 3 (architecture), 4 (tasks)         |
+| `CONCERT-WORKFLOW-MISSION-SMALL.md`  | 1 (vision), 2 (tasks)                                             |
 
 ---
 
@@ -188,6 +190,7 @@ If the review cycle encounters an error (e.g., plan file missing, state corrupti
 1. **Write failure block** to `state.json`
 2. **Stop immediately**
 3. **Output recovery guidance:**
+
    ```
    ❌ Review cycle failed: <error_description>
 

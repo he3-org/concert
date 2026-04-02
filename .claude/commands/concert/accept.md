@@ -22,6 +22,7 @@ Accept the current stage's plan, create project-level spec, advance pipeline.
 ## Next Steps
 
 After accept, output the workflow-appropriate next step:
+
 ```
 📋 Next steps:
   → Continue:           /concert:continue     (advance to next stage or start execution)

@@ -3,11 +3,14 @@
      Any manual changes will be lost. To customize behavior, see docs/concert/README.md -->
 
 ---
+
 name: self-improvement
 description: Post-mission retrospective analysis for Concert optimization
 triggers:
-  - after: verification
-    condition: concert.jsonc → self_improvement.enabled == true
+
+- after: verification
+  condition: concert.jsonc → self_improvement.enabled == true
+
 ---
 
 ## Overview
@@ -44,16 +47,16 @@ If `self_improvement.enabled` is `false`, skip entirely — do not spawn the age
 
 The agent MUST read all of these before generating its analysis:
 
-| Source | Purpose |
-|--------|---------|
-| `state.json` → `telemetry[]` | Per-task outcomes: model tier, confidence, review results, revision counts |
-| `state.json` → `failure_log[]` | Error patterns and how they were resolved |
-| `COST-REPORT.md` | Aggregated model tier effectiveness and confidence accuracy data |
-| `PHASE-SUMMARY-*.md` files | Phase-level completion context and complexity indicators |
-| `TASK-*.md` files | Original task definitions and model tier assignments |
-| `.claude/agents/` | Current agent definitions (to suggest prompt improvements) |
-| `.claude/skills/` | Current skill definitions (to suggest additions or changes) |
-| `docs/concert/workflows/` | Current workflow definitions (to suggest process improvements) |
+| Source                         | Purpose                                                                    |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| `state.json` → `telemetry[]`   | Per-task outcomes: model tier, confidence, review results, revision counts |
+| `state.json` → `failure_log[]` | Error patterns and how they were resolved                                  |
+| `COST-REPORT.md`               | Aggregated model tier effectiveness and confidence accuracy data           |
+| `PHASE-SUMMARY-*.md` files     | Phase-level completion context and complexity indicators                   |
+| `TASK-*.md` files              | Original task definitions and model tier assignments                       |
+| `.claude/agents/`              | Current agent definitions (to suggest prompt improvements)                 |
+| `.claude/skills/`              | Current skill definitions (to suggest additions or changes)                |
+| `docs/concert/workflows/`      | Current workflow definitions (to suggest process improvements)             |
 
 ---
 
@@ -159,27 +162,27 @@ Write `CONCERT-IMPROVEMENT.md` to the **mission folder** (alongside `COST-REPORT
 - Telemetry: state.json → telemetry[] (<N> records)
 - Failures: state.json → failure_log[] (<N> entries)
 - Cost report: COST-REPORT.md
-- Phase summaries: phases/*/PHASE-SUMMARY-*.md
+- Phase summaries: phases/_/PHASE-SUMMARY-_.md
 ```
 
 ### Suggestion Priority Definitions
 
-| Priority | Meaning | Threshold |
-|----------|---------|-----------|
-| **HIGH** | Pattern appeared in ≥3 tasks or caused ≥2 revision cycles. Fixing this would measurably reduce cost or improve quality for future missions. | Frequent + high impact |
-| **MEDIUM** | Pattern appeared in 1–2 tasks. Worth addressing but not urgent. | Occasional occurrence |
-| **LOW** | Minor optimization or observation. Nice-to-have for future improvement. | Single occurrence or minor |
+| Priority   | Meaning                                                                                                                                     | Threshold                  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **HIGH**   | Pattern appeared in ≥3 tasks or caused ≥2 revision cycles. Fixing this would measurably reduce cost or improve quality for future missions. | Frequent + high impact     |
+| **MEDIUM** | Pattern appeared in 1–2 tasks. Worth addressing but not urgent.                                                                             | Occasional occurrence      |
+| **LOW**    | Minor optimization or observation. Nice-to-have for future improvement.                                                                     | Single occurrence or minor |
 
 ### Suggestion Format Requirements
 
 Every suggestion MUST include:
 
-| Field | Description | Required |
-|-------|-------------|----------|
-| **Priority** | `HIGH`, `MEDIUM`, or `LOW` | Yes |
-| **Evidence** | Specific telemetry data points that support the suggestion | Yes |
-| **Suggestion** | Concrete, actionable change to make | Yes |
-| **Affects** | Specific file paths or systems that would need to change | Yes |
+| Field          | Description                                                | Required |
+| -------------- | ---------------------------------------------------------- | -------- |
+| **Priority**   | `HIGH`, `MEDIUM`, or `LOW`                                 | Yes      |
+| **Evidence**   | Specific telemetry data points that support the suggestion | Yes      |
+| **Suggestion** | Concrete, actionable change to make                        | Yes      |
+| **Affects**    | Specific file paths or systems that would need to change   | Yes      |
 
 ---
 

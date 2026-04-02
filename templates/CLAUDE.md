@@ -12,6 +12,7 @@ This project uses [Concert](https://github.com/he3-org/concert) for agentic deve
 - `/concert:status` — Check current status
 - `/concert:continue` — Continue to next stage or resume execution
 - `/concert:debug` — Debug an issue
+- `/concert:fix` — Fix an error with TDD-first diagnosis and quality review
 - `/concert:verify` — Verify work
 - `/concert:quick` — Run a quick task
 - `/concert:restart` — Restart a stage

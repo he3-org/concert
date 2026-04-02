@@ -62,6 +62,22 @@ describe('template files', () => {
     );
   });
 
+  it('docs/concert/TODO.md exists with ad hoc description', () => {
+    const todoPath = path.join(TEMPLATES_DIR, 'docs', 'concert', 'TODO.md');
+    expect(fs.existsSync(todoPath)).toBe(true);
+    const content = fs.readFileSync(todoPath, 'utf-8');
+    expect(content).toContain('TODO');
+    expect(content).toContain('should NOT');
+  });
+
+  it('docs/concert/IDEAS.md exists with ad hoc description', () => {
+    const ideasPath = path.join(TEMPLATES_DIR, 'docs', 'concert', 'IDEAS.md');
+    expect(fs.existsSync(ideasPath)).toBe(true);
+    const content = fs.readFileSync(ideasPath, 'utf-8');
+    expect(content).toContain('Ideas');
+    expect(content).toContain('should NOT');
+  });
+
   it('no file in templates exceeds 50KB', () => {
     function checkSize(dir: string): void {
       if (!fs.existsSync(dir)) return;
@@ -121,6 +137,7 @@ const EXPECTED_AGENTS = [
   'concert-quick',
   'concert-push',
   'concert-documenter',
+  'concert-fix',
 ];
 
 describe('agent definition files (live)', () => {
@@ -175,6 +192,7 @@ const EXPECTED_COMMANDS = [
   'restart',
   'replan',
   'archive',
+  'fix',
 ];
 
 describe('Claude Code command files (live)', () => {
@@ -199,6 +217,7 @@ const EXPECTED_WORKFLOWS = [
   'CONCERT-WORKFLOW-REVIEW-CYCLE',
   'CONCERT-WORKFLOW-OBSERVABILITY',
   'CONCERT-WORKFLOW-SELF-IMPROVEMENT',
+  'CONCERT-WORKFLOW-FIX',
 ];
 
 describe('workflow files (live)', () => {

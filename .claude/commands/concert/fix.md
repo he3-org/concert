@@ -23,7 +23,7 @@ redesign), a reasoning document is written to `docs/` and the command exits with
    - Review the fix against the `CONCERT-WORKFLOW-FIX.md` quality loop
    - If agents, skills, or documentation need updating to prevent recurrence, do that
 5. If the fix is impossible or requires architecture-level changes:
-   - Write a reasoning document to `docs/concert/fix-escalation-<date>.md`
+   - Write a reasoning document to `docs/fix-escalation-<date>.md`
    - Output: "This needs extraordinary guidance. See: `<document_path>`"
    - Do NOT attempt the fix
 6. Commit fix with conventional format: `fix(scope): description`

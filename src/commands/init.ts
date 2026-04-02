@@ -144,11 +144,12 @@ export async function runInit(cwd: string): Promise<number> {
   result.created.push(...liveResult.created);
   result.skipped.push(...liveResult.skipped);
 
-  // Set project_name in concert.jsonc
+  // Set project_name and concert_version in concert.jsonc
   const projectName = detectProjectName(cwd);
   const rawConfig = readConfigRaw(cwd);
   if (rawConfig) {
-    const modified = modifyConfigField(rawConfig, ["project_name"], projectName);
+    let modified = modifyConfigField(rawConfig, ["project_name"], projectName);
+    modified = modifyConfigField(modified, ["concert_version"], version);
     writeConfig(cwd, modified);
   }
 

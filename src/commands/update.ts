@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { resolvePackageRoot, copyLiveFiles } from "../lib/copy.js";
-import { readConfigRaw, writeConfig, readConfig } from "../lib/config.js";
+import { readConfigRaw, writeConfig, readConfig, modifyConfigField } from "../lib/config.js";
 import { readState, writeState } from "../lib/state.js";
 import { getPackageVersion } from "../lib/version.js";
 import { mergeState, mergeConfig } from "../lib/merge.js";
@@ -153,7 +153,9 @@ export async function runUpdate(cwd: string): Promise<number> {
   if (currentRaw && fs.existsSync(templateConfigPath)) {
     const templateRaw = fs.readFileSync(templateConfigPath, "utf-8");
     const templateConfig = jsonc.parse(templateRaw) as Record<string, unknown>;
-    const { mergedRaw, report } = mergeConfig(currentRaw, templateConfig);
+    let { mergedRaw, report } = mergeConfig(currentRaw, templateConfig);
+    // Always update concert_version to the current package version
+    mergedRaw = modifyConfigField(mergedRaw, ["concert_version"], version);
     writeConfig(cwd, mergedRaw);
     configReport = report;
   }

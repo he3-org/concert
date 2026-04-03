@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.1](https://github.com/he3-org/concert/compare/v1.6.0...v1.6.1) (2026-04-03)
+
+
+### Bug Fixes
+
+* allow trailing commas when parsing concert.jsonc ([#31](https://github.com/he3-org/concert/issues/31)) ([29f054d](https://github.com/he3-org/concert/commit/29f054d2e0c6694a3e98cccde50f886c0f7da9df))
+* skill YAML frontmatter, env check wording, review flow, and CoPilot CLI support ([#33](https://github.com/he3-org/concert/issues/33)) ([e071a00](https://github.com/he3-org/concert/commit/e071a009b87224c950e1ceab67c93e996822a879))
+
 ## [1.6.0](https://github.com/he3-org/concert/compare/v1.5.0...v1.6.0) (2026-04-02)
 
 

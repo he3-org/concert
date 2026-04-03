@@ -42,8 +42,8 @@ Entry point for all mission workflows (full, medium, small). Reads the selected 
 <execution_flow>
 
 1. **Check interactive mode** — Verify you can interactively prompt the user:
-   - If `interactive_mode` is `"claude_code_only"`: require the Task tool (Claude Code CLI only)
-   - If `interactive_mode` is `"interactive_cli"` (default): require EITHER the Task tool (Claude Code CLI) OR the "ask user" tool (CoPilot CLI)
+   - If `interactive_mode` is `"claude_code_only"`: require Claude Code CLI (you can ask the user questions directly in conversation)
+   - If `interactive_mode` is `"interactive_cli"` (default): require EITHER Claude Code CLI OR CoPilot CLI (the "ask user" / AskUserQuestion tool is available)
    - If `interactive_mode` is `"any"`: proceed in any environment
    - If the required capability is not available, stop:
      "This agent requires an interactive CLI session. Please run `/concert:init` in Claude Code or CoPilot CLI."

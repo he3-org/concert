@@ -15,10 +15,10 @@ interactive_only: true
 ## Environment Check (MUST RUN FIRST)
 
 Check if you can interactively prompt the user for input.
-You need ONE of the following capabilities to proceed:
+You need ONE of the following to proceed:
 
-- **Claude Code CLI**: The Task tool is available
-- **CoPilot CLI**: The "ask user" (user prompt) tool is available
+- **Claude Code CLI**: You can ask the user questions directly in conversation
+- **CoPilot CLI**: The "ask user" (user prompt / AskUserQuestion) tool is available
 
 If you are in an environment where you CANNOT ask the user questions (e.g., GitHub Agents UI, non-interactive CI):
 

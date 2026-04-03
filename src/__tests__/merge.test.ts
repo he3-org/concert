@@ -140,6 +140,20 @@ describe('mergeConfig', () => {
     expect(mergedRaw).toContain('user-project');
   });
 
+  it('handles trailing commas in current config (JSONC style)', () => {
+    const currentRaw = `{
+  "project_name": "web-store",
+  "concert_version": "0.1.0",
+  "execution": {
+    "mode": "wave",
+    "max_iterations": 3,
+  },
+}`;
+    expect(() => mergeConfig(currentRaw, templateConfig)).not.toThrow();
+    const { mergedRaw } = mergeConfig(currentRaw, templateConfig);
+    expect(mergedRaw).toContain('web-store');
+  });
+
   it('report accurately lists all additions, removals, and warnings', () => {
     const currentRaw = `{
   "project_name": "test",

@@ -115,7 +115,10 @@ export function mergeConfig(
   const report: MergeReport = { added: [], removed: [], warnings: [] };
 
   const errors: jsonc.ParseError[] = [];
-  const current = jsonc.parse(currentRaw, errors) as Record<string, unknown>;
+  const current = jsonc.parse(currentRaw, errors, { allowTrailingComma: true }) as Record<
+    string,
+    unknown
+  >;
   if (errors.length > 0) {
     throw new Error(
       `Failed to parse current config: ${errors.map((e) => jsonc.printParseErrorCode(e.error)).join(', ')}`

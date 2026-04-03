@@ -151,7 +151,9 @@ export async function runUpdate(cwd: string): Promise<number> {
   const templateConfigPath = path.join(templatesDir, 'concert.jsonc');
   if (currentRaw && fs.existsSync(templateConfigPath)) {
     const templateRaw = fs.readFileSync(templateConfigPath, 'utf-8');
-    const templateConfig = jsonc.parse(templateRaw) as Record<string, unknown>;
+    const templateConfig = jsonc.parse(templateRaw, undefined, {
+      allowTrailingComma: true,
+    }) as Record<string, unknown>;
     let { mergedRaw, report } = mergeConfig(currentRaw, templateConfig);
     // Always update concert_version to the current package version
     mergedRaw = modifyConfigField(mergedRaw, ['concert_version'], version);

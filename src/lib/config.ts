@@ -22,7 +22,7 @@ export function readConfig(cwd: string): ConcertConfig | null {
   }
   const raw = fs.readFileSync(configPath, 'utf-8');
   const errors: jsonc.ParseError[] = [];
-  const parsed = jsonc.parse(raw, errors);
+  const parsed = jsonc.parse(raw, errors, { allowTrailingComma: true });
   if (errors.length > 0) {
     throw new Error(
       `Failed to parse ${CONFIG_FILENAME}: ${errors.map((e) => jsonc.printParseErrorCode(e.error)).join(', ')}`

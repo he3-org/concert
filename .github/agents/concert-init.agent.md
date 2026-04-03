@@ -13,8 +13,8 @@ Check if you can interactively prompt the user for input.
 If you CANNOT ask the user questions (e.g., GitHub Agents UI):
 
 STOP IMMEDIATELY and output:
-❌ This command requires interactive mode (Claude Code CLI or web).
-Run `/concert:init` in Claude Code instead.
+❌ This command requires interactive mode (Claude Code CLI, CoPilot CLI, or web).
+Run `/concert:init` in an interactive CLI instead.
 
 Do NOT attempt to proceed without user input. Do NOT guess at answers.
 

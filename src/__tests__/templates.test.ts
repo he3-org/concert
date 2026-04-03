@@ -178,6 +178,15 @@ describe('GitHub agent stubs (live)', () => {
       expect(content).not.toContain('tools:');
       expect(content).not.toContain('\nmodel:');
     });
+
+    it(`${agent}.agent.md has YAML frontmatter on line 1`, () => {
+      const stubPath = path.join(ROOT, '.github', 'agents', `${agent}.agent.md`);
+      const content = fs.readFileSync(stubPath, 'utf-8');
+      expect(
+        content.startsWith('---\n'),
+        `${agent}.agent.md must start with --- (YAML frontmatter)`
+      ).toBe(true);
+    });
   }
 });
 
@@ -414,6 +423,21 @@ describe('user guidance templates', () => {
       'Stage Draft Complete',
       'Stage Accepted',
       'Review Prompt',
+      'Mission Initialized',
+      'Mission Archived',
+      'Replan Complete',
+      'Restart Complete',
+      'Fix Complete',
+      'Fix Escalated',
+      'Debug Complete',
+      'Debug Escalated',
+      'Quick Complete',
+      'Code Review Pass',
+      'Code Review Fail',
+      'Coder Task Complete',
+      'Coder Task Failed',
+      'Documentation Updated',
+      'Verification Complete',
       'Failure Recovery',
       'Mission Status',
     ];

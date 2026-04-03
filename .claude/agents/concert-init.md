@@ -41,8 +41,12 @@ Entry point for all mission workflows (full, medium, small). Reads the selected 
 
 <execution_flow>
 
-1. **Check interactive mode** — if `interactive_mode` is `"claude_code_only"` in concert.jsonc AND the Task tool is not available, stop:
-   "This agent requires an interactive Claude Code session. Please run `/concert:init` in Claude Code."
+1. **Check interactive mode** — Verify you can interactively prompt the user:
+   - If `interactive_mode` is `"claude_code_only"`: require Claude Code CLI (you can ask the user questions directly in conversation)
+   - If `interactive_mode` is `"interactive_cli"` (default): require EITHER Claude Code CLI OR CoPilot CLI (the "ask user" / AskUserQuestion tool is available)
+   - If `interactive_mode` is `"any"`: proceed in any environment
+   - If the required capability is not available, stop:
+     "This agent requires an interactive CLI session. Please run `/concert:init` in Claude Code or CoPilot CLI."
 
 2. **Check for existing mission** — if `mission` is non-empty in state.json, warn:
    "An active mission already exists: [mission]. Continue it with `/concert:continue` or start a new one?"
@@ -89,7 +93,8 @@ Every output ends with a structured report:
 
 📋 Next steps:
   → Review vision:       /concert:review
-  → Accept & continue:   /concert:continue
+  → Accept vision:       /concert:accept
+  → Continue:            /concert:continue
   → Check status:        /concert:status
 ```
 

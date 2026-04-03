@@ -66,7 +66,7 @@ describe('types', () => {
         pr_target: 'main',
       },
       status_display: 'wip_pr',
-      interactive_mode: 'claude_code_only',
+      interactive_mode: 'interactive_cli',
       execution: {
         mode: 'wave',
         max_tasks_per_file: 4,
@@ -106,7 +106,7 @@ describe('types', () => {
       },
     };
     expect(config.project_name).toBe('my-project');
-    expect(config.interactive_mode).toBe('claude_code_only');
+    expect(config.interactive_mode).toBe('interactive_cli');
     expect(config.execution.max_review_iterations).toBe(3);
   });
 

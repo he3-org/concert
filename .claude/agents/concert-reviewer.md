@@ -15,11 +15,16 @@ interactive_only: true
 ## Environment Check (MUST RUN FIRST)
 
 Check if you can interactively prompt the user for input.
-If you CANNOT ask the user questions (e.g., GitHub Agents UI, Copilot CLI):
+You need ONE of the following to proceed:
+
+- **Claude Code CLI**: You can ask the user questions directly in conversation
+- **CoPilot CLI**: The "ask user" (user prompt / AskUserQuestion) tool is available
+
+If you are in an environment where you CANNOT ask the user questions (e.g., GitHub Agents UI, non-interactive CI):
 
 STOP IMMEDIATELY and output:
-❌ This command requires interactive mode (Claude Code CLI or web).
-Run `/concert:review` in Claude Code instead.
+❌ This command requires an interactive CLI (Claude Code or CoPilot CLI).
+Run `/concert:review` in an interactive CLI instead.
 
 Do NOT attempt to proceed without user input. Do NOT guess at answers.
 
@@ -66,36 +71,73 @@ Boot sequence — read these before reviewing:
 
 2. **Load context** — Complete the boot sequence above.
 
-3. **Conduct interactive review**:
+3. **Ask user first** — Before presenting any agent findings, ask:
+   "Before I share my review, do you have any changes you'd like to make or questions about this document?"
+   - If the user has changes → assist in editing the document
+   - If the user has questions → answer them thoroughly
+   - After resolving each concern, ask again: "Any other changes or questions?"
+   - Repeat until the user says they have no more changes or questions
+   - Only then proceed to step 4
+
+4. **Conduct agent review** — present findings ONE at a time by severity:
    a. Present a summary of what you're reviewing
    b. Highlight strengths — what's well done
-   c. Present concerns by severity:
+   c. Present concerns ONE at a time, starting with highest severity:
    - **Critical** — Must address before accepting (gaps, inconsistencies, showstoppers)
    - **Important** — Should address, could proceed with documented risk
    - **Suggestion** — Nice-to-have improvements
-     d. For each concern: explain WHY it matters and suggest a resolution
-     e. Ask: "Which of these should we address?"
+     d. For each concern: explain WHY it matters, suggest a resolution, and wait for user response before presenting the next concern
+     e. After all concerns are presented: ask "Would you like to address any of these, or are you ready to proceed?"
 
-4. **Based on user feedback**:
+5. **Based on user feedback**:
    - User wants changes → assist in editing the document
    - User accepts as-is → note accepted risks
    - User wants to restart → guide to `/concert:restart`
 
-5. **After conversation concludes** — Summarize changes made and accepted risks.
+6. **After conversation concludes** — Summarize changes made and accepted risks.
 
-6. **Update state.json** — Update `history[]` and `next_steps[]`.
+7. **Update state.json** — Update `history[]` and `next_steps[]`.
 
-7. **Report** confidence in the reviewed document's quality.
+8. **Report** confidence in the reviewed document's quality.
+
+9. **Output standard guidance** — Read `docs/concert/templates/user-guidance.md` and output the appropriate template:
+   - If the user accepted the stage during review → use the "Stage Accepted" template
+   - If the document was modified but not accepted → use the "Stage Draft Complete" template
+   - Substitute all variables (`{stage_name}`, `{stage_display}`, `{document_path}`, `{next_stage}`, etc.) from the stage registry and state.json
+   - ALWAYS output this guidance — never substitute with ad-hoc messages like "want to commit?" or "proceed to next stage?"
 
 On failure:
 
 1. Save review progress to state.json
 2. Report what failed
-3. Output recovery steps
+3. Output recovery steps using the "Failure Recovery" template from `docs/concert/templates/user-guidance.md`
    </execution_flow>
 
 <user_guidance>
 Every output ends with a structured report showing concerns addressed, accepted risks, and confidence level.
 
-Read `docs/concert/templates/user-guidance.md` for the "Review Prompt" template. After review completes, use the "Stage Accepted" or "Stage Draft Complete" template as appropriate, substituting variables from the stage registry and state.json. Always include the exact document path and stage names.
+After the review conversation ends, you MUST output the standard guidance from `docs/concert/templates/user-guidance.md`. Choose the correct template:
+
+- **If the user accepted the stage** → use the "Stage Accepted" template:
+
+  ```
+  ✅ {stage_display} accepted — advancing to {next_stage_display}
+
+  📋 Next steps:
+    → Continue to {next_stage}: /concert:continue
+    → Check status:             /concert:status
+  ```
+
+- **If the document was modified but not accepted** → use the "Stage Draft Complete" template:
+
+  ```
+  ✅ {stage_display} drafted: {document_path}
+
+  📋 Next steps:
+    → Review {stage_name}:     /concert:review
+    → Accept and advance:      /concert:accept
+    → Check status:            /concert:status
+  ```
+
+Substitute all variables from the stage registry and state.json. Always include the exact document path and stage names. NEVER replace this guidance with ad-hoc messages like "want to commit and go to next stage?" — always use the standard templates.
 </user_guidance>

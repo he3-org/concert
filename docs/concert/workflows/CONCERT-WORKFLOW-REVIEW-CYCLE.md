@@ -59,16 +59,32 @@ When a planning stage completes, the user is prompted to review:
 ```
 1. Agent reads state.json to determine current stage
 2. Agent reads the plan document for the current stage
-3. Agent asks: "Do you want to accept, add changes, or ask questions?"
+3. Agent asks the user first: "Before I share my review, do you have any
+   changes you'd like to make or questions about this document?"
 
-4a. If ACCEPT:
+3a. If USER HAS CHANGES OR QUESTIONS:
+    → Resolve the user's concern (edit document or answer question)
+    → Ask again: "Any other changes or questions?"
+    → Repeat until the user has no more changes or questions
+
+3b. If USER HAS NO CHANGES OR QUESTIONS:
+    → Proceed to step 4
+
+4. Agent presents its own review findings ONE concern at a time:
+   - Starts with highest severity (Critical → Important → Suggestion)
+   - For each concern: explains WHY it matters, suggests resolution
+   - Waits for user response before presenting the next concern
+   - After all concerns: "Would you like to address any of these,
+     or are you ready to proceed?"
+
+5a. If ACCEPT:
     → Calls accept logic (same as /concert:accept)
     → Creates *-SPEC.md (project-level)
     → Updates state.json → pipeline.<stage> = "accepted"
     → Advances to next stage
-    → Outputs next steps
+    → Outputs standard guidance from user-guidance.md templates
 
-4b. If CHANGES:
+5b. If CHANGES:
     → Open conversation:
       - User adds requirements, asks questions, provides feedback
       - Agent incorporates feedback into the plan
@@ -78,12 +94,16 @@ When a planning stage completes, the user is prompted to review:
       - Asks again: accept, more changes, or questions?
     → No limit on iterations. The user owns the pace.
 
-4c. If QUESTIONS:
+5c. If QUESTIONS:
     → Same open conversation flow
     → Agent answers questions about the plan, rationale, trade-offs
     → Questions do NOT modify the plan unless the user requests changes
     → After answering: asks if the user wants to accept, make changes, or ask more
 ```
+
+After the review conversation ends, the agent MUST output standard guidance
+from `docs/concert/templates/user-guidance.md` — never substitute with ad-hoc
+messages like "want to commit?" or "proceed to next stage?".
 
 ### The `/concert:accept` Command
 

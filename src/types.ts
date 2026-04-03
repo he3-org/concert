@@ -152,7 +152,7 @@ export interface ConcertConfig {
   };
 
   status_display: string;
-  interactive_mode: 'claude_code_only' | 'any';
+  interactive_mode: 'claude_code_only' | 'interactive_cli' | 'any';
 
   execution: {
     mode: string;

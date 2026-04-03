@@ -74,5 +74,5 @@
     "include_copy_paste_commands": true,
     "show_both_cli_and_ui_options": true
   },
-  "interactive_mode": "claude_code_only"
+  "interactive_mode": "interactive_cli"
 }

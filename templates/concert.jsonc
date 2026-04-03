@@ -18,9 +18,11 @@
   "status_display": "wip_pr",
 
   // Controls where interactive agents (concert-init, concert-review) can run.
-  // "claude_code_only" (default): interactive agents refuse to run in GitHub Agents UI.
+  // "interactive_cli" (default): interactive agents can run in any CLI with user prompting
+  //   (Claude Code CLI or CoPilot CLI). They refuse to run in GitHub Agents UI.
+  // "claude_code_only": interactive agents only run in Claude Code CLI.
   // "any": interactive agents attempt to run in any environment.
-  "interactive_mode": "claude_code_only",
+  "interactive_mode": "interactive_cli",
 
   "execution": {
     "mode": "wave",

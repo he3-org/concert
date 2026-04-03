@@ -8,4 +8,4 @@ Ad hoc checklist items for tracking work that needs attention.
 
 <!-- Add checklist items below this line -->
  - [ ] After Vision was created,the guidence didnt have the approve option, it needs to be included as an option.
- - [ ] At the start of a human concert:review session, it should first ask if user has any changes or questions, if not then proceed with agent questions, otherwise resolve the users concern and then ask again if user has any changes or questions.
+ - [ ] At the start of a human concert:review session, it should first ask if user has any changes or questions, if so resolve the users concern and then ask again if user has any changes or questions, if the user does not then proceed with the agent questions one at a time.

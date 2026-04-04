@@ -159,6 +159,15 @@ describe('agent definition files (live)', () => {
       expect(content).toContain('model:');
       expect(content).toContain('interactive_only:');
     });
+
+    it(`${agent}.md has YAML frontmatter on line 1`, () => {
+      const filePath = path.join(ROOT, '.claude', 'agents', `${agent}.md`);
+      const content = fs.readFileSync(filePath, 'utf-8');
+      expect(
+        content.startsWith('---\n'),
+        `${agent}.md must start with --- (YAML frontmatter)`
+      ).toBe(true);
+    });
   }
 });
 

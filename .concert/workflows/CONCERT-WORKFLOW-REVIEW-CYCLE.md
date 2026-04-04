@@ -44,7 +44,8 @@ steps:
 
   3:
     agent: stage_specialist (concert-analyst / concert-architect / concert-designer / concert-planner / concert-init)
-    trigger: user issues resolved AND agent concerns resolved AND document was modified
+    trigger: user issues resolved AND agent concerns resolved AND document was modified during either resolution
+    skip_if: document was NOT modified (only questions asked — no edits)
     action: re-review the updated document for new questions or concerns
     outputs: [new agent questions OR clean confirmation]
 
@@ -148,12 +149,17 @@ When a planning stage completes, the user is prompted to review:
     → Questions do NOT modify the plan unless the user requests changes
     → After answering: asks if the user wants to accept, make changes, or ask more
 
-6. SPECIALIST RE-REVIEW (runs after user issues AND agent concerns are resolved
-   and the document was modified):
+6. SPECIALIST RE-REVIEW (runs after ALL user issues AND ALL agent concerns are
+   resolved, AND the document was modified during either the user-change or
+   agent-concern resolution process):
 
    The stage's specialist agent (concert-analyst, concert-architect,
    concert-designer, concert-planner, or concert-init) re-reads the updated
    document to determine if the changes introduced new questions or concerns.
+
+   If the document was NOT modified (e.g., only questions were asked and
+   answered), this step is SKIPPED and the user is prompted to accept or
+   continue reviewing.
 
    6a. If the specialist HAS new questions:
        → Present the new questions to the user

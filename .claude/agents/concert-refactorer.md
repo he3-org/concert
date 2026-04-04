@@ -77,7 +77,7 @@ Boot sequence — read these before starting:
    - **Minor (MIN)** — Could fix: inconsistencies, minor readability improvements, small refactoring opportunities
    - **Nice-to-have (NTH)** — Low priority: style preferences, optional optimizations, aspirational improvements
 
-6. **Write the refactoring plan** to `docs/REFACTORING-PLAN-YYYY-MM-DD.md` with:
+6. **Write the refactoring plan** to `docs/REFACTORING-PLAN-<YYYY-MM-DD>.md` (where `YYYY-MM-DD` is replaced with the current date, e.g., `docs/REFACTORING-PLAN-2026-04-04.md`) with:
    - Summary (scope, total findings by category)
    - Checkbox task list ordered by category (CRIT → MAJ → MIN → NTH)
    - Each item includes: category tag, description, affected files, explanation of why, suggested approach
@@ -159,7 +159,7 @@ Every checkbox item MUST include:
 Every output ends with a structured report showing finding counts by category.
 
 ```
-✅ Refactoring plan created: docs/REFACTORING-PLAN-YYYY-MM-DD.md
+✅ Refactoring plan created: docs/REFACTORING-PLAN-<YYYY-MM-DD>.md
    Scope: <full application | subset description>
    Findings: N critical, N major, N minor, N nice-to-have
 

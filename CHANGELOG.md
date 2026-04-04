@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.8.1](https://github.com/he3-org/concert/compare/v1.8.0...v1.8.1) (2026-04-04)
+
+
+### Bug Fixes
+
+* move docs/concert to .concert and increase isManagedFile line check to 15 ([#42](https://github.com/he3-org/concert/issues/42)) ([72da43f](https://github.com/he3-org/concert/commit/72da43f075f0afef2f8f20067679d31be3f9a86d))
+* remove .jsonc exclusion from .prettierignore and add CI checks ([#40](https://github.com/he3-org/concert/issues/40)) ([31edaa7](https://github.com/he3-org/concert/commit/31edaa76682b215cc012cb2632b1ad9bfa44ed6d))
+* remove simple/complex task logic and fix STATUS.md references ([#43](https://github.com/he3-org/concert/issues/43)) ([189e233](https://github.com/he3-org/concert/commit/189e2330b8dcaf31440fd3d1954493e58a7c5817))
+
 ## [1.8.0](https://github.com/he3-org/concert/compare/v1.7.0...v1.8.0) (2026-04-04)
 
 ### Features

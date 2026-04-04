@@ -20,6 +20,46 @@ Execution proceeds as: **phases → waves → tasks**. Each phase contains task 
 grouped into waves by dependency order. Within a wave, tasks can run in parallel
 (in Claude Code) or sequentially (in other environments).
 
+## Steps (Declarative)
+
+```yaml
+workflow: execution
+trigger: pipeline.stage == "execution"
+
+steps:
+  1:
+    action: select_phase
+    inputs: [state.json → current_phase, phase directories]
+    outputs: [TASK files for current phase]
+    on_fail: stop with dependency_missing error
+
+  2:
+    action: resolve_waves
+    inputs: [TASK files, dependency DAG]
+    outputs: [ordered wave groups]
+    on_fail: stop with circular_dependency error
+
+  3:
+    action: execute_wave
+    for_each: task in current_wave
+    sub_workflow: CONCERT-WORKFLOW-CODE-QUALITY
+    inputs: [TASK file, skills]
+    outputs: [code, tests, review result]
+    on_fail: record failure, suggest /concert:debug
+
+  4:
+    action: complete_phase
+    inputs: [all TASK files completed, PHASE-SUMMARY]
+    gate: all tasks passed
+    on_pass: run regression tests, invoke concert-documenter, advance to next phase
+    on_fail: back_to(step 3) for failed tasks
+
+  5:
+    action: all_phases_complete
+    gate: all phases finished
+    on_pass: advance to verification stage
+```
+
 ---
 
 ## Execution Flow

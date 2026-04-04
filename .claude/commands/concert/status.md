@@ -31,7 +31,6 @@ Phase N (name):  ████░░░░ XX% (task-file, task M/N)
 Cost: ~$X.XX spent  |  ~$X-Y remaining
 
 📋 Next steps:
-  → [context-appropriate action]: /concert:[command]
-  → In GitHub UI: Select "[agent-name]" agent
+  → [context-appropriate action]: /concert:[command]  (@concert-[command] in Copilot)
   → Track progress: [PR link or STATUS.md path]
 ```

@@ -7,6 +7,8 @@
 Templates for agent output messaging. Agents read this file and substitute variables
 from `stage-registry.jsonc` and `state.json`. Use `{variable}` syntax.
 
+Every `/concert:X` command has a Copilot equivalent `@concert-X`. Always show both.
+
 **Variables:**
 
 - `{stage_name}` — stage name from registry (e.g., "requirements")
@@ -28,16 +30,10 @@ Use when a planning agent finishes drafting its output document.
 ✅ {stage_display} drafted: {document_path}
 
 📋 Next steps:
-  → Review {stage_name}:     /concert:review
+  → Review {stage_name}:     /concert:review       (@concert-review in Copilot)
     (reviews {document_path})
-  → Accept and advance:      /concert:accept
-  → Check status:            /concert:status
-```
-
-**With GitHub UI option** (when `user_guidance.show_both_cli_and_ui_options` is true):
-
-```
-  → In GitHub UI:            Select "concert-reviewer" agent on PR #{pr_number}
+  → Accept and advance:      /concert:accept       (@concert-accept in Copilot)
+  → Check status:            /concert:status       (@concert-status in Copilot)
 ```
 
 ---
@@ -50,14 +46,8 @@ Use when a stage is accepted and the pipeline advances.
 ✅ {stage_display} accepted — advancing to {next_stage_display}
 
 📋 Next steps:
-  → Continue to {next_stage}: /concert:continue
-  → Check status:             /concert:status
-```
-
-**With GitHub UI option:**
-
-```
-  → In GitHub UI:             Select "concert-continue" agent on PR #{pr_number}
+  → Continue to {next_stage}: /concert:continue     (@concert-continue in Copilot)
+  → Check status:             /concert:status       (@concert-status in Copilot)
 ```
 
 ---
@@ -73,10 +63,265 @@ This is the {stage_display} document for the current mission.
 Review the document and provide feedback below.
 
 📋 After review:
-  → Accept this stage:     /concert:accept
-  → Review again:          /concert:review
-  → Restart from scratch:  /concert:restart {stage_name}
-  → Check status:          /concert:status
+  → Accept this stage:     /concert:accept        (@concert-accept in Copilot)
+  → Review again:          /concert:review        (@concert-review in Copilot)
+  → Restart from scratch:  /concert:restart {stage_name}  (@concert-restart in Copilot)
+  → Check status:          /concert:status        (@concert-status in Copilot)
+```
+
+---
+
+## Mission Initialized
+
+Use when concert-init completes mission setup.
+
+```
+✅ Mission initialized: {feature_name}
+   Branch: concert/{slug}
+   PR: #{pr_number} — WIP: {feature_name}
+   Vision: {document_path}
+
+📋 Next steps:
+  → Review vision:       /concert:review        (@concert-review in Copilot)
+  → Accept vision:       /concert:accept        (@concert-accept in Copilot)
+  → Continue:            /concert:continue      (@concert-continue in Copilot)
+  → Check status:        /concert:status        (@concert-status in Copilot)
+```
+
+---
+
+## Mission Archived
+
+Use when concert-archive completes.
+
+```
+📦 Mission archived: {mission_name}
+   Deleted: {mission_path}
+   State reset: docs/concert/state.json
+
+   Mission history is preserved in git log.
+   Project specs (docs/concert/*-SPEC.md) are unchanged.
+
+📋 Next steps:
+  → Start a new mission:  /concert:init          (@concert-init in Copilot)
+```
+
+---
+
+## Replan Complete
+
+Use when concert-replan finishes re-running consultants.
+
+```
+🔄 Replanning from: {stage_name}
+   Downstream stages marked for re-run.
+   Committed code preserved — only new/changed work will be planned.
+
+📋 Next steps:
+  → Review the updated plan:  /concert:review    (@concert-review in Copilot)
+  → Accept and continue:      /concert:accept    (@concert-accept in Copilot)
+  → Check status:             /concert:status    (@concert-status in Copilot)
+```
+
+---
+
+## Restart Complete
+
+Use when concert-restart finishes resetting and re-running a consultant.
+
+```
+🔄 Stage restarted: {stage_display}
+   Previous plan discarded. Consultant re-running from scratch.
+
+📋 Next steps:
+  → Review the new plan:   /concert:review      (@concert-review in Copilot)
+  → Accept the plan:       /concert:accept      (@concert-accept in Copilot)
+  → Check status:          /concert:status      (@concert-status in Copilot)
+```
+
+---
+
+## Fix Complete
+
+Use when concert-fix finishes a fix.
+
+```
+✅ Fix complete: {root_cause}
+   Fix type: {fix_type}
+   Regression test: {test_name}
+   Confidence: {confidence} — {reasoning}
+
+📋 Next steps:
+  → Review the fix:       git diff HEAD~1
+  → Run full tests:       {test_command}
+  → Continue work:        /concert:continue      (@concert-continue in Copilot)
+  → Check status:         /concert:status        (@concert-status in Copilot)
+```
+
+---
+
+## Fix Escalated
+
+Use when concert-fix escalates beyond a simple fix.
+
+```
+🚫 Fix escalated: requires guidance
+   Root cause: {root_cause}
+   Reason: {escalation_reason}
+
+📋 Next steps:
+  → Read the analysis:    {document_path}
+  → Start a mission:      /concert:init          (@concert-init in Copilot)
+```
+
+---
+
+## Debug Complete
+
+Use when concert-debug resolves the issue.
+
+```
+✅ Debug complete: {root_cause}
+   Fix: {fix_description}
+   Regression test: {test_name}
+   Commit: {commit_hash} — {commit_message}
+
+📋 Next steps:
+  → Resume execution:  /concert:continue        (@concert-continue in Copilot)
+  → Check status:      /concert:status          (@concert-status in Copilot)
+```
+
+---
+
+## Debug Escalated
+
+Use when concert-debug exhausts hypotheses.
+
+```
+⚠️ Escalation after {hypothesis_count} hypothesis cycles
+   Hypotheses tested: {hypothesis_list}
+   Current state: {current_state}
+
+📋 Next steps:
+  → Investigate manually and run /concert:debug again  (@concert-debug in Copilot)
+  → Or restart the task: /concert:restart              (@concert-restart in Copilot)
+```
+
+---
+
+## Quick Complete
+
+Use when concert-quick finishes a task.
+
+```
+✅ Quick task complete: {task_description}
+   Files changed: {files_changed}
+   Commit: {commit_hash} — {commit_message}
+
+📋 Next steps:
+  → Review changes:  git diff HEAD~1
+  → Run tests:       {test_command}
+  → Check status:    /concert:status            (@concert-status in Copilot)
+```
+
+---
+
+## Code Review Pass
+
+Use when concert-code-reviewer passes a task.
+
+```
+✅ Code Review: PASS ({summary})
+
+📋 Next steps:
+  → Task passes review — ready for next task
+  → Continue execution:  /concert:continue      (@concert-continue in Copilot)
+```
+
+---
+
+## Code Review Fail
+
+Use when concert-code-reviewer finds MAJ/CRIT issues.
+
+```
+❌ Code Review: FAIL ({summary})
+
+📋 Findings:
+  {findings_list}
+
+📋 Next steps:
+  → Coder must fix findings before task can pass
+  → Return to coder with this review
+```
+
+---
+
+## Coder Task Complete
+
+Use when concert-coder finishes implementing a task.
+
+```
+✅ Task implemented: {task_name}
+   Tests: {test_count} passing
+   Confidence: {confidence}
+   Commit: {commit_hash} — {commit_message}
+
+📋 Next steps:
+  → Awaiting code review
+  → If review passes: continue to next task
+  → If review fails: address findings and resubmit
+```
+
+---
+
+## Coder Task Failed
+
+Use when concert-coder's task fails after retries.
+
+```
+❌ Task failed: {task_name}
+   Error: {error_description}
+   State: {failure_state}
+
+📋 Next steps:
+  → Debug the failure:   /concert:debug         (@concert-debug in Copilot)
+  → Check status:        /concert:status        (@concert-status in Copilot)
+```
+
+---
+
+## Documentation Updated
+
+Use when concert-documenter finishes.
+
+```
+✅ Documentation updated for Phase {phase_number}: {phase_name}
+   Files updated: {files_list}
+   Commit: {commit_hash} — {commit_message}
+
+📋 Next steps:
+  → Continue execution:  /concert:continue      (@concert-continue in Copilot)
+  → Check status:        /concert:status        (@concert-status in Copilot)
+```
+
+---
+
+## Verification Complete
+
+Use when concert-verifier finishes.
+
+```
+✅ Verification complete: {result}
+   Requirements tested: {requirements_count}
+   Pass rate: {pass_rate}
+
+📋 Next steps:
+  → Review verification:  {verification_path}
+  → Cost report:          {cost_report_path}
+  → If issues found:      /concert:continue      (@concert-continue in Copilot)
+  → If clean:             Mission complete! Create PR for human review.
+  → Archive mission:      /concert:archive       (@concert-archive in Copilot)
 ```
 
 ---
@@ -89,11 +334,11 @@ Use when a stage fails.
 ❌ Concert stopped: {stage_name} failed ({error_type})
 
 📋 Next steps:
-  → Inspect the state:  /concert:status
-  → Debug the issue:    /concert:debug
-  → After fixing:       /concert:continue
-  → Discard and redo:   /concert:restart
-  → Roll back to:       /concert:replan {stage_name}
+  → Inspect the state:  /concert:status          (@concert-status in Copilot)
+  → Debug the issue:    /concert:debug           (@concert-debug in Copilot)
+  → After fixing:       /concert:continue        (@concert-continue in Copilot)
+  → Discard and redo:   /concert:restart         (@concert-restart in Copilot)
+  → Roll back to:       /concert:replan {stage_name}  (@concert-replan in Copilot)
 ```
 
 ---

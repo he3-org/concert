@@ -28,8 +28,7 @@ After init completes, output:
 
 ```
 📋 Next steps:
-  → Review vision:    /concert:review
-  → Accept vision:    /concert:accept
-  → Check status:     /concert:status
-  → In GitHub UI:     Select "concert-review" is interactive-only — use Claude Code
+  → Review vision:    /concert:review        (@concert-review in Copilot)
+  → Accept vision:    /concert:accept        (@concert-accept in Copilot)
+  → Check status:     /concert:status        (@concert-status in Copilot)
 ```

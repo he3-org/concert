@@ -14,6 +14,61 @@ description: Fix-review quality loop — defines the self-review and reviewer es
 This workflow defines the quality loop for the `/concert:fix` command. It operates
 independently of the mission pipeline — fixes do not require an active mission.
 
+## Steps (Declarative)
+
+```yaml
+workflow: fix
+trigger: /concert:fix command
+independent: true # does not require active mission
+
+steps:
+  1:
+    agent: concert-fix
+    action: reproduce
+    inputs: [error description, codebase]
+    outputs: [failing test that captures error]
+    on_fail: escalate with reasoning document
+
+  2:
+    agent: concert-fix
+    action: diagnose
+    inputs: [failing test, codebase, hypotheses]
+    outputs: [root cause identification]
+    on_fail: escalate after 3 hypothesis cycles
+
+  3:
+    agent: concert-fix
+    action: assess
+    inputs: [root cause]
+    outputs: [patch vs refactor vs escalate decision]
+    gate: complexity_assessment
+    on_escalate: write reasoning document, stop
+
+  4:
+    agent: concert-fix
+    action: implement
+    inputs: [root cause, fix type decision]
+    outputs: [code changes, passing tests]
+    on_fail: retry(1), then escalate
+
+  5:
+    gate: complexity > threshold (>2 files OR refactoring OR critical path)
+    on_pass: spawn concert-code-reviewer (step 6)
+    on_fail: self-review only (step 7)
+
+  6:
+    agent: concert-code-reviewer
+    inputs: [fix diff, relevant skills]
+    outputs: [review with severity ratings]
+    on_fail: back_to(step 4)
+
+  7:
+    agent: concert-fix
+    action: self_review
+    inputs: [fix diff, quality checklist]
+    outputs: [review result]
+```
+
 The fix workflow prioritizes quality over speed. Every fix must:
 
 1. Be reproduced with a failing test

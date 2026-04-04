@@ -93,6 +93,7 @@ Every output ends with a structured report:
 
 📋 Next steps:
   → Task passes review — ready for next task
+  → Continue execution:  /concert:continue      (@concert-continue in Copilot)
   → MIN items can be addressed if time permits
 ```
 

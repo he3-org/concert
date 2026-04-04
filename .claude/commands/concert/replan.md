@@ -27,7 +27,7 @@ After replan, output:
 
 ```
 📋 Next steps:
-  → Review the updated plan:  /concert:review
-  → Accept and continue:      /concert:accept
-  → Check status:             /concert:status
+  → Review the updated plan:  /concert:review    (@concert-review in Copilot)
+  → Accept and continue:      /concert:accept    (@concert-accept in Copilot)
+  → Check status:             /concert:status    (@concert-status in Copilot)
 ```

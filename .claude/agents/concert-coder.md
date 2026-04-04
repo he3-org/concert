@@ -87,7 +87,7 @@ On failure:
 3. If the failure is transient (flaky test, timeout): retry once with the same approach
 4. If the failure is deterministic (type error, logic bug): report what failed and what was attempted
 5. Commit any valid partial work so progress is not lost
-6. Output next steps — suggest `/concert:debug` for investigation if needed
+6. Output next steps — suggest `/concert:debug` (@concert-debug in Copilot) for investigation if needed
    </execution_flow>
 
 <user_guidance>

@@ -6,18 +6,20 @@ This project uses [Concert](https://github.com/he3-org/concert) for agentic deve
 
 ### Commands
 
-- `/concert:init` — Start a new mission
-- `/concert:review` — Review a stage
-- `/concert:accept` — Accept a stage
-- `/concert:status` — Check current status
-- `/concert:continue` — Continue to next stage or resume execution
-- `/concert:debug` — Debug an issue
-- `/concert:fix` — Fix an error with TDD-first diagnosis and quality review
-- `/concert:verify` — Verify work
-- `/concert:quick` — Run a quick task
-- `/concert:restart` — Restart a stage
-- `/concert:replan` — Replan from a stage
-- `/concert:archive` — Archive completed mission and reset state
+| Command                | Claude Code         | Copilot / GitHub Agents |
+| ---------------------- | ------------------- | ----------------------- |
+| Start a new mission    | `/concert:init`     | `@concert-init`         |
+| Review a stage         | `/concert:review`   | `@concert-review`       |
+| Accept a stage         | `/concert:accept`   | `@concert-accept`       |
+| Check current status   | `/concert:status`   | `@concert-status`       |
+| Continue to next stage | `/concert:continue` | `@concert-continue`     |
+| Debug an issue         | `/concert:debug`    | `@concert-debug`        |
+| Fix an error (TDD)     | `/concert:fix`      | `@concert-fix`          |
+| Verify work            | `/concert:verify`   | `@concert-verify`       |
+| Run a quick task       | `/concert:quick`    | `@concert-quick`        |
+| Restart a stage        | `/concert:restart`  | `@concert-restart`      |
+| Replan from a stage    | `/concert:replan`   | `@concert-replan`       |
+| Archive mission        | `/concert:archive`  | `@concert-archive`      |
 
 ### State
 

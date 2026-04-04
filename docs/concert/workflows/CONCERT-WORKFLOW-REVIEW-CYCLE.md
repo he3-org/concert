@@ -20,6 +20,35 @@ Every planning stage (vision, requirements, architecture, UX, tasks) produces a
 plan document. The review cycle lets the user inspect, refine, and accept that
 document before it becomes a project-level spec.
 
+## Steps (Declarative)
+
+```yaml
+workflow: review-cycle
+trigger: planning_stage.status == "draft"
+
+steps:
+  1:
+    agent: concert-reviewer
+    inputs: [plan document, upstream specs, state.json]
+    outputs: [review findings by severity]
+    interactive: true
+    on_fail: suggest /concert:restart
+
+  2:
+    gate: user_decision
+    options:
+      accept: advance pipeline, create spec file (via concert-accept)
+      revise: loop back to step 1 with changes
+      restart: discard plan, re-run consultant (via concert-restart)
+      replan: go back to earlier stage (via concert-replan)
+
+  3:
+    agent: concert-accept
+    inputs: [reviewed plan document, state.json]
+    outputs: [spec file, updated pipeline state]
+    trigger: user chose "accept" in step 2
+```
+
 ---
 
 ## Trigger
@@ -215,7 +244,7 @@ If the review cycle encounters an error (e.g., plan file missing, state corrupti
    ❌ Review cycle failed: <error_description>
 
    📋 Next steps:
-     → Check state:        /concert:status
-     → Restart the stage:  /concert:restart
-     → Restart the stage:  /concert:restart <stage>
+     → Check state:        /concert:status        (@concert-status in Copilot)
+     → Restart the stage:  /concert:restart       (@concert-restart in Copilot)
+     → Restart the stage:  /concert:restart <stage>  (@concert-restart in Copilot)
    ```

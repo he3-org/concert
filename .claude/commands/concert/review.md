@@ -24,8 +24,8 @@ After review, output:
 
 ```
 📋 Next steps:
-  → Accept this stage:    /concert:accept
-  → Continue reviewing:   /concert:review
-  → Restart this stage:   /concert:restart
-  → Check status:         /concert:status
+  → Accept this stage:    /concert:accept        (@concert-accept in Copilot)
+  → Continue reviewing:   /concert:review        (@concert-review in Copilot)
+  → Restart this stage:   /concert:restart       (@concert-restart in Copilot)
+  → Check status:         /concert:status        (@concert-status in Copilot)
 ```

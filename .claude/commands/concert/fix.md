@@ -38,6 +38,6 @@ After fix completes, output:
 📋 Next steps:
   → Review the fix:       git diff HEAD~1
   → Run full tests:       [project test command]
-  → Continue work:        /concert:continue
-  → Check status:         /concert:status
+  → Continue work:        /concert:continue      (@concert-continue in Copilot)
+  → Check status:         /concert:status        (@concert-status in Copilot)
 ```

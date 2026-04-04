@@ -24,5 +24,5 @@ Archive a completed mission — remove mission folder and reset state.
    Project specs (docs/concert/*-SPEC.md) are unchanged.
 
 📋 Next steps:
-  → Start a new mission:  /concert:init
+  → Start a new mission:  /concert:init          (@concert-init in Copilot)
 ```

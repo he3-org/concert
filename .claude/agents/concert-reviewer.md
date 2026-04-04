@@ -124,8 +124,8 @@ After the review conversation ends, you MUST output the standard guidance from `
   ✅ {stage_display} accepted — advancing to {next_stage_display}
 
   📋 Next steps:
-    → Continue to {next_stage}: /concert:continue
-    → Check status:             /concert:status
+    → Continue to {next_stage}: /concert:continue    (@concert-continue in Copilot)
+    → Check status:             /concert:status      (@concert-status in Copilot)
   ```
 
 - **If the document was modified but not accepted** → use the "Stage Draft Complete" template:
@@ -134,9 +134,9 @@ After the review conversation ends, you MUST output the standard guidance from `
   ✅ {stage_display} drafted: {document_path}
 
   📋 Next steps:
-    → Review {stage_name}:     /concert:review
-    → Accept and advance:      /concert:accept
-    → Check status:            /concert:status
+    → Review {stage_name}:     /concert:review      (@concert-review in Copilot)
+    → Accept and advance:      /concert:accept      (@concert-accept in Copilot)
+    → Check status:            /concert:status      (@concert-status in Copilot)
   ```
 
 Substitute all variables from the stage registry and state.json. Always include the exact document path and stage names. NEVER replace this guidance with ad-hoc messages like "want to commit and go to next stage?" — always use the standard templates.

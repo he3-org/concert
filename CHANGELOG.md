@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/he3-org/concert/compare/v1.6.1...v1.6.2) (2026-04-04)
+
+
+### Bug Fixes
+
+* coder-reviewer loop exits early leaving MIN/NTH unfixed ([#35](https://github.com/he3-org/concert/issues/35)) ([4d22a3c](https://github.com/he3-org/concert/commit/4d22a3ccbc9e8fd5d0a115d8ae7c0ffee0424f39))
+
 ## [1.6.1](https://github.com/he3-org/concert/compare/v1.6.0...v1.6.1) (2026-04-03)
 
 

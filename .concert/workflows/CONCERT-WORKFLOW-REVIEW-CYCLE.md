@@ -43,10 +43,27 @@ steps:
       replan: go back to earlier stage (via concert-replan)
 
   3:
+    agent: stage_specialist (concert-analyst / concert-architect / concert-designer / concert-planner / concert-init)
+    trigger: user issues resolved AND agent concerns resolved AND document was modified
+    action: re-review the updated document for new questions or concerns
+    outputs: [new agent questions OR clean confirmation]
+
+  4:
+    gate: re_review_result
+    options:
+      new_questions: agent has new questions → guide user to start review (/concert:review) or stop automation
+      no_new_questions: document is clean → guide user to accept now (/concert:accept) or stop automation
+
+  5:
     agent: concert-accept
     inputs: [reviewed plan document, state.json]
-    outputs: [spec file, updated pipeline state]
-    trigger: user chose "accept" in step 2
+    outputs: [spec file, updated pipeline state, next-steps guidance]
+    trigger: user chose "accept" in step 2 or step 4
+    post_actions:
+      - update state.json → pipeline.<stage> = "accepted"
+      - create *-SPEC.md
+      - update PR body
+      - guide user → continue to next stage (/concert:continue) or stop automation
 ```
 
 ---
@@ -110,8 +127,11 @@ When a planning stage completes, the user is prompted to review:
     → Calls accept logic (same as /concert:accept)
     → Creates *-SPEC.md (project-level)
     → Updates state.json → pipeline.<stage> = "accepted"
-    → Advances to next stage
-    → Outputs standard guidance from user-guidance.md templates
+    → Updates PR body
+    → Guides the user:
+      "✅ Stage accepted. Next steps:
+        → Continue to next stage:  /concert:continue  (@concert-continue in Copilot)
+        → Stop here for now:       (no action needed — resume later with /concert:continue)"
 
 5b. If CHANGES:
     → Open conversation:
@@ -120,14 +140,34 @@ When a planning stage completes, the user is prompted to review:
       - After each exchange: "Any more changes, or shall I update the document?"
       - When done: agent rewrites the plan file with all accumulated changes
       - Shows updated document
-      - Asks again: accept, more changes, or questions?
-    → No limit on iterations. The user owns the pace.
+    → After document is updated, proceed to STEP 6 (Specialist Re-Review)
 
 5c. If QUESTIONS:
     → Same open conversation flow
     → Agent answers questions about the plan, rationale, trade-offs
     → Questions do NOT modify the plan unless the user requests changes
     → After answering: asks if the user wants to accept, make changes, or ask more
+
+6. SPECIALIST RE-REVIEW (runs after user issues AND agent concerns are resolved
+   and the document was modified):
+
+   The stage's specialist agent (concert-analyst, concert-architect,
+   concert-designer, concert-planner, or concert-init) re-reads the updated
+   document to determine if the changes introduced new questions or concerns.
+
+   6a. If the specialist HAS new questions:
+       → Present the new questions to the user
+       → Guide the user:
+         "The specialist agent has new questions after reviewing the changes.
+           → Start a new review:    /concert:review    (@concert-review in Copilot)
+           → Stop automation here:  (no action needed — resume later with /concert:review)"
+
+   6b. If the specialist has NO new questions:
+       → Inform the user the document looks good
+       → Guide the user:
+         "No new concerns from the specialist agent.
+           → Accept now:            /concert:accept    (@concert-accept in Copilot)
+           → Stop automation here:  (no action needed — resume later with /concert:accept)"
 ```
 
 After the review conversation ends, the agent MUST output standard guidance
@@ -150,8 +190,10 @@ messages like "want to commit?" or "proceed to next stage?".
    - Advance stage to the next value per the active workflow's stage table
 5. Commit the spec file and state.json update
 6. Update human status display (WIP PR body)
-7. Output next steps:
-   → Suggest /concert:continue (advances to next stage or starts execution)
+7. Output next steps — guide the user to continue or stop:
+   → Continue to next stage:  /concert:continue  (@concert-continue in Copilot)
+   → Stop here for now:       (no action needed — resume later with /concert:continue)
+   → Check status:            /concert:status    (@concert-status in Copilot)
 ```
 
 ### The `/concert:restart` Command
@@ -228,7 +270,7 @@ After the user accepts and the review cycle ends:
 2. **State updated** — `state.json` reflects the accepted stage
 3. **Pipeline advanced** — Next stage is ready
 4. **Status updated** — Human status display shows progress
-5. **Next steps output** — User knows exactly what to do next
+5. **Next steps output** — User is guided to continue (start the next stage) or stop automation
 
 ---
 

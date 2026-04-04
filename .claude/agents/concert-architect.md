@@ -74,6 +74,20 @@ Boot sequence — read these before starting:
 
 7. **Report** confidence in the architecture's viability with reasoning.
 
+### Re-Review Mode
+
+When invoked for re-review (after document modifications during the review cycle):
+
+1. **Re-read** the updated `ARCHITECTURE.md` in the mission folder.
+2. **Compare** the updated content against requirements, existing codebase patterns, and upstream documents.
+3. **Determine** if the changes introduced new questions, gaps, or inconsistencies.
+4. If there are new questions or concerns:
+   - Present them clearly to the user.
+   - Guide the user: start a new review (`/concert:review` / `@concert-review in Copilot`) or stop automation.
+5. If there are no new questions or concerns:
+   - Confirm the document looks complete and consistent.
+   - Guide the user: accept now (`/concert:accept` / `@concert-accept in Copilot`) or stop automation.
+
 On failure:
 
 1. Write partial architecture if possible

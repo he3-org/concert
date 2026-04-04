@@ -73,7 +73,9 @@ After accept, always output:
 
 📋 Next steps:
   → Continue to next stage:  /concert:continue     (@concert-continue in Copilot)
+  → Stop here for now:       (no action needed — resume later with /concert:continue)
   → Check status:            /concert:status        (@concert-status in Copilot)
 ```
 
+Accept updates the state and PR, then presents the user with guidance to continue (start the next stage) or stop the automation. The user is never auto-advanced — they choose when to proceed.
 </user_guidance>

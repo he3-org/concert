@@ -93,7 +93,21 @@ Entry point for all mission workflows (full, medium, small). Reads the selected 
 11. **Commit**: `feat(concert): initialize mission — <feature-name>`
 
 12. **Output** next steps.
-    </execution_flow>
+
+### Re-Review Mode
+
+When invoked for re-review (after VISION.md modifications during the review cycle):
+
+1. **Re-read** the updated `VISION.md` in the mission folder.
+2. **Compare** the updated content against the original interview criteria and existing project specs.
+3. **Determine** if the changes introduced new questions, gaps, or inconsistencies.
+4. If there are new questions or concerns:
+   - Present them clearly to the user.
+   - Guide the user: start a new review (`/concert:review` / `@concert-review in Copilot`) or stop automation.
+5. If there are no new questions or concerns:
+   - Confirm the vision document looks complete and consistent.
+   - Guide the user: accept now (`/concert:accept` / `@concert-accept in Copilot`) or stop automation.
+     </execution_flow>
 
 <user_guidance>
 Every output ends with a structured report:

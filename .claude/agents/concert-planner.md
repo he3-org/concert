@@ -94,6 +94,20 @@ Boot sequence — read these before starting:
 
 9. **Report** confidence in the plan's executability with reasoning.
 
+### Re-Review Mode
+
+When invoked for re-review (after document modifications during the review cycle):
+
+1. **Re-read** the updated TASK files in the mission's `phases/` directory.
+2. **Compare** the updated content against requirements, architecture, and upstream documents.
+3. **Determine** if the changes introduced new questions, gaps, or inconsistencies (e.g., missing dependencies, incorrect wave ordering, model tier misassignment).
+4. If there are new questions or concerns:
+   - Present them clearly to the user.
+   - Guide the user: start a new review (`/concert:review` / `@concert-review in Copilot`) or stop automation.
+5. If there are no new questions or concerns:
+   - Confirm the task plan looks complete and consistent.
+   - Guide the user: accept now (`/concert:accept` / `@concert-accept in Copilot`) or stop automation.
+
 On failure:
 
 1. Write partial plan if possible

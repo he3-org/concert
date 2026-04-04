@@ -82,7 +82,7 @@ Boot sequence — read these before starting:
    - Checkbox task list ordered by category (CRIT → MAJ → MIN → NTH)
    - Each item includes: category tag, description, affected files, explanation of why, suggested approach
 
-7. **Update state.json** — Set `pipeline.refactoring` to `"complete"`, update `history[]` and `next_steps[]`.
+7. **Update state.json** — Set `pipeline.refactoring` to `"accepted"`, update `history[]` and `next_steps[]`.
 
 8. **Commit** the refactoring plan file.
 

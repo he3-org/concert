@@ -34,17 +34,19 @@ npx @he3-org/concert@latest update
 
 ## Full Pipeline Stages (Large Feature)
 
-| #   | Stage         | Agent                | Output                              | Description                                                                      |
-| --- | ------------- | -------------------- | ----------------------------------- | -------------------------------------------------------------------------------- |
-| 1   | Vision        | `concert-init`       | `VISION.md`                         | Interactive interview — captures what, who, why, scope, and success criteria     |
-| 2   | Requirements  | `concert-analyst`    | `REQUIREMENTS.md`                   | Formalizes testable requirements with acceptance criteria from codebase analysis |
-| 3   | Architecture  | `concert-architect`  | `ARCHITECTURE.md`                   | Tech stack decisions, component design, data models, trade-offs                  |
-| 4   | UX Design     | `concert-designer`   | `UX.md`                             | User flows, component specs, interaction patterns, accessibility                 |
-| 5   | Task Planning | `concert-planner`    | `phases/TASK-*.md`                  | Decomposes work into phased task files with model tier assignments               |
-| 6   | Execution     | `concert-coder`      | Code + `PHASE-SUMMARY` files        | Implements tasks with TDD, commits along the way                                 |
-| 7   | Verification  | `concert-verifier`   | `VERIFICATION.md`, `COST-REPORT.md` | Acceptance checks against requirements                                           |
-| 8   | Refactoring   | `concert-refactorer` | `REFACTORING-PLAN-YYYY-MM-DD.md`    | Prioritized refactoring plan (CRIT/MAJ/MIN/NTH) — human reviews and executes     |
-| 9   | Retrospective | _(self-improvement)_ | `CONCERT-IMPROVEMENT.md`            | Analyzes mission telemetry to suggest Concert improvements                       |
+| #   | Stage         | Agent                | Output                                | Description                                                                      |
+| --- | ------------- | -------------------- | ------------------------------------- | -------------------------------------------------------------------------------- |
+| 1   | Vision        | `concert-init`       | `VISION.md`                           | Interactive interview — captures what, who, why, scope, and success criteria     |
+| 2   | Requirements  | `concert-analyst`    | `REQUIREMENTS.md`                     | Formalizes testable requirements with acceptance criteria from codebase analysis |
+| 3   | Architecture  | `concert-architect`  | `ARCHITECTURE.md`                     | Tech stack decisions, component design, data models, trade-offs                  |
+| 4   | UX Design     | `concert-designer`   | `UX.md`                               | User flows, component specs, interaction patterns, accessibility                 |
+| 5   | Task Planning | `concert-planner`    | `phases/TASK-*.md`                    | Decomposes work into phased task files with model tier assignments               |
+| 6   | Execution     | `concert-coder`      | Code + `PHASE-SUMMARY` files          | Implements tasks with TDD, commits along the way                                 |
+| 7   | Verification  | `concert-verifier`   | `VERIFICATION.md`, `COST-REPORT.md`   | Acceptance checks against requirements                                           |
+| 8   | Refactoring   | `concert-refactorer` | `docs/REFACTORING-PLAN-YYYY-MM-DD.md` | Prioritized refactoring plan (CRIT/MAJ/MIN/NTH) — human reviews and executes     |
+| 9   | Retrospective | _(self-improvement)_ | `CONCERT-IMPROVEMENT.md`              | Analyzes mission telemetry to suggest Concert improvements                       |
+
+> **Note:** Outputs listed above are relative to the active mission folder at `.concert/missions/<mission>/`. Accepted specs are saved separately to `.concert/*-SPEC.md`.
 
 > **Medium missions** skip UX (stage 4). **Small missions** skip requirements, architecture, and UX (stages 2–4).
 
@@ -116,7 +118,7 @@ Stay on **Opus** for the specification stages — each one follows the same revi
 
 ```
 /concert:review        # Review requirements, ask questions, request changes
-/concert:accept        # Accept requirements → creates REQUIREMENTS-SPEC.md
+/concert:accept        # Accept requirements → creates .concert/REQUIREMENTS-SPEC.md
 ```
 
 ```
@@ -127,7 +129,7 @@ Stay on **Opus** for the specification stages — each one follows the same revi
 
 ```
 /concert:review        # Review architecture
-/concert:accept        # Accept → ARCHITECTURE-SPEC.md
+/concert:accept        # Accept → .concert/ARCHITECTURE-SPEC.md
 ```
 
 ```
@@ -138,7 +140,7 @@ Stay on **Opus** for the specification stages — each one follows the same revi
 
 ```
 /concert:review
-/concert:accept        # Accept → UX-SPEC.md
+/concert:accept        # Accept → .concert/UX-SPEC.md
 ```
 
 At every breakpoint between stages, you control whether to continue immediately or pause, review the output files, and come back later with `/concert:continue`.

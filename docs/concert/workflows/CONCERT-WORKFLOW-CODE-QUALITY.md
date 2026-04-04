@@ -38,13 +38,14 @@ steps:
     on_fail: record failure
 
   3:
-    gate: review.highest_severity NOT IN [CRIT, MAJ]
+    gate: CRIT == 0 AND MAJ == 0 AND MIN == 0 AND NTH == 0
     on_pass: commit and proceed to next task
     on_fail: back_to(step 1, max_iterations: 3)
 
   4:
     gate: iterations < max_review_iterations (default: 3)
-    on_fail: stop with error_type "model_capability_exceeded"
+    on_pass: continue loop (send remaining findings back to coder)
+    on_fail: if CRIT or MAJ remain → stop with error_type "model_capability_exceeded"; else → pass (commit and proceed)
 ```
 
 ---
@@ -100,34 +101,38 @@ the runner acts as both coder and self-reviewer.
    e. Returns structured review to orchestrator
 
 6. Orchestrator evaluates the review outcome:
-   → PASS or NTH or MIN only → Task passes (proceed to commit)
-   → MAJ or CRIT present → Task fails review (send back to coder)
+   → Zero findings (no CRIT, MAJ, MIN, or NTH) → Task passes (proceed to commit)
+   → Any findings remain → Send back to coder for next priority tier
 ```
 
 ### Review-Fix Cycle
 
-When a task fails review (MAJ or CRIT findings):
+When a review returns any findings (CRIT, MAJ, MIN, or NTH):
 
 ```
 1. Orchestrator sends review findings back to Coder
-2. Coder fixes the issues:
-   a. Addresses all CRIT findings (mandatory)
-   b. Addresses all MAJ findings (mandatory)
-   c. Addresses MIN findings if straightforward (optional)
-   d. Logs NTH findings (do not fix now)
+2. Coder fixes in priority order:
+   a. If CRIT or MAJ present: fix ALL CRIT and MAJ findings
+   b. Else if MIN present: fix ALL MIN findings
+   c. Else if NTH present: fix ALL NTH findings
+   d. Else: nothing to fix — pass back to reviewer
 3. Coder re-runs tests
 4. Coder returns fixed implementation
 5. Orchestrator spawns Reviewer again
-6. Repeat until PASS / NTH / MIN only, or max revisions reached
+6. Repeat until zero findings remain, or max revisions reached
 ```
 
 ### Maximum Revisions
 
 - **Default max revisions:** 3 per task
-- If a task still has MAJ/CRIT findings after 3 revision cycles:
-  1. Stop the task
-  2. Write failure to `state.json` with `error_type: "model_capability_exceeded"`
-  3. Output guidance to escalate to a higher model tier or human review
+- If a task reaches the max revision limit:
+  1. If CRIT or MAJ findings remain → **FAIL**:
+     - Stop the task
+     - Write failure to `state.json` with `error_type: "model_capability_exceeded"`
+     - Output guidance to escalate to a higher model tier or human review
+  2. If only MIN or NTH (or no findings) remain → **PASS**:
+     - Commit the work — remaining MIN/NTH are acceptable at this point
+     - Log the remaining findings in telemetry for future improvement
 
 ---
 
@@ -135,25 +140,26 @@ When a task fails review (MAJ or CRIT findings):
 
 The reviewer rates each finding using structured severity levels:
 
-| Level    | Meaning                                                         | Action Required                 |
-| -------- | --------------------------------------------------------------- | ------------------------------- |
-| **CRIT** | Blocks deployment — security issue, data loss risk              | Must fix before proceeding      |
-| **MAJ**  | Significant quality issue — performance, missing error handling | Must fix before task completion |
-| **MIN**  | Style issue, minor improvement                                  | Fix if time permits (optional)  |
-| **NTH**  | Nice-to-have, suggestion for future                             | Log only, do not fix now        |
-| **PASS** | No issues found                                                 | Proceed                         |
+| Level    | Meaning                                                         | Action Required                    |
+| -------- | --------------------------------------------------------------- | ---------------------------------- |
+| **CRIT** | Blocks deployment — security issue, data loss risk              | Must fix before proceeding         |
+| **MAJ**  | Significant quality issue — performance, missing error handling | Must fix before task completion    |
+| **MIN**  | Style issue, minor improvement                                  | Must fix (after CRIT/MAJ resolved) |
+| **NTH**  | Nice-to-have, suggestion for future                             | Must fix (after MIN resolved)      |
+| **PASS** | No issues found                                                 | Proceed                            |
 
 ### Review Outcome
 
-The overall review result is the **highest severity found**:
+The loop continues until **all findings are resolved** or max iterations are reached:
 
-| Highest Finding | Outcome | Next Action                                       |
-| --------------- | ------- | ------------------------------------------------- |
-| CRIT            | FAIL    | Send back to coder — all CRIT + MAJ must be fixed |
-| MAJ             | FAIL    | Send back to coder — all MAJ must be fixed        |
-| MIN             | PASS    | Commit — MIN items optionally fixed               |
-| NTH             | PASS    | Commit — NTH items logged for future              |
-| (none)          | PASS    | Commit — no issues                                |
+| Findings Remaining | Iterations < Max | Next Action                                        |
+| ------------------ | ---------------- | -------------------------------------------------- |
+| CRIT or MAJ        | Yes              | Send back to coder — fix all CRIT + MAJ            |
+| MIN only           | Yes              | Send back to coder — fix all MIN                   |
+| NTH only           | Yes              | Send back to coder — fix all NTH                   |
+| None               | N/A              | Commit — task passes                               |
+| CRIT or MAJ        | No (max reached) | FAIL — stop with `model_capability_exceeded`       |
+| MIN or NTH only    | No (max reached) | PASS — commit, log remaining findings in telemetry |
 
 ---
 

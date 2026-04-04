@@ -197,7 +197,8 @@ Boot sequence — read these before starting:
 10. **Quality loop** — Read `CONCERT-WORKFLOW-FIX.md` for the fix-review cycle rules:
     - For simple fixes (≤2 files changed, no refactoring): self-review is sufficient
     - For complex fixes (>2 files, includes refactoring, touches critical paths): spawn code reviewer
-    - If reviewer returns MAJ/CRIT: address findings and re-review (up to 3 cycles)
+    - If reviewer returns any findings: address in priority order (CRIT/MAJ first, then MIN, then NTH) and re-review (up to 3 cycles)
+    - After 3 cycles: fail only if CRIT or MAJ remain; pass otherwise
 
 11. **Commit** — `fix(scope): description`
 

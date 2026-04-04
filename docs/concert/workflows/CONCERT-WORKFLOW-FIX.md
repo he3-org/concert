@@ -123,20 +123,21 @@ For complex fixes (full review mode):
    e. Skill compliance check
 4. Reviewer returns structured findings with severity ratings
 
-5. On PASS (NTH/MIN only):
+5. On PASS (zero findings):
    → Fix is approved
    → Commit and report
 
-6. On FAIL (MAJ/CRIT present):
-   → Fix agent addresses all CRIT and MAJ findings
+6. On remaining findings (any severity):
+   → Fix agent addresses findings in priority order (CRIT/MAJ first, then MIN, then NTH)
    → Re-runs full test suite
    → Re-submits for review
    → Repeat up to 3 cycles
 
-7. After 3 failed review cycles:
-   → Stop and report: "Fix could not pass review after 3 iterations"
-   → Log failure to state.json if mission is active
-   → Suggest manual investigation or /concert:debug
+7. After 3 review cycles:
+   → If CRIT or MAJ remain: stop and report failure
+   → If only MIN or NTH remain: pass (commit and report)
+   → Log failure/pass to state.json if mission is active
+   → Suggest manual investigation or /concert:debug if failed
 ```
 
 ### Review Focus for Fixes

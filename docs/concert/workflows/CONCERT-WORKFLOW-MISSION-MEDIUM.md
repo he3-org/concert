@@ -92,8 +92,8 @@ If any stage fails:
    ❌ Concert stopped: <stage> failed (<error_type>)
 
    📋 Next steps:
-     → Inspect the state:  /concert:status
-     → After fixing:       /concert:continue
-     → Discard and redo:   /concert:restart
-     → Roll back to:       /concert:replan <earlier-stage>
+     → Inspect the state:  /concert:status        (@concert-status in Copilot)
+     → After fixing:       /concert:continue      (@concert-continue in Copilot)
+     → Discard and redo:   /concert:restart       (@concert-restart in Copilot)
+     → Roll back to:       /concert:replan <earlier-stage>  (@concert-replan in Copilot)
    ```

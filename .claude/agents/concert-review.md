@@ -13,5 +13,7 @@ interactive_only: true
 ---
 
 This is a command alias that maps `/concert:review` to the concert-reviewer agent.
+Claude Code maps `/concert:review` to `.claude/agents/concert-review.md` by convention,
+but the canonical agent is `concert-reviewer.md`. This alias bridges the naming gap.
 
 Read `.claude/agents/concert-reviewer.md` for your complete instructions and follow them exactly.

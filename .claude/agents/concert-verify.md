@@ -13,5 +13,7 @@ interactive_only: false
 ---
 
 This is a command alias that maps `/concert:verify` to the concert-verifier agent.
+Claude Code maps `/concert:verify` to `.claude/agents/concert-verify.md` by convention,
+but the canonical agent is `concert-verifier.md`. This alias bridges the naming gap.
 
 Read `.claude/agents/concert-verifier.md` for your complete instructions and follow them exactly.

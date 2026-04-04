@@ -15,9 +15,37 @@ This workflow defines the code quality loop used during task execution. It is
 referenced by `CONCERT-WORKFLOW-EXECUTION.md` when a task file requires the
 full orchestrator-coder-reviewer pattern instead of simple single-runner execution.
 
-The loop ensures code quality through structured review with severity ratings.
-It separates concerns: the **coder** writes code, the **reviewer** evaluates it,
-and the **orchestrator** decides what happens next based on the review outcome.
+## Steps (Declarative)
+
+```yaml
+workflow: code-quality
+trigger: task_file.task_count > 3 AND environment.supports_subagents
+fallback: simple-mode (single runner, no subagents)
+
+steps:
+  1:
+    agent: concert-coder
+    inputs: [TASK file, skills from .claude/skills/]
+    outputs: [code, tests, confidence rating]
+    model: per task file "model" field
+    on_fail: retry(1), then record failure
+
+  2:
+    agent: concert-code-reviewer
+    inputs: [git diff, TASK file acceptance criteria, skills]
+    outputs: [review with severity ratings]
+    model: balanced
+    on_fail: record failure
+
+  3:
+    gate: review.highest_severity NOT IN [CRIT, MAJ]
+    on_pass: commit and proceed to next task
+    on_fail: back_to(step 1, max_iterations: 3)
+
+  4:
+    gate: iterations < max_review_iterations (default: 3)
+    on_fail: stop with error_type "model_capability_exceeded"
+```
 
 ---
 
@@ -221,7 +249,7 @@ If the code quality loop encounters an unrecoverable error:
 
    📋 Next steps:
      → Inspect changes:     git diff
-     → Read the failure:    /concert:status
-     → After fixing:        /concert:continue
-     → Replan if needed:    /concert:replan tasks
+     → Read the failure:    /concert:status        (@concert-status in Copilot)
+     → After fixing:        /concert:continue      (@concert-continue in Copilot)
+     → Replan if needed:    /concert:replan tasks   (@concert-replan in Copilot)
    ```

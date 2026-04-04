@@ -59,7 +59,7 @@ After each stage completes and is accepted:
    - Stage 4 → `UX-SPEC.md`
    - Stage 5 → No spec (produces TASK files directly)
 2. **Update state.json** — Set `pipeline.<stage>` to `"accepted"` and advance `stage` to the next value in the table
-3. **Update human status display** — Update WIP PR body or `STATUS.md` (per `concert.jsonc` → `status_display`)
+3. **Update human status display** — Update WIP PR body
 4. **Output next steps** — Show the user what to do next with specific file paths and commands
 
 ---

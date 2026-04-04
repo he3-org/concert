@@ -406,7 +406,7 @@ The system should maintain a human-readable status display.
 
 **Acceptance Criteria:**
 
-- When `status_display` in `concert.jsonc` is `"wip_pr"`, the WIP PR body is updated with pipeline progress after each stage transition
+- The WIP PR body is updated with pipeline progress after each stage transition
 - The status display shows the visual pipeline, current position, and recent history
 - The display is updated after stage acceptance and phase completion
 
@@ -641,7 +641,7 @@ The system must define and maintain a structured state file.
 - `workflow_path`: string — path to workflow file
 - `branch`: string — git branch name
 - `pr_number`: number — PR number (0 if none)
-- `status_display`: string — display mode (wip_pr, status_md)
+- `status_display`: string — display mode (wip_pr)
 - `feature_size`: string — small, medium, large
 - `stage`: string — current pipeline stage
 - `pipeline`: object — stage statuses (pending, draft, accepted)

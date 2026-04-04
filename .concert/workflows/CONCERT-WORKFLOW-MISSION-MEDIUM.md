@@ -73,7 +73,7 @@ After each stage completes and is accepted:
    - Stage 3 → `ARCHITECTURE-SPEC.md`
    - Stage 4 → No spec (produces TASK files directly)
 2. **Update state.json** — Set `pipeline.<stage>` to `"accepted"` and advance `stage` to the next value
-3. **Update human status display** — Update WIP PR body or `STATUS.md`
+3. **Update human status display** — Update WIP PR body
 4. **Output next steps** — Show the user what to do next with file paths and commands
 
 ---

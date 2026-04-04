@@ -5,22 +5,21 @@
 ---
 
 name: code-quality
-description: Orchestrator-coder-reviewer loop for complex task execution
+description: Orchestrator-coder-reviewer loop for task execution
 
 ---
 
 ## Overview
 
 This workflow defines the code quality loop used during task execution. It is
-referenced by `CONCERT-WORKFLOW-EXECUTION.md` when a task file requires the
-full orchestrator-coder-reviewer pattern instead of simple single-runner execution.
+referenced by `CONCERT-WORKFLOW-EXECUTION.md` for all task file execution using
+the orchestrator-coder-reviewer pattern.
 
 ## Steps (Declarative)
 
 ```yaml
 workflow: code-quality
-trigger: task_file.task_count > 3 AND environment.supports_subagents
-fallback: simple-mode (single runner, no subagents)
+trigger: pipeline.stage == "execution"
 
 steps:
   1:
@@ -52,16 +51,13 @@ steps:
 
 ## When to Use This Workflow
 
-| Condition              | Execution Mode                                      |
-| ---------------------- | --------------------------------------------------- |
-| Task file has ≤3 tasks | **Simple mode** — single runner handles everything  |
-| Task file has >3 tasks | **Full loop** — orchestrator-coder-reviewer pattern |
-| Claude Code session    | Full loop available (supports subagent spawning)    |
-| GitHub Agents UI       | Simple mode only (no subagent spawning)             |
+This workflow is used for **all task execution** regardless of task count or environment.
+Every task file goes through the orchestrator-coder-reviewer loop.
 
-The orchestrator reads the task file's complexity and the current environment
-to decide which mode to use. In environments that don't support subagent spawning,
-the runner acts as both coder and self-reviewer.
+| Environment         | Behavior                                          |
+| ------------------- | ------------------------------------------------- |
+| Claude Code session | Full loop with subagent spawning via Task tool    |
+| GitHub Agents UI    | Full loop executed directly (user selected model) |
 
 ---
 
@@ -216,28 +212,13 @@ The reviewer agent MUST follow these rules:
 
 ## Telemetry Integration
 
-After each task completes (either via simple mode or full loop):
+After each task completes:
 
 1. **Log review_result** — The highest severity found (`PASS`, `NTH`, `MIN`, `MAJ`, `CRIT`) or `"none"` if no review ran
 2. **Log revision_count** — How many review-fix cycles the task went through
 3. **Log confidence** — The coder's self-assessed confidence level
 
 → See `CONCERT-WORKFLOW-OBSERVABILITY.md` for full telemetry fields.
-
----
-
-## Simple Mode (≤3 Tasks or Non-Claude-Code)
-
-When using simple mode (single runner, no subagents):
-
-1. Runner implements the task (acts as coder)
-2. Runner self-reviews against acceptance criteria and loaded skills
-3. Runner reports confidence
-4. No separate reviewer agent — review quality depends on the runner's model tier
-5. Telemetry records `review_result: "none"` (no formal review)
-
-Simple mode is faster and cheaper but provides less quality assurance. It is
-appropriate for well-scoped tasks with clear acceptance criteria.
 
 ---
 

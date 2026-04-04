@@ -97,8 +97,7 @@ For each wave in order (wave 1, wave 2, ... wave N):
    b. Determine execution mode:
       - Claude Code: spawn subagent via Task tool with model parameter
       - GitHub Agents UI: execute directly (user selected model at launch)
-   c. For simple task files (≤3 tasks): single runner handles all tasks
-   d. For complex task files (>3 tasks): use orchestrator-coder-reviewer loop
+   c. Execute using orchestrator-coder-reviewer loop
       → Refer to: CONCERT-WORKFLOW-CODE-QUALITY.md
 3. Per task within a file:
    a. Read task instructions (files to modify, requirements, tests, skills)
@@ -128,7 +127,7 @@ For each wave in order (wave 1, wave 2, ... wave N):
       - Total tasks, files created/modified, tests added, commits
       - Confidence breakdown (high/medium/low counts)
    d. Update state.json: mark phase complete, advance to next phase
-   e. Update human status display (WIP PR body or STATUS.md)
+   e. Update human status display (WIP PR body)
    f. Output next steps
 2. If more phases remain:
    → Continue to next phase (repeat from step 1)

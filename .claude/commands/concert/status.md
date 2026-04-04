@@ -12,9 +12,9 @@ Show current mission position, pipeline progress, cost estimate, and next steps.
    - All planning done, mid-execution? → suggest run/continue
    - All phases done? → suggest verify
    - Verified? → suggest shipping
-4. Read `.concert/concert.jsonc` for `status_display` mode
+4. Read `.concert/concert.jsonc` for project configuration
 5. Output formatted status with:
-   - Mission name and PR link (if wip_pr mode)
+   - Mission name and PR link
    - Pipeline progress bar
    - Current phase progress (if in execution)
    - Cost estimate (spent + remaining)
@@ -23,7 +23,7 @@ Show current mission position, pipeline progress, cost estimate, and next steps.
 ## Output Format
 
 ```
-📊 Mission: YYYY-MM-DD-slug  (PR #N or STATUS.md)
+📊 Mission: YYYY-MM-DD-slug  (PR #N)
 
 Pipeline: vision ✅ → requirements ✅ → architecture ⏳ → ...
 
@@ -32,5 +32,5 @@ Cost: ~$X.XX spent  |  ~$X-Y remaining
 
 📋 Next steps:
   → [context-appropriate action]: /concert:[command]  (@concert-[command] in Copilot)
-  → Track progress: [PR link or STATUS.md path]
+  → Track progress: [PR link]
 ```

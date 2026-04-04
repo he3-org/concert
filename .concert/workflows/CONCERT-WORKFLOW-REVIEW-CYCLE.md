@@ -149,7 +149,7 @@ messages like "want to commit?" or "proceed to next stage?".
    - Set pipeline.<stage> = "accepted"
    - Advance stage to the next value per the active workflow's stage table
 5. Commit the spec file and state.json update
-6. Update human status display (WIP PR body or STATUS.md)
+6. Update human status display (WIP PR body)
 7. Output next steps:
    → Suggest /concert:continue (advances to next stage or starts execution)
 ```

@@ -20,7 +20,7 @@ Create a new Concert mission.
    - Stage: "vision"
    - Pipeline: `{ "vision": "draft" }`
    - Empty telemetry[], failure_log[], history[], blockers[]
-8. Create human status display (WIP PR if `status_display: "wip_pr"`, or STATUS.md if `status_display: "status_md"`)
+8. Create human status display (WIP PR)
 
 ## Next Steps
 

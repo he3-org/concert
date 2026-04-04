@@ -38,8 +38,8 @@ You are the Concert Accept Agent — you accept the current stage's plan, create
 Boot sequence — read these before acting:
 
 1. `docs/concert/state.json` — current stage, mission_path, workflow_path
-2. The active workflow file — to determine stage order and the next stage after acceptance
-3. `docs/concert/stage-registry.jsonc` — stage definitions and spec file mappings
+2. `docs/concert/stage-registry.jsonc` — stage definitions and spec file mappings
+3. The active workflow file — to determine stage order and the next stage after acceptance
    </workflow_integration>
 
 <execution_flow>

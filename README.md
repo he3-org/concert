@@ -79,7 +79,7 @@ This creates `.concert/`, `concert.jsonc`, agent definitions, workflows, and inj
 Open Claude Code with an **Opus** model and start a new mission:
 
 ```
-/concert:init
+/concert:init [prompt, file, or blank]
 ```
 
 Concert interviews you one question at a time — what you're building, who it's for, scope, constraints. It proposes a feature size (small/medium/large) and writes `VISION.md`.

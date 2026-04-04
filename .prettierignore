@@ -2,5 +2,3 @@ dist
 node_modules
 *.lock
 package-lock.json
-# JSONC files: prettier adds trailing commas which jsonc-parser does not support
-*.jsonc

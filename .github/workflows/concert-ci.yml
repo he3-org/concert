@@ -25,6 +25,9 @@ jobs:
       - run: npm run typecheck
         name: Type check
 
+      - run: npm run format:check
+        name: Prettier check
+
       - run: npm test
         name: Run tests
 

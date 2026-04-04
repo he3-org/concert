@@ -16,7 +16,7 @@ describe('template files', () => {
     expect(fs.existsSync(configPath)).toBe(true);
     const content = fs.readFileSync(configPath, 'utf-8');
     const errors: jsonc.ParseError[] = [];
-    jsonc.parse(content, errors);
+    jsonc.parse(content, errors, { allowTrailingComma: true });
     expect(errors).toHaveLength(0);
   });
 
@@ -309,7 +309,7 @@ describe('stage registry', () => {
     expect(fs.existsSync(registryPath)).toBe(true);
     const content = fs.readFileSync(registryPath, 'utf-8');
     const errors: jsonc.ParseError[] = [];
-    const registry = jsonc.parse(content, errors);
+    const registry = jsonc.parse(content, errors, { allowTrailingComma: true });
     expect(errors).toHaveLength(0);
     expect(registry).toHaveProperty('stages');
     expect(registry).toHaveProperty('workflows');
@@ -317,7 +317,7 @@ describe('stage registry', () => {
 
   it('all stages have required fields', () => {
     const content = fs.readFileSync(registryPath, 'utf-8');
-    const registry = jsonc.parse(content);
+    const registry = jsonc.parse(content, undefined, { allowTrailingComma: true });
     const requiredFields = [
       'name',
       'order',
@@ -339,7 +339,7 @@ describe('stage registry', () => {
 
   it('all referenced agent files exist', () => {
     const content = fs.readFileSync(registryPath, 'utf-8');
-    const registry = jsonc.parse(content);
+    const registry = jsonc.parse(content, undefined, { allowTrailingComma: true });
     const agentsDir = path.join(ROOT, '.claude', 'agents');
     for (const stage of registry.stages) {
       if (stage.agent === null) continue; // stage not yet implemented
@@ -353,14 +353,14 @@ describe('stage registry', () => {
 
   it('stage names are unique', () => {
     const content = fs.readFileSync(registryPath, 'utf-8');
-    const registry = jsonc.parse(content);
+    const registry = jsonc.parse(content, undefined, { allowTrailingComma: true });
     const names = registry.stages.map((s: { name: string }) => s.name);
     expect(new Set(names).size).toBe(names.length);
   });
 
   it('stage orders are sequential starting from 1', () => {
     const content = fs.readFileSync(registryPath, 'utf-8');
-    const registry = jsonc.parse(content);
+    const registry = jsonc.parse(content, undefined, { allowTrailingComma: true });
     const orders = registry.stages
       .map((s: { order: number }) => s.order)
       .sort((a: number, b: number) => a - b);
@@ -377,7 +377,7 @@ describe('stage registry', () => {
 describe('workflow-registry consistency', () => {
   const registryPath = path.join(ROOT, 'docs', 'concert', 'stage-registry.jsonc');
   const content = fs.readFileSync(registryPath, 'utf-8');
-  const registry = jsonc.parse(content);
+  const registry = jsonc.parse(content, undefined, { allowTrailingComma: true });
   const stageNames = new Set(registry.stages.map((s: { name: string }) => s.name));
 
   it('all workflow variants reference valid stage names', () => {

@@ -17,7 +17,7 @@
       "triggers_review": true,
       "produces_spec": "VISION-SPEC.md",
       "interactive": true,
-      "display_name": "Vision"
+      "display_name": "Vision",
     },
     {
       "name": "requirements",
@@ -29,7 +29,7 @@
       "triggers_review": true,
       "produces_spec": "REQUIREMENTS-SPEC.md",
       "interactive": false,
-      "display_name": "Requirements"
+      "display_name": "Requirements",
     },
     {
       "name": "architecture",
@@ -41,7 +41,7 @@
       "triggers_review": true,
       "produces_spec": "ARCHITECTURE-SPEC.md",
       "interactive": false,
-      "display_name": "Architecture"
+      "display_name": "Architecture",
     },
     {
       "name": "ux",
@@ -53,7 +53,7 @@
       "triggers_review": true,
       "produces_spec": "UX-SPEC.md",
       "interactive": false,
-      "display_name": "UX Design"
+      "display_name": "UX Design",
     },
     {
       "name": "tasks",
@@ -65,7 +65,7 @@
       "triggers_review": true,
       "produces_spec": null,
       "interactive": false,
-      "display_name": "Task Planning"
+      "display_name": "Task Planning",
     },
     {
       "name": "execution",
@@ -77,7 +77,7 @@
       "triggers_review": false,
       "produces_spec": null,
       "interactive": false,
-      "display_name": "Execution"
+      "display_name": "Execution",
     },
     {
       "name": "verification",
@@ -89,27 +89,44 @@
       "triggers_review": false,
       "produces_spec": null,
       "interactive": true,
-      "display_name": "Verification"
+      "display_name": "Verification",
     },
     {
       "name": "retrospective",
       "order": 8,
-      "agent": null,  // retrospective agent not yet implemented
+      "agent": null, // retrospective agent not yet implemented
       "inputs": ["telemetry", "COST-REPORT.md", "failure_log", "mission docs"],
       "outputs": ["CONCERT-IMPROVEMENT.md"],
       "output_template": "CONCERT-IMPROVEMENT.md",
       "triggers_review": false,
       "produces_spec": null,
       "interactive": false,
-      "display_name": "Retrospective"
-    }
+      "display_name": "Retrospective",
+    },
   ],
 
   // Workflow variants — each is a list of stage names to include.
   // The stage details come from the "stages" array above.
   "workflows": {
-    "mission-full": ["vision", "requirements", "architecture", "ux", "tasks", "execution", "verification", "retrospective"],
-    "mission-medium": ["vision", "requirements", "architecture", "tasks", "execution", "verification", "retrospective"],
-    "mission-small": ["vision", "tasks", "execution", "verification", "retrospective"]
-  }
+    "mission-full": [
+      "vision",
+      "requirements",
+      "architecture",
+      "ux",
+      "tasks",
+      "execution",
+      "verification",
+      "retrospective",
+    ],
+    "mission-medium": [
+      "vision",
+      "requirements",
+      "architecture",
+      "tasks",
+      "execution",
+      "verification",
+      "retrospective",
+    ],
+    "mission-small": ["vision", "tasks", "execution", "verification", "retrospective"],
+  },
 }

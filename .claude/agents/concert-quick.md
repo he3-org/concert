@@ -90,7 +90,7 @@ Every output ends with a structured report:
 
 📋 Next steps:
   → Review changes:  git diff HEAD~1
-  → Check status:    /concert:status
+  → Check status:    /concert:status            (@concert-status in Copilot)
 ```
 
 </user_guidance>

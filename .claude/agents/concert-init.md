@@ -107,10 +107,10 @@ Every output ends with a structured report:
    Vision: docs/concert/missions/<mission>/VISION.md
 
 📋 Next steps:
-  → Review vision:       /concert:review
-  → Accept vision:       /concert:accept
-  → Continue:            /concert:continue
-  → Check status:        /concert:status
+  → Review vision:       /concert:review        (@concert-review in Copilot)
+  → Accept vision:       /concert:accept        (@concert-accept in Copilot)
+  → Continue:            /concert:continue      (@concert-continue in Copilot)
+  → Check status:        /concert:status        (@concert-status in Copilot)
 ```
 
 </user_guidance>

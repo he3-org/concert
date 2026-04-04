@@ -22,5 +22,5 @@ After quick completes, output:
 📋 Next steps:
   → Review changes:  git diff HEAD~1
   → Run tests:       [project test command]
-  → Continue work:   /concert:status
+  → Check status:    /concert:status            (@concert-status in Copilot)
 ```

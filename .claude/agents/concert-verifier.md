@@ -91,9 +91,9 @@ Every output ends with a structured report:
 
 📋 Next steps:
   → Review verification:  docs/concert/missions/<mission>/VERIFICATION.md
-  → Execute gap tasks:    /concert:continue  (if gaps exist)
-  → Archive mission:      /concert:archive
-  → Check status:         /concert:status
+  → Execute gap tasks:    /concert:continue      (@concert-continue in Copilot)  (if gaps exist)
+  → Archive mission:      /concert:archive       (@concert-archive in Copilot)
+  → Check status:         /concert:status        (@concert-status in Copilot)
 ```
 
 </user_guidance>

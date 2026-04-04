@@ -25,7 +25,7 @@ After verify, output:
   → Review verification:  docs/concert/missions/.../VERIFICATION.md
   → Cost report:          docs/concert/missions/.../COST-REPORT.md
   → Improvements:         docs/concert/missions/.../CONCERT-IMPROVEMENT.md
-  → If issues found:      /concert:run (gap-closure tasks auto-generated)
+  → If issues found:      /concert:continue      (@concert-continue in Copilot)
   → If clean:             Mission complete! Create PR for human review.
-  → Archive mission:      /concert:archive (removes mission folder, resets state)
+  → Archive mission:      /concert:archive       (@concert-archive in Copilot)
 ```

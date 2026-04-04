@@ -17,7 +17,7 @@ After restart, output:
 
 ```
 📋 Next steps:
-  → Review the new plan:  /concert:review
-  → Accept the plan:      /concert:accept
-  → Check status:         /concert:status
+  → Review the new plan:  /concert:review        (@concert-review in Copilot)
+  → Accept the plan:      /concert:accept        (@concert-accept in Copilot)
+  → Check status:         /concert:status        (@concert-status in Copilot)
 ```

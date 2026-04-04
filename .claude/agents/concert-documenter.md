@@ -69,8 +69,8 @@ Every output ends with a structured report:
    Commit: <hash> — docs: update documentation for phase NN — <phase-name>
 
 📋 Next steps:
-  → Continue execution:  /concert:continue
-  → Check status:        /concert:status
+  → Continue execution:  /concert:continue      (@concert-continue in Copilot)
+  → Check status:        /concert:status        (@concert-status in Copilot)
 ```
 
 </user_guidance>

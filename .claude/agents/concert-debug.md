@@ -94,8 +94,8 @@ Every output ends with a structured report:
    Commit: <hash> — <message>
 
 📋 Next steps:
-  → Resume execution:  /concert:continue
-  → Check status:      /concert:status
+  → Resume execution:  /concert:continue        (@concert-continue in Copilot)
+  → Check status:      /concert:status          (@concert-status in Copilot)
 ```
 
 ```
@@ -104,8 +104,8 @@ Every output ends with a structured report:
    Current state: <what's broken, what was tried>
 
 📋 Next steps:
-  → Investigate manually and run /concert:debug again
-  → Or restart the task: /concert:restart
+  → Investigate manually and run /concert:debug again  (@concert-debug in Copilot)
+  → Or restart the task: /concert:restart              (@concert-restart in Copilot)
 ```
 
 </user_guidance>

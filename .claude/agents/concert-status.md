@@ -80,7 +80,7 @@ Cost: ~$4.20 spent | ~$12-18 remaining
   - Phase 3, Task 3 (Pagination): IN PROGRESS — session crashed
 
 📋 Next steps:
-  → Continue execution:  /concert:continue
+  → Continue execution:  /concert:continue      (@concert-continue in Copilot)
   → In GitHub UI:        Select "concert-continue" agent
   → Track progress:      PR #42
 ```

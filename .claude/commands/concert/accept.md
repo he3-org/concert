@@ -25,6 +25,6 @@ After accept, output the workflow-appropriate next step:
 
 ```
 📋 Next steps:
-  → Continue:           /concert:continue     (advance to next stage or start execution)
-  → Check status:       /concert:status
+  → Continue:           /concert:continue      (@concert-continue in Copilot)
+  → Check status:       /concert:status        (@concert-status in Copilot)
 ```

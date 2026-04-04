@@ -240,8 +240,8 @@ Every output ends with a structured report:
 📋 Next steps:
   → Review the fix:       git diff HEAD~1
   → Run full tests:       [project test command]
-  → Continue work:        /concert:continue
-  → Check status:         /concert:status
+  → Continue work:        /concert:continue      (@concert-continue in Copilot)
+  → Check status:         /concert:status        (@concert-status in Copilot)
 ```
 
 ```
@@ -253,7 +253,7 @@ Every output ends with a structured report:
 
 📋 Next steps:
   → Read the analysis:    <document_path>
-  → Start a mission:      /concert:init
+  → Start a mission:      /concert:init          (@concert-init in Copilot)
   → Discuss approach:     [describe to team]
 ```
 

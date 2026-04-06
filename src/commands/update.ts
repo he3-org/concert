@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { resolvePackageRoot, copyLiveFiles } from '../lib/copy.js';
+import { resolvePackageRoot, copyLiveFiles, cleanupStaleFiles } from '../lib/copy.js';
 import { readConfigRaw, writeConfig, readConfig, modifyConfigField } from '../lib/config.js';
 import { readState, writeState } from '../lib/state.js';
 import { getPackageVersion } from '../lib/version.js';
@@ -176,12 +176,16 @@ export async function runUpdate(cwd: string): Promise<number> {
     stateReport = report;
   }
 
+  // Clean up stale Concert-managed files from previous versions
+  const cleanupResult = cleanupStaleFiles(cwd, version);
+
   const allCurrent =
     updatedFiles.length === 0 &&
     configReport.added.length === 0 &&
     configReport.removed.length === 0 &&
     stateReport.added.length === 0 &&
-    stateReport.removed.length === 0;
+    stateReport.removed.length === 0 &&
+    cleanupResult.deleted.length === 0;
 
   if (allCurrent) {
     process.stdout.write(`Concert is up to date (v${version})
@@ -202,6 +206,14 @@ export async function runUpdate(cwd: string): Promise<number> {
     output += `  Updated managed files:\n`;
     for (const f of updatedFiles) {
       output += `    ${f.path}  (${f.from} -> ${f.to})\n`;
+    }
+    output += '\n';
+  }
+
+  if (cleanupResult.deleted.length > 0) {
+    output += `  Removed stale files from previous version:\n`;
+    for (const f of cleanupResult.deleted) {
+      output += `    ${f}\n`;
     }
     output += '\n';
   }

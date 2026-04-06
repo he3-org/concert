@@ -19,6 +19,7 @@
     "spent_this_mission": "",
     "by_stage": {}
   },
+  "next_action": null,
   "blockers": [],
   "telemetry": [],
   "failure_log": [],

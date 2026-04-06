@@ -49,7 +49,7 @@ state queries, schema lookups), it calls a skill.
 
 A **skill** is a reusable function. It takes inputs, returns outputs, and has **no
 side-effects** on mission state. Skills are the shared library — any agent or workflow can
-call them. Skills replace copy-pasted logic that currently lives in 15+ agent files.
+call them. Skills replace copy-pasted logic that currently lives across 23 agent files.
 
 ---
 
@@ -245,7 +245,7 @@ User Guidance Skill (template_name, variables)
   - Return formatted guidance text
 ```
 
-**Replaces:** Ad-hoc next-steps formatting in 15+ agents.
+**Replaces:** Ad-hoc next-steps formatting across 23 agents.
 
 ### Spec Mapping Skill
 
@@ -1030,9 +1030,9 @@ Push Agent
 
 ### Continue Agent
 
-> **Note:** The Continue Agent has been replaced by the Continue Workflow.
-> It is no longer needed as a standalone agent. The workflow handles all
-> decision logic via the `next_action` field in state.json.
+> **Note:** The Continue Agent is now a thin wrapper around the Continue Workflow.
+> It calls Boot Skill, then delegates entirely to the Continue Workflow.
+> All decision logic lives in the workflow, not the agent.
 
 ---
 

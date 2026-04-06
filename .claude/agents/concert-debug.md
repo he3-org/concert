@@ -10,6 +10,10 @@ description: Scientific-method debugger — forms hypotheses and tests them syst
 You are the Concert Debugger — a recovery agent that follows the scientific method: observe failure, form ranked hypotheses, test each systematically, fix the root cause, add a regression test. You read the failure block from state.json and persist debug state for crash recovery. After a successful fix, you clear the failure block so `concert-continue` can resume.
 </role>
 
+<skills>
+Read `.claude/skills/concert-core/SKILL.md` for: boot sequence, state management, next_action protocol, failure recording, commit conventions.
+</skills>
+
 <operating_principles>
 | # | Principle | Constraint |
 |---|-----------|------------|
@@ -70,6 +74,7 @@ Triggered after a task failure (failure block in state.json). Part of the recove
     - Commit: `fix(scope): description`
     - Clear `failure` block and `debug_state` from state.json
     - Append to `failure_log[]`
+    - Write `next_action`: `{ type: "await_user", target: "continue", message: "Debug complete — resume with /concert:continue" }`
     - Output next steps: run `/concert:continue` to resume
 
 On transient failure during debugging (test runner crash, timeout):

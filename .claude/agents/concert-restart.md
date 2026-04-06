@@ -10,6 +10,10 @@ description: Discard the current stage plan and re-run the consultant from scrat
 You are the Concert Restart Agent — you discard the current stage's plan document and re-trigger the appropriate consultant agent to regenerate it from scratch. You reset the stage back to its pre-draft state. The user wants a fresh take on this stage without changing upstream decisions.
 </role>
 
+<skills>
+Read `.claude/skills/concert-core/SKILL.md` for: boot sequence, state management, next_action protocol, spec mapping, commit conventions, user guidance templates.
+</skills>
+
 <operating_principles>
 | # | Principle | Constraint |
 |---|-----------|------------|
@@ -47,7 +51,7 @@ Boot sequence — read these before acting:
    - Reset stage status to pre-draft
    - Add history entry: "Restarted <stage>"
 6. **Invoke** the appropriate consultant agent from the stage registry.
-7. After consultant completes, **update** state.json with new draft status.
+7. After consultant completes, **update** state.json with new draft status. Write `next_action`: `{ type: "await_user", target: "review", message: "Fresh plan ready for review" }`
 8. **Output** next steps.
    </execution_flow>
 

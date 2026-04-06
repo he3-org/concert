@@ -493,19 +493,62 @@ Review Workflow (stage?)
   2. IF stage not provided → use current stage from state
   3. Call Spec Mapping Skill (stage) → get document_path, agent
   4. IF stage does not trigger review → error: "Stage {stage} does not have a review step"
-  5. Run Reviewer Agent (document_path)
-       → Agent presents document, gathers feedback, incorporates changes
-  6. IF document was modified:
-       → Look up specialist agent from stage-registry
-       → Run specialist agent in re-review mode (only check for new concerns)
-       → IF specialist finds new concerns → Go to step 5
-  7. Call Open Questions Skill (mission_path)
-  8. IF reviewing ALIGNMENT.md and it was modified:
-       → For each mission doc affected by alignment changes:
-           Run specialist agent in re-review mode
-  9. Call User Guidance Skill ("Review Complete", { open_question_count })
-  10. Call State Skill → set_next_action:
-        { type: "await_user", target: "accept", message: "Review complete" }
+  5. Initialize modified_documents = []
+
+  — Phase 1: Pre-Review User Input —
+  6. Ask user: "Do you have any changes or questions before we review the open questions?"
+  7. IF yes:
+       → Resolve the user's input (apply changes, answer questions)
+       → Track any documents modified → append to modified_documents
+       → Go to step 6 (ask again until user has no more changes)
+  8. ELSE: continue
+
+  — Phase 2: Open Questions Resolution —
+  9. FOR each mission document in workflow stage order
+     (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX.md, ALIGNMENT.md):
+       a. Call Open Questions Skill → get open questions for this document
+       b. IF no open questions → continue to next document
+       c. FOR each open question in the document (one at a time):
+            - Present the question to the user
+            - Gather user's response
+            - Resolve the question and update the document
+            - Track document as modified → append to modified_documents (if not already)
+       d. Continue to next document
+
+  — Phase 3: Post-Review User Input —
+  10. Ask user: "Do you have any changes or questions before we complete this round of review?"
+  11. IF yes:
+        → Resolve the user's input (apply changes, answer questions)
+        → Track any documents modified → append to modified_documents
+        → Go to step 10 (ask again until user has no more changes)
+  12. ELSE: continue
+
+  — Phase 4: Automated Agentic Re-Review —
+  13. FOR each document in modified_documents (excluding ALIGNMENT.md):
+        → Look up specialist agent for that document from stage-registry
+        → Run specialist agent in re-review mode:
+            Purpose: find any new concerns arising from the modifications
+            New concerns become new open questions added to the document
+  14. After all specialist re-reviews complete:
+        → Re-review ALL mission documents (excluding ALIGNMENT.md)
+            for new alignment concerns
+        → Any new alignment concerns become new open questions
+            added to ALIGNMENT.md
+
+  — Phase 5: Breakpoint & Status —
+  15. Call Commit Skill ("docs", stage, "incorporate review feedback")
+  16. Call Open Questions Skill (mission_path) → get updated counts
+  17. Call State Skill → write any pending updates (counts, status)
+  18. Call User Guidance Skill ("Review Complete", { open_question_count })
+        → Present current status with updated open question counts
+        → Provide guidance for next steps:
+            IF open_question_count > 0:
+              → Suggest running Review again to resolve new questions
+            ELSE:
+              → Suggest running Accept to proceed
+  19. Call State Skill → set_next_action:
+        { type: "await_user", target: "review_or_accept",
+          message: "Review round complete" }
 ```
 
 ### Accept Workflow
@@ -730,13 +773,21 @@ Architect Agent
        - Error handling strategy
        - Security considerations
        - Performance targets
-  3. Write ARCHITECTURE.md to mission folder
-  4. Call State Skill → write:
+  3. Identify Suggested New Skills:
+       - Review the architecture for technologies, services, programming languages,
+         frameworks, and tools that will be used
+       - Compare against existing Concert skills (from .claude/skills/)
+       - For each technology/service/language not covered by an existing skill:
+           List as a suggested new skill with rationale
+       - Write the "Suggested New Skills" section in ARCHITECTURE.md
+         (placed before the Open Questions section)
+  4. Write ARCHITECTURE.md to mission folder
+  5. Call State Skill → write:
        { pipeline: { architecture: "draft" } }
-  5. Call Commit Skill ("docs", "architecture", "draft architecture")
-  6. Call State Skill → set_next_action:
+  6. Call Commit Skill ("docs", "architecture", "draft architecture")
+  7. Call State Skill → set_next_action:
        { type: "await_user", target: "review" }
-  7. Return { document_path, confidence }
+  8. Return { document_path, confidence }
 ```
 
 ### Designer Agent
@@ -753,13 +804,21 @@ Designer Agent
        - Interaction patterns
        - Accessibility requirements
        - Platform conventions
-  4. Write UX.md to mission folder
-  5. Call State Skill → write:
+  4. Identify Suggested New Skills:
+       - Review the UX design for technologies, UI frameworks, design systems,
+         accessibility tools, and platform-specific patterns that will be used
+       - Compare against existing Concert skills (from .claude/skills/)
+       - For each technology/tool/pattern not covered by an existing skill:
+           List as a suggested new skill with rationale
+       - Write the "Suggested New Skills" section in UX.md
+         (placed before the Open Questions section)
+  5. Write UX.md to mission folder
+  6. Call State Skill → write:
        { pipeline: { ux: "draft" } }
-  6. Call Commit Skill ("docs", "ux", "draft UX design")
-  7. Call State Skill → set_next_action:
+  7. Call Commit Skill ("docs", "ux", "draft UX design")
+  8. Call State Skill → set_next_action:
        { type: "await_user", target: "review" }
-  8. Return { document_path, confidence }
+  9. Return { document_path, confidence }
 ```
 
 ### Planner Agent
@@ -826,20 +885,30 @@ Code Reviewer Agent (task_file, commit_hash)
 ### Reviewer Agent
 
 ```
-Reviewer Agent (document_path)
-  1. Call Boot Skill ("review")
-  2. Present document to user
-  3. Gather feedback interactively:
-       - Present one concern at a time
-       - User can: approve, request change, ask question, skip
-  4. For each requested change:
-       - Apply change to document
-       - Track what was modified
-  5. After all feedback processed:
-       - Update ALIGNMENT.md with any cross-cutting concerns
-       - Call Open Questions Skill → count remaining questions
-  6. Call Commit Skill ("docs", stage, "incorporate review feedback")
-  7. Return { modified: bool, changes_made[], open_question_count }
+Reviewer Agent (document_path, mode)
+  — mode: "interactive" (user-facing) or "re-review" (automated) —
+
+  IF mode == "interactive":
+    1. Call Boot Skill ("review")
+    2. Present document to user
+    3. Gather feedback interactively:
+         - Present one concern at a time
+         - User can: approve, request change, ask question, skip
+    4. For each requested change:
+         - Apply change to document
+         - Track what was modified
+    5. Return { modified: bool, changes_made[], modified_documents[] }
+
+  IF mode == "re-review":
+    1. Call Boot Skill ("review")
+    2. Read the document and all related mission context
+    3. Analyze for new concerns introduced by recent modifications:
+         - Consistency with other mission documents
+         - Completeness gaps
+         - New dependencies or conflicts
+    4. For each new concern found:
+         - Add as a new open question (❓) in the document
+    5. Return { new_questions_added: number, questions[] }
 ```
 
 ### Accept Agent

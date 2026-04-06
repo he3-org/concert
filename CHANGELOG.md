@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/he3-org/concert/compare/v1.9.0...v1.10.0) (2026-04-06)
+
+
+### Features
+
+* refactor commands, workflows, agents, and skills. ([c0aa56e](https://github.com/he3-org/concert/commit/c0aa56eea9131267326821de05a530a05c80d66e))
+
 ## [1.9.0](https://github.com/he3-org/concert/compare/v1.8.1...v1.9.0) (2026-04-06)
 
 

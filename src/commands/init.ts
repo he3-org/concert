@@ -146,7 +146,7 @@ export async function runInit(cwd: string): Promise<number> {
   const result = copyTemplates(templatesDir, cwd, false);
 
   // Copy live files (agents, workflows, skills, commands, GitHub agents)
-  const liveResult = copyLiveFiles(packageRoot, cwd, false);
+  const liveResult = copyLiveFiles(packageRoot, cwd, false, version);
   result.created.push(...liveResult.created);
   result.skipped.push(...liveResult.skipped);
 

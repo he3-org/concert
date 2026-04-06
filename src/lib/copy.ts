@@ -187,7 +187,10 @@ export const EXCLUDED_SKILLS: readonly string[] = [];
  * Rules excluded from shipping. These are specific to the Concert repo
  * and not useful for target repos. Everything else in .claude/rules/ ships.
  */
-export const EXCLUDED_RULES: readonly string[] = ['concert-repo-managed-files.md'];
+export const EXCLUDED_RULES: readonly string[] = [
+  'concert-managed-file-headers.md',
+  'concert-repo-managed-files.md',
+];
 
 /**
  * Workflow files excluded from shipping. These are specific to the Concert repo

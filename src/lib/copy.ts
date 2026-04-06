@@ -411,23 +411,25 @@ export function countLiveFiles(packageRoot: string): Record<string, number> {
 export function cleanupStaleFiles(targetDir: string, currentVersion: string): CleanupResult {
   const result: CleanupResult = { deleted: [] };
 
-  // Directories to scan for stale Concert-managed files
-  const scanDirs: Array<{ dir: string; pattern?: RegExp }> = [
+  // Directories to scan for stale Concert-managed files.
+  // excluded: optional list of filenames to skip (Concert-repo-only files).
+  const scanDirs: Array<{ dir: string; pattern?: RegExp; excluded?: readonly string[] }> = [
     { dir: '.claude/agents', pattern: /^concert-.*\.md$/ },
     { dir: '.claude/commands/concert', pattern: /\.md$/ },
     { dir: '.github/agents', pattern: /^concert-.*\.agent\.md$/ },
     { dir: '.concert/workflows', pattern: /^CONCERT-WORKFLOW-.*\.md$/ },
     { dir: '.concert/templates', pattern: /\.md$/ },
-    { dir: '.github/workflows', pattern: /^concert-.*\.yml$/ },
+    { dir: '.github/workflows', pattern: /^concert-.*\.yml$/, excluded: EXCLUDED_WORKFLOWS },
   ];
 
-  for (const { dir, pattern } of scanDirs) {
+  for (const { dir, pattern, excluded } of scanDirs) {
     const fullDir = path.join(targetDir, dir);
     if (!fs.existsSync(fullDir)) continue;
     const entries = fs.readdirSync(fullDir, { withFileTypes: true });
     for (const entry of entries) {
       if (!entry.isFile()) continue;
       if (pattern && !pattern.test(entry.name)) continue;
+      if (excluded?.includes(entry.name)) continue;
       const filePath = path.join(fullDir, entry.name);
       const content = fs.readFileSync(filePath, 'utf-8');
       if (!isManagedFile(content)) continue;
@@ -446,6 +448,7 @@ export function cleanupStaleFiles(targetDir: string, currentVersion: string): Cl
     const skillEntries = fs.readdirSync(skillsDir, { withFileTypes: true });
     for (const entry of skillEntries) {
       if (!entry.isDirectory()) continue;
+      if (EXCLUDED_SKILLS.includes(entry.name)) continue;
       const skillMdPath = path.join(skillsDir, entry.name, 'SKILL.md');
       if (!fs.existsSync(skillMdPath)) continue;
       const content = fs.readFileSync(skillMdPath, 'utf-8');
@@ -465,6 +468,7 @@ export function cleanupStaleFiles(targetDir: string, currentVersion: string): Cl
     const ruleEntries = fs.readdirSync(rulesDir, { withFileTypes: true });
     for (const entry of ruleEntries) {
       if (!entry.isFile() || !entry.name.endsWith('.md')) continue;
+      if (EXCLUDED_RULES.includes(entry.name)) continue;
       const filePath = path.join(rulesDir, entry.name);
       const content = fs.readFileSync(filePath, 'utf-8');
       if (!isManagedFile(content)) continue;

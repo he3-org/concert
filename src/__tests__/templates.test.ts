@@ -34,6 +34,7 @@ describe('template files', () => {
       'tasks_completed',
       'commits',
       'cost',
+      'next_action',
       'blockers',
       'telemetry',
       'failure_log',

@@ -90,6 +90,15 @@ export interface CostTracking {
   by_stage: Record<string, string>;
 }
 
+export type NextActionType = 'run_agent' | 'run_workflow' | 'await_user';
+
+export interface NextAction {
+  type: NextActionType;
+  target: string;
+  context?: Record<string, string>;
+  message: string;
+}
+
 export interface ConcertState {
   // Identity
   mission: string;
@@ -117,6 +126,9 @@ export interface ConcertState {
 
   // Cost tracking
   cost: CostTracking;
+
+  // Session continuation
+  next_action?: NextAction | null;
 
   // Active states (nullable)
   failure?: FailureBlock | null;

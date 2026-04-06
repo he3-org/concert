@@ -56,7 +56,7 @@ Agent (.claude/agents/concert-*.md)
 1. **Crash safety** — state.json is committed after every update; sessions can resume
    from the last commit with at most one task of work lost.
 2. **KV-cache optimization** — All agents read state.json first in the same order to
-   maximize LLM context cache sharing.
+   maximize LLM key-value cache (KV-cache) sharing across agent invocations.
 3. **Explicit handoff** — Every agent writes `next_action` to state.json before
    completing, so the next session knows exactly what to do.
 4. **Staged review gates** — Users must review and accept each planning stage before

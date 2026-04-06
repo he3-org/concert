@@ -55,10 +55,10 @@ Every agent writes a `next_action` to state.json before completing:
 **Rules:**
 
 - `await_user` → stop and show status; user must invoke next command
-- `run_agent` → the Continue Workflow spawns the named agent
-- `run_workflow` → the Continue Workflow runs the named workflow
+- `run_agent` → `concert-continue` spawns the named agent
+- `run_workflow` → `concert-continue` runs the named workflow
 - Every agent MUST set `next_action` — never leave it stale
-- The Continue agent reads `next_action` to decide what to do next
+- `concert-continue` reads `next_action` to decide what to do next
 
 **Standard next_action values by agent:**
 

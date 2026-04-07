@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/he3-org/concert/compare/v1.10.1...v1.11.0) (2026-04-07)
+
+
+### Features
+
+* add suggested skills section and standardize open questions format ([#53](https://github.com/he3-org/concert/issues/53)) ([4902fd2](https://github.com/he3-org/concert/commit/4902fd262788ef1b934efdb4aae1089b7a44dd69))
+
 ## [1.10.1](https://github.com/he3-org/concert/compare/v1.10.0...v1.10.1) (2026-04-07)
 
 

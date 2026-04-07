@@ -65,15 +65,19 @@ Boot sequence — read these before starting:
    - **Accessibility** — ARIA roles, color contrast, screen reader considerations
    - **Platform conventions** — Per loaded UX skills
 
-5. **Write** `UX.md` to the mission folder.
+5. **Add Suggested Skills** — Review the UI frameworks, component libraries, design systems, and platform-specific tools in the UX design. List existing skills in `.claude/skills/`. For each technology that does NOT have a corresponding skill, add a `## Suggested Skills` section with: proposed skill name, target technology/service, and rationale for why a skill would help downstream agents (coder, code-reviewer, verifier). Omit this section if no new skills are needed.
 
-6. **Update state.json** — Set `pipeline.ux` to `"draft"`, update `history[]` and `next_steps[]`.
+6. **Add Open Questions** — Add a `## Open Questions` section as the LAST section of the document. List any unresolved questions, concerns, or items needing clarification as unchecked checkbox items (`- [ ] question text`). If there are no open questions, include the section header with no items.
 
-7. **Commit** the UX file.
+7. **Write** `UX.md` to the mission folder.
 
-8. **Write `next_action`** to state.json: `{ type: "await_user", target: "review", message: "UX design ready for review" }`
+8. **Update state.json** — Set `pipeline.ux` to `"draft"`, update `history[]` and `next_steps[]`.
 
-9. **Report** confidence in the design's implementability with reasoning.
+9. **Commit** the UX file.
+
+10. **Write `next_action`** to state.json: `{ type: "await_user", target: "review", message: "UX design ready for review" }`
+
+11. **Report** confidence in the design's implementability with reasoning.
 
 ### Re-Review Mode
 
@@ -81,11 +85,13 @@ When invoked for re-review (after document modifications during the review cycle
 
 1. **Re-read** the updated `UX.md` in the mission folder.
 2. **Compare** the updated content against requirements, architecture constraints, and upstream documents.
-3. **Determine** if the changes introduced new questions, gaps, or inconsistencies.
-4. If there are new questions or concerns:
+3. **Review Suggested Skills** — Re-check the `## Suggested Skills` section. Add new suggestions if the changes introduced technologies without existing skills. Remove suggestions that are no longer relevant.
+4. **Review Open Questions** — Update the `## Open Questions` checkbox list. Add new questions if changes introduced gaps. Check off (`- [x]`) any questions that are now resolved, noting the resolution inline.
+5. **Determine** if the changes introduced new questions, gaps, or inconsistencies.
+6. If there are new questions or concerns:
    - Present them clearly to the user.
    - Guide the user: start a new review (`/concert:review` / `@concert-review in Copilot`) or stop automation.
-5. If there are no new questions or concerns:
+7. If there are no new questions or concerns:
    - Confirm the document looks complete and consistent.
    - Guide the user: accept now (`/concert:accept` / `@concert-accept in Copilot`) or stop automation.
 

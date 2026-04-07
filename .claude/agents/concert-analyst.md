@@ -62,7 +62,7 @@ Boot sequence — read these before starting:
    - **Edge cases** — Explicitly identified edge cases and expected behavior
    - **Out of scope** — Items explicitly excluded per VISION.md
    - **Assumptions** — Things assumed true that could affect implementation
-   - **Open questions** — Items needing user clarification
+   - **Open questions** — Items needing user clarification, as a `## Open Questions` checkbox list (`- [ ] question text`). This MUST be the last section of the document.
 
 4. **Write** `REQUIREMENTS.md` to the mission folder.
 

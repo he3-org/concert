@@ -67,15 +67,19 @@ Boot sequence — read these before starting:
    - **Trade-offs** — decisions made and their consequences
    - **Migration plan** — how to evolve existing code toward the new design
 
-4. **Write** `ARCHITECTURE.md` to the mission folder.
+4. **Add Suggested Skills** — Review the tech stack, services, frameworks, and languages in the architecture. List existing skills in `.claude/skills/`. For each technology that does NOT have a corresponding skill, add a `## Suggested Skills` section with: proposed skill name, target technology/service, and rationale for why a skill would help downstream agents (coder, code-reviewer, verifier). Omit this section if no new skills are needed.
 
-5. **Update state.json** — Set `pipeline.architecture` to `"draft"`, update `history[]` and `next_steps[]`.
+5. **Add Open Questions** — Add a `## Open Questions` section as the LAST section of the document. List any unresolved questions, concerns, or items needing clarification as unchecked checkbox items (`- [ ] question text`). If there are no open questions, include the section header with no items.
 
-6. **Commit** the architecture file.
+6. **Write** `ARCHITECTURE.md` to the mission folder.
 
-7. **Write `next_action`** to state.json: `{ type: "await_user", target: "review", message: "Architecture ready for review" }`
+7. **Update state.json** — Set `pipeline.architecture` to `"draft"`, update `history[]` and `next_steps[]`.
 
-8. **Report** confidence in the architecture's viability with reasoning.
+8. **Commit** the architecture file.
+
+9. **Write `next_action`** to state.json: `{ type: "await_user", target: "review", message: "Architecture ready for review" }`
+
+10. **Report** confidence in the architecture's viability with reasoning.
 
 ### Re-Review Mode
 
@@ -83,11 +87,13 @@ When invoked for re-review (after document modifications during the review cycle
 
 1. **Re-read** the updated `ARCHITECTURE.md` in the mission folder.
 2. **Compare** the updated content against requirements, existing codebase patterns, and upstream documents.
-3. **Determine** if the changes introduced new questions, gaps, or inconsistencies.
-4. If there are new questions or concerns:
+3. **Review Suggested Skills** — Re-check the `## Suggested Skills` section. Add new suggestions if the changes introduced technologies without existing skills. Remove suggestions that are no longer relevant.
+4. **Review Open Questions** — Update the `## Open Questions` checkbox list. Add new questions if changes introduced gaps. Check off (`- [x]`) any questions that are now resolved, noting the resolution inline.
+5. **Determine** if the changes introduced new questions, gaps, or inconsistencies.
+6. If there are new questions or concerns:
    - Present them clearly to the user.
    - Guide the user: start a new review (`/concert:review` / `@concert-review in Copilot`) or stop automation.
-5. If there are no new questions or concerns:
+7. If there are no new questions or concerns:
    - Confirm the document looks complete and consistent.
    - Guide the user: accept now (`/concert:accept` / `@concert-accept in Copilot`) or stop automation.
 

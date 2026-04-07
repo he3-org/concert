@@ -1,0 +1,63 @@
+# Deploy Concert 3 — Creates the concert3 repo and pushes all files
+# Uses GH_CLASSIC_TOKEN from repository secrets.
+#
+# Run this workflow from the "concert" repo to deploy concert3 to a new repo.
+
+name: "🚀 Deploy Concert 3 Repo"
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repository name to create"
+        required: true
+        default: "concert3"
+        type: string
+      visibility:
+        description: "Repository visibility"
+        required: true
+        type: choice
+        options:
+          - private
+          - public
+        default: private
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout concert repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Deploy concert3 to new repository
+        env:
+          GH_CLASSIC_TOKEN: ${{ secrets.GH_CLASSIC_TOKEN }}
+          GITHUB_ORG: he3-org
+          REPO_NAME: ${{ inputs.repo_name }}
+          REPO_VISIBILITY: ${{ inputs.visibility }}
+        run: |
+          # Copy concert3 directory to a temp location
+          cp -r concert3 /tmp/concert3-deploy
+          cd /tmp/concert3-deploy
+
+          # Run the setup script
+          node scripts/setup.mjs
+
+      - name: Summary
+        run: |
+          echo "## 🎵 Concert 3 Deployed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Repository: https://github.com/he3-org/${{ inputs.repo_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Go to the new repo → **Actions** → **🎵 Concert Init** → **Run workflow**" >> $GITHUB_STEP_SUMMARY
+          echo "2. Enter a mission name and description" >> $GITHUB_STEP_SUMMARY
+          echo "3. Edit VISION.md, then comment \`/accept\` on the mission issue" >> $GITHUB_STEP_SUMMARY

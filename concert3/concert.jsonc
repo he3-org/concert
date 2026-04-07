@@ -1,0 +1,34 @@
+{
+  // Concert 3 Configuration
+  // GitHub-native SDLC orchestration
+
+  "project_name": "concert3",
+
+  // Git settings
+  "git": {
+    "base_branch": "main",
+    "commit_format": "conventional"
+  },
+
+  // Execution settings
+  "execution": {
+    "max_review_iterations": 3,
+    "max_tasks_per_wave": 5
+  },
+
+  // Model tier routing
+  "model_profiles": {
+    "quality": "claude-opus-4-6",
+    "balanced": "claude-sonnet-4-6",
+    "budget": "claude-haiku-4-5"
+  },
+
+  // Review gates — which stages require /accept
+  "review_gates": {
+    "vision": true,
+    "requirements": true,
+    "architecture": true,
+    "ux": true,
+    "planning": true
+  }
+}

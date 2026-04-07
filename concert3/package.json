@@ -1,0 +1,27 @@
+{
+  "name": "@he3-org/concert3",
+  "version": "0.1.0",
+  "description": "GitHub-native SDLC orchestration — AI as workers, not managers",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/he3-org/concert3.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "echo 'No build step — Concert 3 is a GitHub-native template'",
+    "test": "echo 'Tests run via GitHub Actions workflows'",
+    "setup": "node scripts/setup.mjs"
+  },
+  "keywords": [
+    "concert",
+    "sdlc",
+    "orchestration",
+    "github-actions",
+    "copilot",
+    "ai-development"
+  ]
+}

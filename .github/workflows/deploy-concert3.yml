@@ -1,0 +1,126 @@
+# Deploy Concert 3 — Creates the concert3 repo from the concert3/ directory
+# Uses GH_CLASSIC_TOKEN from repository secrets to create and push to the new repo.
+#
+# Usage: Go to Actions → Deploy Concert 3 → Run workflow
+
+name: "🚀 Deploy Concert 3"
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Target repository name"
+        required: true
+        default: "concert3"
+        type: string
+      visibility:
+        description: "Repository visibility"
+        required: true
+        type: choice
+        options:
+          - private
+          - public
+        default: private
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout concert repo
+        uses: actions/checkout@v4
+
+      - name: Verify concert3 directory exists
+        run: |
+          if [ ! -d "concert3" ]; then
+            echo "❌ concert3/ directory not found in repository"
+            exit 1
+          fi
+          echo "✅ concert3/ directory found"
+          ls -la concert3/
+
+      - name: Create target repository
+        env:
+          GH_TOKEN: ${{ secrets.GH_CLASSIC_TOKEN }}
+        run: |
+          # Check if repo exists
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/he3-org/${{ inputs.repo_name }}")
+
+          if [ "$STATUS" = "200" ]; then
+            echo "ℹ️ Repository already exists"
+          else
+            echo "🏗️ Creating repository..."
+            PRIVATE=$([[ "${{ inputs.visibility }}" == "private" ]] && echo "true" || echo "false")
+
+            curl -s -X POST \
+              -H "Authorization: token $GH_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/orgs/he3-org/repos" \
+              -d "{
+                \"name\": \"${{ inputs.repo_name }}\",
+                \"description\": \"GitHub-native SDLC orchestration — AI as workers, not managers\",
+                \"private\": $PRIVATE,
+                \"auto_init\": false,
+                \"has_issues\": true,
+                \"has_projects\": true,
+                \"has_wiki\": false
+              }"
+            echo "✅ Repository created"
+          fi
+
+      - name: Push concert3 files to target repo
+        env:
+          GH_TOKEN: ${{ secrets.GH_CLASSIC_TOKEN }}
+        run: |
+          # Copy concert3 content to a clean directory
+          DEPLOY_DIR=$(mktemp -d)
+          cp -r concert3/. "$DEPLOY_DIR/"
+
+          cd "$DEPLOY_DIR"
+
+          # Initialize git
+          git init
+          git checkout -b main
+          git config user.name "Concert Bot"
+          git config user.email "concert@github.com"
+
+          # Add and commit all files
+          git add -A
+          git commit -m "feat: initial Concert 3 implementation
+
+          GitHub-native SDLC orchestration with:
+          - GitHub Actions as deterministic orchestrator
+          - GitHub Issues as state machine (labels)
+          - Copilot Coding Agent as flat workers
+          - Zero agent nesting
+          - /accept and /revise command handling
+          - Automated quality loop (code → review → fix)"
+
+          # Push to target repo
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/he3-org/${{ inputs.repo_name }}.git"
+          git push -u origin main --force
+
+          echo "✅ Files pushed to he3-org/${{ inputs.repo_name }}"
+
+      - name: Summary
+        run: |
+          echo "## 🎵 Concert 3 Deployed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** [he3-org/${{ inputs.repo_name }}](https://github.com/he3-org/${{ inputs.repo_name }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### What's Included" >> $GITHUB_STEP_SUMMARY
+          echo "- 4 GitHub Actions workflows (orchestrator, execute, review, init)" >> $GITHUB_STEP_SUMMARY
+          echo "- 6 Copilot agent definitions (analyst, architect, designer, planner, coder, reviewer)" >> $GITHUB_STEP_SUMMARY
+          echo "- 5 document templates (vision, requirements, architecture, UX, task)" >> $GITHUB_STEP_SUMMARY
+          echo "- Issue templates, instructions, and documentation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Go to [Actions → 🎵 Concert Init](https://github.com/he3-org/${{ inputs.repo_name }}/actions/workflows/concert-init.yml) → **Run workflow**" >> $GITHUB_STEP_SUMMARY
+          echo "2. Enter a mission name and description" >> $GITHUB_STEP_SUMMARY
+          echo "3. Edit \`VISION.md\`, then comment \`/accept\` on the mission issue" >> $GITHUB_STEP_SUMMARY
+          echo "4. Watch the pipeline run automatically! 🚀" >> $GITHUB_STEP_SUMMARY

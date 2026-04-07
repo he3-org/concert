@@ -340,8 +340,11 @@ jobs:
               }
 
               // Check if all tasks are complete → mission done
-              if (missionTasks.length === 0) {
-                // All open tasks are done!
+              // missionTasks only contains OPEN task issues for this mission.
+              // completedIds tracks all completed task IDs (including the one just finished).
+              // Only trigger completion if there are completed tasks AND no open tasks remain.
+              if (missionTasks.length === 0 && completedIds.size > 0) {
+                // All tasks are done!
                 await github.rest.issues.createComment({
                   owner: context.repo.owner, repo: context.repo.repo,
                   issue_number: meta.parent,

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/he3-org/concert/compare/v1.10.0...v1.10.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* stamp current version into managed file headers during copy ([#51](https://github.com/he3-org/concert/issues/51)) ([566ee24](https://github.com/he3-org/concert/commit/566ee247a7fda6dc0b136963b108c5c2c63d9f12))
+
 ## [1.10.0](https://github.com/he3-org/concert/compare/v1.9.0...v1.10.0) (2026-04-06)
 
 

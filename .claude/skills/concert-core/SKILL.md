@@ -154,6 +154,7 @@ Every mission document (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX.md) MUST
 - The section MUST appear as the **last section** of the document
 - Agents creating or updating documents MUST add/maintain this section
 - During review, resolved questions get checked off with the resolution noted
+- An empty section (header with no items) is valid and means "no open questions" — always include the header even when there are no questions
 
 **Detection:** To find open questions, scan for unchecked items (`- [ ]`) in the `## Open Questions` section of each mission document. This is the ONLY method needed — no heuristic scanning for ❓, TBD, or other markers.
 

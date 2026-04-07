@@ -67,19 +67,17 @@ Boot sequence — read these before starting:
    - **Trade-offs** — decisions made and their consequences
    - **Migration plan** — how to evolve existing code toward the new design
 
-4. **Add Suggested Skills** — Review the tech stack, services, frameworks, and languages in the architecture. List existing skills in `.claude/skills/`. For each technology that does NOT have a corresponding skill, add a `## Suggested Skills` section with: proposed skill name, target technology/service, and rationale for why a skill would help downstream agents (coder, code-reviewer, verifier). Omit this section if no new skills are needed.
+4. **Write** `ARCHITECTURE.md` to the mission folder, including these final sections:
+   - **Suggested Skills** (`## Suggested Skills`) — Review the tech stack, services, frameworks, and languages in the architecture. Check existing skills in `.claude/skills/`. For each technology that does NOT have a corresponding skill, add an entry with: proposed skill name, target technology/service, and rationale for why a skill would help downstream agents (coder, code-reviewer, verifier). Omit this section entirely if no new skills are needed.
+   - **Open Questions** (`## Open Questions`) — As the LAST section of the document, list any unresolved questions, concerns, or items needing clarification as unchecked checkbox items (`- [ ] question text`). If there are no open questions, include the section header with no items.
 
-5. **Add Open Questions** — Add a `## Open Questions` section as the LAST section of the document. List any unresolved questions, concerns, or items needing clarification as unchecked checkbox items (`- [ ] question text`). If there are no open questions, include the section header with no items.
+5. **Update state.json** — Set `pipeline.architecture` to `"draft"`, update `history[]` and `next_steps[]`.
 
-6. **Write** `ARCHITECTURE.md` to the mission folder.
+6. **Commit** the architecture file.
 
-7. **Update state.json** — Set `pipeline.architecture` to `"draft"`, update `history[]` and `next_steps[]`.
+7. **Write `next_action`** to state.json: `{ type: "await_user", target: "review", message: "Architecture ready for review" }`
 
-8. **Commit** the architecture file.
-
-9. **Write `next_action`** to state.json: `{ type: "await_user", target: "review", message: "Architecture ready for review" }`
-
-10. **Report** confidence in the architecture's viability with reasoning.
+8. **Report** confidence in the architecture's viability with reasoning.
 
 ### Re-Review Mode
 

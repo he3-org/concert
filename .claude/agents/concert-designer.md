@@ -65,19 +65,17 @@ Boot sequence — read these before starting:
    - **Accessibility** — ARIA roles, color contrast, screen reader considerations
    - **Platform conventions** — Per loaded UX skills
 
-5. **Add Suggested Skills** — Review the UI frameworks, component libraries, design systems, and platform-specific tools in the UX design. List existing skills in `.claude/skills/`. For each technology that does NOT have a corresponding skill, add a `## Suggested Skills` section with: proposed skill name, target technology/service, and rationale for why a skill would help downstream agents (coder, code-reviewer, verifier). Omit this section if no new skills are needed.
+5. **Write** `UX.md` to the mission folder, including these final sections:
+   - **Suggested Skills** (`## Suggested Skills`) — Review the UI frameworks, component libraries, design systems, and platform-specific tools in the UX design. Check existing skills in `.claude/skills/`. For each technology that does NOT have a corresponding skill, add an entry with: proposed skill name, target technology/service, and rationale for why a skill would help downstream agents (coder, code-reviewer, verifier). Omit this section entirely if no new skills are needed.
+   - **Open Questions** (`## Open Questions`) — As the LAST section of the document, list any unresolved questions, concerns, or items needing clarification as unchecked checkbox items (`- [ ] question text`). If there are no open questions, include the section header with no items.
 
-6. **Add Open Questions** — Add a `## Open Questions` section as the LAST section of the document. List any unresolved questions, concerns, or items needing clarification as unchecked checkbox items (`- [ ] question text`). If there are no open questions, include the section header with no items.
+6. **Update state.json** — Set `pipeline.ux` to `"draft"`, update `history[]` and `next_steps[]`.
 
-7. **Write** `UX.md` to the mission folder.
+7. **Commit** the UX file.
 
-8. **Update state.json** — Set `pipeline.ux` to `"draft"`, update `history[]` and `next_steps[]`.
+8. **Write `next_action`** to state.json: `{ type: "await_user", target: "review", message: "UX design ready for review" }`
 
-9. **Commit** the UX file.
-
-10. **Write `next_action`** to state.json: `{ type: "await_user", target: "review", message: "UX design ready for review" }`
-
-11. **Report** confidence in the design's implementability with reasoning.
+9. **Report** confidence in the design's implementability with reasoning.
 
 ### Re-Review Mode
 

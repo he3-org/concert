@@ -10,7 +10,7 @@ description: Enforce safe, correct ASP.NET Core middleware authoring — pipelin
 ## Quick Reference
 
 - Registration order in Program.cs is execution order — get it wrong and auth failures go unlogged or unformatted.
-- Recommended pipeline order: request logging → custom authentication → exception handling → `UseAuthentication` → `UseAuthorization`.
+- Recommended pipeline order: request logging → exception handling → custom authentication → `UseAuthentication` → `UseAuthorization`.
 - Always call `EnableBuffering()` before `_next()` if the middleware reads the request body; rewind to position 0 after `_next()` before reading.
 - Exception-handling middleware must never itself throw — wrap everything in try-catch with a safe fallback response.
 - Use `CryptographicOperations.FixedTimeEquals` for secret comparison — never `string.Equals`, `==`, or LINQ.
@@ -37,8 +37,8 @@ Read `references/rules-detail.md` § Pipeline Order before registering any middl
 Register middleware in `Program.cs` following this order:
 
 1. Request logging middleware (must see all requests, including rejected ones).
-2. Custom authentication middleware (after logging, before exception handling).
-3. Exception-handling middleware (wraps all downstream errors).
+2. Exception-handling middleware (wraps all downstream middleware so unhandled exceptions produce consistent error responses).
+3. Custom authentication middleware (after logging and exception handling, before authorization).
 4. `app.UseAuthentication()` (built-in authentication schemes).
 5. `app.UseAuthorization()` (policy enforcement).
 

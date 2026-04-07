@@ -118,7 +118,7 @@ builder.Host.UseSerilog((ctx, services, cfg) =>
 });
 ```
 
-**Why guard with both environment and connection string?** The environment guard prevents production sinks from activating in local development. The connection string guard prevents startup failures when a developer runs the app with a configuration that lacks the required secret.
+**Why guard with both environment and required sink configuration?** The environment guard prevents production sinks from activating in local development. The required sink configuration guard prevents startup failures when a developer runs the app with a configuration that lacks the sink's required connection string, endpoint, key, or similar setting.
 
 ---
 

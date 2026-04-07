@@ -13,7 +13,7 @@ Structured logging patterns for ASP.NET Core using Serilog — covering bootstra
 
 - Use two-stage bootstrap: `CreateBootstrapLogger` → `UseSerilog` → `Log.CloseAndFlush` in `finally`.
 - Enable `SelfLog` on `Console.Error` as the very first statement in `Program.cs`.
-- Gate environment-specific sinks (e.g., SQL Server, Application Insights): only activate outside Development and when the connection string is present.
+- Gate environment-specific sinks (e.g., SQL Server, Application Insights): only activate outside Development and when the required sink configuration is present (for example, a connection string, endpoint, or key).
 - Console sink is always active regardless of environment.
 - When using the SQL Server sink, set `autoCreateSqlTable: false` if table schema is managed externally (e.g., via migrations).
 - Use `LogContext.PushProperty` for per-request properties; use `Enrich.WithProperty` for static global properties only.

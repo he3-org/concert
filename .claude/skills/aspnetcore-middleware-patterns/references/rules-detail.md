@@ -10,8 +10,8 @@ Registration order in `Program.cs` is execution order. Middleware registered fir
 
 ```csharp
 app.UseMiddleware<RequestLoggingMiddleware>();       // 1 — must see all requests
-app.UseMiddleware<CustomAuthenticationMiddleware>(); // 2 — after logging, before exception wrapper
-app.UseMiddleware<ExceptionHandlingMiddleware>();    // 3 — wraps all downstream errors
+app.UseMiddleware<ExceptionHandlingMiddleware>();    // 2 — wraps all downstream errors
+app.UseMiddleware<CustomAuthenticationMiddleware>(); // 3 — after logging/exception handling, before authorization
 app.UseAuthentication();                            // 4 — built-in auth schemes
 app.UseAuthorization();                             // 5 — policy enforcement
 ```
@@ -19,8 +19,8 @@ app.UseAuthorization();                             // 5 — policy enforcement
 **Rationale:**
 
 - Request logging first: captures every request, including those rejected by auth. Moving it later means auth failures are invisible in logs.
-- Custom authentication second: the correlation ID assigned by request logging is available; 401 responses from this middleware are caught and formatted by exception-handling middleware.
-- Exception-handling middleware third: wraps all business logic and downstream middleware so unhandled exceptions produce consistent error responses.
+- Exception-handling middleware second: wraps all downstream middleware (including custom auth) so any unhandled exceptions produce consistent error responses.
+- Custom authentication third: the correlation ID assigned by request logging is available, and exceptions thrown by this middleware are caught by the exception handler above it.
 - `UseAuthentication` / `UseAuthorization` after custom middleware: built-in ASP.NET Core auth runs after custom middleware has had its say.
 
 ---
@@ -87,7 +87,7 @@ private async Task HandleExceptionAsync(HttpContext context, Exception ex)
 
         try
         {
-            statusCode = ex is NotFoundException ? 404
+            statusCode = ex is KeyNotFoundException ? 404
                        : ex is UnauthorizedAccessException ? 401
                        : 500;
         }

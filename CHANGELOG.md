@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/he3-org/concert/compare/v1.12.0...v1.13.0) (2026-04-07)
+
+
+### Features
+
+* add model-tier breakpoints for GitHub execution environments ([#59](https://github.com/he3-org/concert/issues/59)) ([ee46a4d](https://github.com/he3-org/concert/commit/ee46a4d5c3ff6f8473cb149ed95e8e2dec90b7c7))
+
 ## [1.12.0](https://github.com/he3-org/concert/compare/v1.11.0...v1.12.0) (2026-04-07)
 
 

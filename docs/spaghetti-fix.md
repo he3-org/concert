@@ -60,10 +60,10 @@ call them. Skills replace copy-pasted logic that currently lives across 23 agent
 All inter-agent and inter-workflow communication flows through the **Context Blackboard**
 — a combination of two mechanisms:
 
-| Mechanism | What | Who writes | Who reads | Lifetime |
-| :--- | :--- | :--- | :--- | :--- |
-| **state.json** | Pipeline position, execution progress, failure blocks, telemetry, history, cost, next action hint | Any agent (via State Skill) | Any agent/workflow (via State Skill) | Persists across sessions |
-| **Mission documents** | VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX.md, ALIGNMENT.md, TASK files, PHASE-SUMMARY files | Planning & execution agents | Downstream agents | Persists in git |
+| Mechanism             | What                                                                                              | Who writes                  | Who reads                            | Lifetime                 |
+| :-------------------- | :------------------------------------------------------------------------------------------------ | :-------------------------- | :----------------------------------- | :----------------------- |
+| **state.json**        | Pipeline position, execution progress, failure blocks, telemetry, history, cost, next action hint | Any agent (via State Skill) | Any agent/workflow (via State Skill) | Persists across sessions |
+| **Mission documents** | VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX.md, ALIGNMENT.md, TASK files, PHASE-SUMMARY files | Planning & execution agents | Downstream agents                    | Persists in git          |
 
 ### The `next_action` Field
 
@@ -73,18 +73,20 @@ includes a structured `next_action` hint:
 ```jsonc
 {
   "next_action": {
-    "type": "run_agent",           // "run_agent" | "run_workflow" | "await_user"
-    "target": "concert-analyst",   // agent or workflow name
-    "context": {                   // optional key-value pairs for the target
+    "type": "run_agent", // "run_agent" | "run_workflow" | "await_user"
+    "target": "concert-analyst", // agent or workflow name
+    "context": {
+      // optional key-value pairs for the target
       "stage": "requirements",
-      "resume_from": "step_3"
+      "resume_from": "step_3",
     },
-    "message": "Requirements analysis ready to begin"
-  }
+    "message": "Requirements analysis ready to begin",
+  },
 }
 ```
 
 **Rules:**
+
 - Every agent writes a `next_action` before completing
 - The Continue Workflow reads `next_action` to decide what to do next
 - `await_user` means "stop and show status" — the user must invoke the next command
@@ -101,39 +103,39 @@ context object. Agents never read state.json directly — they go through the sk
 
 ### Pipeline Stages
 
-| Order | Stage | Agent | Triggers Review | Produces Spec | Interactive |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | Vision | Init Agent | Yes | VISION-SPEC.md | Yes |
-| 2 | Requirements | Analyst Agent | Yes | REQUIREMENTS-SPEC.md | No |
-| 3 | Architecture | Architect Agent | Yes | ARCHITECTURE-SPEC.md | No |
-| 4 | UX | Designer Agent | Yes | UX-SPEC.md | No |
-| 5 | Tasks | Planner Agent | Yes | — | No |
-| 6 | Execution | Coder Agent (via Execution Workflow) | No | — | No |
-| 7 | Verification | Verifier Agent | No | — | Yes |
-| 8 | Refactoring | Refactorer Agent | No | — | No |
-| 9 | Retrospective | Retrospective Agent | No | — | No |
+| Order | Stage         | Agent                                | Triggers Review | Produces Spec        | Interactive |
+| :---- | :------------ | :----------------------------------- | :-------------- | :------------------- | :---------- |
+| 1     | Vision        | Init Agent                           | Yes             | VISION-SPEC.md       | Yes         |
+| 2     | Requirements  | Analyst Agent                        | Yes             | REQUIREMENTS-SPEC.md | No          |
+| 3     | Architecture  | Architect Agent                      | Yes             | ARCHITECTURE-SPEC.md | No          |
+| 4     | UX            | Designer Agent                       | Yes             | UX-SPEC.md           | No          |
+| 5     | Tasks         | Planner Agent                        | Yes             | —                    | No          |
+| 6     | Execution     | Coder Agent (via Execution Workflow) | No              | —                    | No          |
+| 7     | Verification  | Verifier Agent                       | No              | —                    | Yes         |
+| 8     | Refactoring   | Refactorer Agent                     | No              | —                    | No          |
+| 9     | Retrospective | Retrospective Agent                  | No              | —                    | No          |
 
 ### Workflow Variants
 
-| Variant | Stages Included |
-| :--- | :--- |
-| mission-full | All 9 |
-| mission-medium | Skip UX (8 stages) |
-| mission-small | Skip Requirements, Architecture, UX (6 stages) |
+| Variant        | Stages Included                                |
+| :------------- | :--------------------------------------------- |
+| mission-full   | All 9                                          |
+| mission-medium | Skip UX (8 stages)                             |
+| mission-small  | Skip Requirements, Architecture, UX (6 stages) |
 
 ### Stage × Feature Matrix
 
-| Stage | Review Workflow | Accept Workflow | Produces Spec | Has Sub-Workflow |
-| :--- | :--- | :--- | :--- | :--- |
-| Vision | Yes | Yes | Yes | No |
-| Requirements | Yes | Yes | Yes | No |
-| Architecture | Yes | Yes | Yes | No |
-| UX | Yes | Yes | Yes | No |
-| Tasks | Yes | Yes | No | No |
-| Execution | No | No | No | Yes (Execution Workflow) |
-| Verification | No | No | No | No |
-| Refactoring | No | No | No | No |
-| Retrospective | No | No | No | No |
+| Stage         | Review Workflow | Accept Workflow | Produces Spec | Has Sub-Workflow         |
+| :------------ | :-------------- | :-------------- | :------------ | :----------------------- |
+| Vision        | Yes             | Yes             | Yes           | No                       |
+| Requirements  | Yes             | Yes             | Yes           | No                       |
+| Architecture  | Yes             | Yes             | Yes           | No                       |
+| UX            | Yes             | Yes             | Yes           | No                       |
+| Tasks         | Yes             | Yes             | No            | No                       |
+| Execution     | No              | No              | No            | Yes (Execution Workflow) |
+| Verification  | No              | No              | No            | No                       |
+| Refactoring   | No              | No              | No            | No                       |
+| Retrospective | No              | No              | No            | No                       |
 
 ---
 
@@ -1177,12 +1179,12 @@ Workflow`). No alias indirection needed.
 
 ## Summary
 
-| Layer | Count (Before) | Count (After) | Change |
-| :--- | :--- | :--- | :--- |
-| Commands | 13 | 13 | Same count, all simplified to one-liners |
-| Workflows | 9 | 11 | +2 (Continue Workflow, Code Quality Sub-Workflow extracted) |
-| Agents | 23 | 21 | −2 (removed alias agents concert-review, concert-verify) |
-| Skills | 11 | 20 | +9 (Boot, State, Status, User Guidance, Spec Mapping, Commit, Severity, Failure, Open Questions) |
-| Duplicated logic blocks | ~150+ lines across agents | 0 | Extracted into skills |
-| Embedded workflow logic in agents | 7 agents | 0 | Moved to workflows |
-| Embedded logic in commands | 6 commands | 0 | Delegated to workflows/agents |
+| Layer                             | Count (Before)            | Count (After) | Change                                                                                           |
+| :-------------------------------- | :------------------------ | :------------ | :----------------------------------------------------------------------------------------------- |
+| Commands                          | 13                        | 13            | Same count, all simplified to one-liners                                                         |
+| Workflows                         | 9                         | 11            | +2 (Continue Workflow, Code Quality Sub-Workflow extracted)                                      |
+| Agents                            | 23                        | 21            | −2 (removed alias agents concert-review, concert-verify)                                         |
+| Skills                            | 11                        | 20            | +9 (Boot, State, Status, User Guidance, Spec Mapping, Commit, Severity, Failure, Open Questions) |
+| Duplicated logic blocks           | ~150+ lines across agents | 0             | Extracted into skills                                                                            |
+| Embedded workflow logic in agents | 7 agents                  | 0             | Moved to workflows                                                                               |
+| Embedded logic in commands        | 6 commands                | 0             | Delegated to workflows/agents                                                                    |

@@ -2,32 +2,28 @@
 
 ## [1.11.0](https://github.com/he3-org/concert/compare/v1.10.1...v1.11.0) (2026-04-07)
 
-
 ### Features
 
-* add suggested skills section and standardize open questions format ([#53](https://github.com/he3-org/concert/issues/53)) ([4902fd2](https://github.com/he3-org/concert/commit/4902fd262788ef1b934efdb4aae1089b7a44dd69))
+- add suggested skills section and standardize open questions format ([#53](https://github.com/he3-org/concert/issues/53)) ([4902fd2](https://github.com/he3-org/concert/commit/4902fd262788ef1b934efdb4aae1089b7a44dd69))
 
 ## [1.10.1](https://github.com/he3-org/concert/compare/v1.10.0...v1.10.1) (2026-04-07)
 
-
 ### Bug Fixes
 
-* stamp current version into managed file headers during copy ([#51](https://github.com/he3-org/concert/issues/51)) ([566ee24](https://github.com/he3-org/concert/commit/566ee247a7fda6dc0b136963b108c5c2c63d9f12))
+- stamp current version into managed file headers during copy ([#51](https://github.com/he3-org/concert/issues/51)) ([566ee24](https://github.com/he3-org/concert/commit/566ee247a7fda6dc0b136963b108c5c2c63d9f12))
 
 ## [1.10.0](https://github.com/he3-org/concert/compare/v1.9.0...v1.10.0) (2026-04-06)
 
-
 ### Features
 
-* refactor commands, workflows, agents, and skills. ([c0aa56e](https://github.com/he3-org/concert/commit/c0aa56eea9131267326821de05a530a05c80d66e))
+- refactor commands, workflows, agents, and skills. ([c0aa56e](https://github.com/he3-org/concert/commit/c0aa56eea9131267326821de05a530a05c80d66e))
 
 ## [1.9.0](https://github.com/he3-org/concert/compare/v1.8.1...v1.9.0) (2026-04-06)
 
-
 ### Features
 
-* clean up agent frontmatter and improve review-cycle workflow ([#45](https://github.com/he3-org/concert/issues/45)) ([71ffe64](https://github.com/he3-org/concert/commit/71ffe64ce5df3b8e5bf0bf93a8ba82ae1030019b))
-* rename archive→delete, CONCERT-RECOMMENDS.md, ALIGNMENT.md, status open questions, cross-doc review loop ([#47](https://github.com/he3-org/concert/issues/47)) ([cd97321](https://github.com/he3-org/concert/commit/cd9732143a4d4289757b3c20fc90be9f52c8f384))
+- clean up agent frontmatter and improve review-cycle workflow ([#45](https://github.com/he3-org/concert/issues/45)) ([71ffe64](https://github.com/he3-org/concert/commit/71ffe64ce5df3b8e5bf0bf93a8ba82ae1030019b))
+- rename archive→delete, CONCERT-RECOMMENDS.md, ALIGNMENT.md, status open questions, cross-doc review loop ([#47](https://github.com/he3-org/concert/issues/47)) ([cd97321](https://github.com/he3-org/concert/commit/cd9732143a4d4289757b3c20fc90be9f52c8f384))
 
 ## [1.8.1](https://github.com/he3-org/concert/compare/v1.8.0...v1.8.1) (2026-04-04)
 

@@ -81,14 +81,14 @@ Boot sequence — read these before reviewing:
    3. ARCHITECTURE.md
    4. UX.md
    5. ALIGNMENT.md (processed last — it is a cross-cutting document, not tied to a specific pipeline stage)
-   - Scan the document for open questions. Open questions are identified by ANY of: items in "Open Questions" or "Open Alignment Questions" sections, items marked with ❓, or items marked as TBD/unresolved.
+   - Scan the document for open questions. Open questions are unchecked checkbox items (`- [ ]`) in the `## Open Questions` section (or `## Open Alignment Questions` in ALIGNMENT.md).
    - For each open question found, present it to the user ONE at a time with the source document clearly identified:
      **Format:** `"From {DOCUMENT_NAME}: {question text}"`
      **Example:** `"From VISION.md: Should the invoice system support multi-currency?"`
    - Wait for the user's response before moving to the next question.
    - Based on the user's answer:
-     - If resolved → update the question in the source document (remove it from open questions, incorporate the answer into the relevant section)
-     - If the user wants to defer → leave it as an open question
+     - If resolved → check off the item in the source document (`- [x]`) and note the resolution inline (e.g., `- [x] Question — Resolved: answer`)
+     - If the user wants to defer → leave it as an unchecked item (`- [ ]`)
      - If the answer reveals a misalignment between documents → add it to ALIGNMENT.md (see step 3c)
 
    b. After all open questions from all documents have been addressed, ask:

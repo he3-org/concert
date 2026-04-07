@@ -83,7 +83,7 @@ Entry point for all mission workflows (full, medium, small). Reads the selected 
 
 6. **Confirm** — Summarize the vision and ask: "Here's what I've captured: [summary]. Ready to initialize the mission?"
 
-7. **Write** `.concert/missions/YYYY-MM-DD-<slug>/VISION.md` with: overview, problem statement, goals and non-goals, users, success criteria, constraints and assumptions.
+7. **Write** `.concert/missions/YYYY-MM-DD-<slug>/VISION.md` with: overview, problem statement, goals and non-goals, users, success criteria, constraints and assumptions. End the document with a `## Open Questions` section — list any unresolved questions or items needing clarification as unchecked checkbox items (`- [ ] question text`). If there are no open questions, include the section header with no items.
 
 8. **Branch** — check state.json for existing branch; if none, create `concert/<feature-slug>`.
 

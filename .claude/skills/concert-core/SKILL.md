@@ -137,9 +137,44 @@ On failure, write to `state.json`:
 
 ### Open Questions
 
-Open questions in mission documents are identified by ANY of:
+Every mission document (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX.md) MUST end with a structured **Open Questions** section using a checkbox list. This is the standardized format for all open questions:
 
-- Items in "Open Questions" or "Open Alignment Questions" sections
-- Items marked with ❓
-- Unchecked items (`- [ ]`) in an "Open" section
-- Items marked as TBD/unresolved
+```markdown
+## Open Questions
+
+- [ ] Question or concern text here
+- [ ] Another question or concern
+- [x] Resolved question — resolution noted here
+```
+
+**Rules:**
+
+- Unchecked items (`- [ ]`) are **open** questions
+- Checked items (`- [x]`) are **resolved** — include the resolution inline
+- The section MUST appear as the **last section** of the document
+- Agents creating or updating documents MUST add/maintain this section
+- During review, resolved questions get checked off with the resolution noted
+- An empty section (header with no items) is valid and means "no open questions" — always include the header even when there are no questions
+
+**Detection:** To find open questions, scan for unchecked items (`- [ ]`) in the `## Open Questions` section of each mission document. This is the ONLY method needed — no heuristic scanning for ❓, TBD, or other markers.
+
+**ALIGNMENT.md** uses a similar format but with its own section name (`## Open Alignment Questions`) — see the reviewer agent for details.
+
+### Suggested Skills
+
+The architect and designer agents identify technologies, services, or tools referenced in their documents that do NOT have a corresponding skill in `.claude/skills/`. They add a **Suggested Skills** section immediately BEFORE the Open Questions section:
+
+```markdown
+## Suggested Skills
+
+- **skill-name** — Target: technology/service/language. Rationale: why this skill would help downstream agents.
+- **another-skill** — Target: technology/service. Rationale: brief explanation.
+```
+
+**Rules:**
+
+- Only the architect and designer agents produce this section
+- Check existing skills in `.claude/skills/` before suggesting — don't suggest skills that already exist
+- Each suggestion includes: a proposed skill name, the target technology/service, and a brief rationale
+- This section appears immediately BEFORE `## Open Questions`
+- If no new skills are needed, omit the section entirely

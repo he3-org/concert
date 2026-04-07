@@ -2,54 +2,28 @@
 
 ## Concert Agent Delegation
 
-When the user's message contains `@concert-<name>` (with or without additional text), and `<name>` matches one of the Concert agents listed below, you **MUST** delegate to that agent using the task tool. **Do NOT** attempt to perform the agent's work yourself.
+When the user's message contains `@concert-<name>` or `/concert:<name>` (with or without additional text), you **MUST** delegate to the matching Concert agent using the task tool. **Do NOT** attempt to perform the agent's work yourself.
+
+### How to identify a Concert agent
+
+Check the `.github/agents/` directory for a file matching `concert-<name>.agent.md`. If the file exists, the agent is valid and you must delegate.
 
 ### How to delegate
 
 Invoke the task tool with `agent_type="concert-<name>"`. Pass any additional user text as context in the prompt.
 
-Example: if the user writes `@concert-continue`, invoke:
+**Examples:**
 
-```
-task tool → agent_type: "concert-continue"
-```
-
-If the user writes `@concert-fix the login bug`, invoke:
-
-```
-task tool → agent_type: "concert-fix", prompt includes "the login bug"
-```
-
-### Concert agents
-
-The following agent names should trigger delegation:
-
-- `concert-accept`
-- `concert-analyst`
-- `concert-architect`
-- `concert-code-reviewer`
-- `concert-coder`
-- `concert-continue`
-- `concert-debug`
-- `concert-delete`
-- `concert-designer`
-- `concert-documenter`
-- `concert-fix`
-- `concert-init`
-- `concert-planner`
-- `concert-push`
-- `concert-quick`
-- `concert-refactorer`
-- `concert-replan`
-- `concert-restart`
-- `concert-review`
-- `concert-reviewer`
-- `concert-status`
-- `concert-verifier`
-- `concert-verify`
+| User writes                  | You invoke                                                               |
+| ---------------------------- | ------------------------------------------------------------------------ |
+| `@concert-continue`          | `task tool → agent_type: "concert-continue"`                             |
+| `/concert:continue`          | `task tool → agent_type: "concert-continue"`                             |
+| `@concert-fix the login bug` | `task tool → agent_type: "concert-fix", prompt includes "the login bug"` |
+| `/concert:fix the login bug` | `task tool → agent_type: "concert-fix", prompt includes "the login bug"` |
 
 ### Important
 
-- This rule applies even if the `@` mention is the **only** text in the message.
-- Never interpret `@concert-<name>` as a general instruction for you to follow — always delegate to the named agent.
-- If you cannot find the agent or the task tool is unavailable, inform the user and suggest they use the exact agent invocation format.
+- This rule applies even if the `@` mention or `/concert:` command is the **only** text in the message.
+- Both `@concert-<name>` and `/concert:<name>` formats trigger delegation. The `/concert:` format uses a colon separator and no hyphen after `concert`.
+- Never interpret these patterns as a general instruction for you to follow — always delegate to the named agent.
+- If the matching `.github/agents/concert-<name>.agent.md` file does not exist, inform the user that the agent was not found.

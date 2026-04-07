@@ -1,0 +1,46 @@
+name: "🎵 Concert Mission"
+description: "Create a new Concert 3 mission"
+title: "🎵 Mission: "
+labels: ["concert/mission", "concert/vision-draft"]
+body:
+  - type: input
+    id: mission-name
+    attributes:
+      label: Mission Name
+      description: "A short, descriptive name for this mission"
+      placeholder: "auth-service"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: workflow
+    attributes:
+      label: Workflow Size
+      description: "How large is this feature?"
+      options:
+        - "full (Vision → Requirements → Architecture → UX → Planning → Execution)"
+        - "medium (Vision → Requirements → Architecture → Planning → Execution)"
+        - "small (Vision → Requirements → Planning → Execution)"
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Mission Description
+      description: "Brief description of what this mission will accomplish"
+      placeholder: "Build a new authentication service with OAuth2 support..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: vision
+    attributes:
+      label: Vision (Optional)
+      description: "If you already have a vision document, paste it here. Otherwise, leave blank and edit VISION.md on the branch."
+      placeholder: |
+        ## Problem Statement
+        ...
+        ## Goals
+        ...

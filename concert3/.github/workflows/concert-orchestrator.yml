@@ -1,0 +1,504 @@
+# Concert 3 — Main Orchestrator
+# Deterministic state machine driven by GitHub events.
+# Replaces LLM-based concert-continue with reliable YAML workflows.
+#
+# Triggers: issue label changes, issue closures, PR merges
+# State: GitHub Issue labels (concert/* namespace)
+
+name: "🎵 Concert Orchestrator"
+
+on:
+  issues:
+    types: [labeled, closed]
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: write
+
+env:
+  CONCERT_LABEL_PREFIX: "concert/"
+
+jobs:
+  # ─────────────────────────────────────────────────────────────
+  # VISION ACCEPTED → Trigger Requirements Generation
+  # ─────────────────────────────────────────────────────────────
+  vision-accepted:
+    if: >-
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'concert/vision-accepted' &&
+      contains(github.event.issue.labels.*.name, 'concert/mission')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract mission metadata
+        id: meta
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+
+            // Extract mission slug from issue body metadata
+            const slugMatch = body.match(/<!-- concert-slug: (.+?) -->/);
+            const branchMatch = body.match(/<!-- concert-branch: (.+?) -->/);
+            const workflowMatch = body.match(/<!-- concert-workflow: (.+?) -->/);
+
+            const slug = slugMatch ? slugMatch[1] : issue.title.replace(/🎵 Mission: /, '').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+            const branch = branchMatch ? branchMatch[1] : `concert/${slug}`;
+            const workflow = workflowMatch ? workflowMatch[1] : 'full';
+
+            core.setOutput('slug', slug);
+            core.setOutput('branch', branch);
+            core.setOutput('workflow', workflow);
+            core.setOutput('parent_number', issue.number);
+
+      - name: Remove vision labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = ['concert/vision-draft', 'concert/vision-accepted'];
+            for (const label of labels) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  name: label,
+                });
+              } catch (e) { /* label may not exist */ }
+            }
+
+      - name: Add requirements-pending label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              labels: ['concert/requirements-pending'],
+            });
+
+      - name: Create requirements sub-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const slug = '${{ steps.meta.outputs.slug }}';
+            const branch = '${{ steps.meta.outputs.branch }}';
+            const parentNumber = ${{ steps.meta.outputs.parent_number }};
+
+            const body = `## Role
+            You are a senior requirements analyst. Your job is to transform a product
+            vision into comprehensive, testable requirements.
+
+            ## Context
+            - **Mission:** ${slug}
+            - **Branch:** ${branch}
+            - **Parent Issue:** #${parentNumber}
+            - **Upstream Document:** \`.concert/missions/${slug}/VISION.md\`
+
+            ## Task
+            1. Read the Vision document from the branch \`${branch}\`
+            2. Read the codebase to understand the current state
+            3. Generate \`REQUIREMENTS.md\` following the template at \`.concert/templates/REQUIREMENTS.md\`
+            4. Commit to branch \`${branch}\`
+
+            ## Quality Criteria
+            - Every functional requirement has a unique \`FR-XXX\` identifier
+            - Non-functional requirements cover: performance, security, scalability, accessibility
+            - Document ends with \`## Open Questions\` section with unresolved items as checkboxes
+            - All requirements are testable and measurable
+
+            ## Skills to Apply
+            Read and follow any relevant \`.concert/skills/\` if present.
+
+            <!-- concert-meta: {"stage": "requirements", "parent": ${parentNumber}, "slug": "${slug}", "branch": "${branch}"} -->`;
+
+            const subIssue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `📋 Generate Requirements — ${slug}`,
+              body: body,
+              labels: ['concert/agent-work', 'concert/requirements'],
+              assignees: ['copilot'],
+            });
+
+            // Add as sub-issue to parent
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: parentNumber,
+              body: `🤖 Requirements generation started → #${subIssue.data.number}\n\nCopilot will analyze the vision and generate comprehensive requirements.`,
+            });
+
+  # ─────────────────────────────────────────────────────────────
+  # REQUIREMENTS ACCEPTED → Trigger Architecture Generation
+  # ─────────────────────────────────────────────────────────────
+  requirements-accepted:
+    if: >-
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'concert/requirements-accepted' &&
+      contains(github.event.issue.labels.*.name, 'concert/mission')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract mission metadata
+        id: meta
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const slugMatch = body.match(/<!-- concert-slug: (.+?) -->/);
+            const branchMatch = body.match(/<!-- concert-branch: (.+?) -->/);
+            const slug = slugMatch ? slugMatch[1] : issue.title.replace(/🎵 Mission: /, '').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+            const branch = branchMatch ? branchMatch[1] : `concert/${slug}`;
+            core.setOutput('slug', slug);
+            core.setOutput('branch', branch);
+            core.setOutput('parent_number', issue.number);
+
+      - name: Transition labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issueNumber, name: 'concert/requirements-accepted',
+              });
+            } catch (e) {}
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issueNumber, name: 'concert/requirements-review',
+              });
+            } catch (e) {}
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issueNumber, labels: ['concert/architecture-pending'],
+            });
+
+      - name: Create architecture sub-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const slug = '${{ steps.meta.outputs.slug }}';
+            const branch = '${{ steps.meta.outputs.branch }}';
+            const parentNumber = ${{ steps.meta.outputs.parent_number }};
+
+            const body = `## Role
+            You are a senior software architect. Your job is to design a system architecture
+            that fulfills the approved requirements.
+
+            ## Context
+            - **Mission:** ${slug}
+            - **Branch:** ${branch}
+            - **Parent Issue:** #${parentNumber}
+            - **Upstream Documents:**
+              - \`.concert/missions/${slug}/VISION.md\`
+              - \`.concert/missions/${slug}/REQUIREMENTS.md\`
+
+            ## Task
+            1. Read the Vision and Requirements documents from branch \`${branch}\`
+            2. Analyze the codebase for existing patterns and constraints
+            3. Generate \`ARCHITECTURE.md\` following the template at \`.concert/templates/ARCHITECTURE.md\`
+            4. Commit to branch \`${branch}\`
+
+            ## Quality Criteria
+            - Architecture addresses every FR-XXX requirement
+            - Clear component diagram with responsibilities
+            - Data flow and API contracts defined
+            - Technology choices justified
+            - Migration/rollback strategy included
+
+            <!-- concert-meta: {"stage": "architecture", "parent": ${parentNumber}, "slug": "${slug}", "branch": "${branch}"} -->`;
+
+            const subIssue = await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `🏗️ Generate Architecture — ${slug}`,
+              body: body,
+              labels: ['concert/agent-work', 'concert/architecture'],
+              assignees: ['copilot'],
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: parentNumber,
+              body: `🤖 Architecture generation started → #${subIssue.data.number}`,
+            });
+
+  # ─────────────────────────────────────────────────────────────
+  # ARCHITECTURE ACCEPTED → Trigger UX Design (if full workflow)
+  # ─────────────────────────────────────────────────────────────
+  architecture-accepted:
+    if: >-
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'concert/architecture-accepted' &&
+      contains(github.event.issue.labels.*.name, 'concert/mission')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract mission metadata
+        id: meta
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const slugMatch = body.match(/<!-- concert-slug: (.+?) -->/);
+            const branchMatch = body.match(/<!-- concert-branch: (.+?) -->/);
+            const workflowMatch = body.match(/<!-- concert-workflow: (.+?) -->/);
+            const slug = slugMatch ? slugMatch[1] : issue.title.replace(/🎵 Mission: /, '').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+            const branch = branchMatch ? branchMatch[1] : `concert/${slug}`;
+            const workflow = workflowMatch ? workflowMatch[1] : 'full';
+            core.setOutput('slug', slug);
+            core.setOutput('branch', branch);
+            core.setOutput('workflow', workflow);
+            core.setOutput('parent_number', issue.number);
+
+      - name: Transition labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issueNumber, name: 'concert/architecture-accepted',
+              });
+            } catch (e) {}
+            const workflow = '${{ steps.meta.outputs.workflow }}';
+            if (workflow === 'full') {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issueNumber, labels: ['concert/ux-pending'],
+              });
+            } else {
+              // Skip UX for small/medium workflows, go straight to planning
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issueNumber, labels: ['concert/planning-pending'],
+              });
+            }
+
+      - name: Create UX or Planning sub-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const slug = '${{ steps.meta.outputs.slug }}';
+            const branch = '${{ steps.meta.outputs.branch }}';
+            const parentNumber = ${{ steps.meta.outputs.parent_number }};
+            const workflow = '${{ steps.meta.outputs.workflow }}';
+
+            if (workflow === 'full') {
+              // Create UX Design sub-issue
+              const body = `## Role
+            You are a senior UX designer. Your job is to create interaction and interface
+            specifications that implement the approved architecture.
+
+            ## Context
+            - **Mission:** ${slug}
+            - **Branch:** ${branch}
+            - **Parent Issue:** #${parentNumber}
+            - **Upstream Documents:**
+              - \`.concert/missions/${slug}/VISION.md\`
+              - \`.concert/missions/${slug}/REQUIREMENTS.md\`
+              - \`.concert/missions/${slug}/ARCHITECTURE.md\`
+
+            ## Task
+            1. Read all upstream documents from branch \`${branch}\`
+            2. Generate \`UX.md\` following the template at \`.concert/templates/UX.md\`
+            3. Commit to branch \`${branch}\`
+
+            ## Quality Criteria
+            - Every user-facing FR has a corresponding UX specification
+            - Accessibility requirements (WCAG 2.1 AA) addressed
+            - Responsive design breakpoints defined
+            - Error states and edge cases covered
+
+            <!-- concert-meta: {"stage": "ux", "parent": ${parentNumber}, "slug": "${slug}", "branch": "${branch}"} -->`;
+
+              const subIssue = await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title: `🎨 Generate UX Design — ${slug}`,
+                body: body,
+                labels: ['concert/agent-work', 'concert/ux'],
+                assignees: ['copilot'],
+              });
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: parentNumber,
+                body: `🤖 UX design generation started → #${subIssue.data.number}`,
+              });
+            } else {
+              // Skip to planning
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: parentNumber, labels: ['concert/planning-ready'],
+              });
+            }
+
+  # ─────────────────────────────────────────────────────────────
+  # UX ACCEPTED or PLANNING READY → Trigger Task Planning
+  # ─────────────────────────────────────────────────────────────
+  planning-ready:
+    if: >-
+      github.event.action == 'labeled' &&
+      (github.event.label.name == 'concert/ux-accepted' ||
+       github.event.label.name == 'concert/planning-ready') &&
+      contains(github.event.issue.labels.*.name, 'concert/mission')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract mission metadata
+        id: meta
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const slugMatch = body.match(/<!-- concert-slug: (.+?) -->/);
+            const branchMatch = body.match(/<!-- concert-branch: (.+?) -->/);
+            const slug = slugMatch ? slugMatch[1] : issue.title.replace(/🎵 Mission: /, '').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+            const branch = branchMatch ? branchMatch[1] : `concert/${slug}`;
+            core.setOutput('slug', slug);
+            core.setOutput('branch', branch);
+            core.setOutput('parent_number', issue.number);
+
+      - name: Transition labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            const labelsToRemove = ['concert/ux-accepted', 'concert/planning-ready'];
+            for (const label of labelsToRemove) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: issueNumber, name: label,
+                });
+              } catch (e) {}
+            }
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issueNumber, labels: ['concert/planning-pending'],
+            });
+
+      - name: Create planning sub-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const slug = '${{ steps.meta.outputs.slug }}';
+            const branch = '${{ steps.meta.outputs.branch }}';
+            const parentNumber = ${{ steps.meta.outputs.parent_number }};
+
+            const body = `## Role
+            You are a senior technical project planner. Your job is to decompose the
+            approved architecture into executable development tasks.
+
+            ## Context
+            - **Mission:** ${slug}
+            - **Branch:** ${branch}
+            - **Parent Issue:** #${parentNumber}
+            - **Upstream Documents:** All documents in \`.concert/missions/${slug}/\`
+
+            ## Task
+            1. Read all planning documents from branch \`${branch}\`
+            2. Decompose into phases, waves, and individual tasks
+            3. Create task files as \`.concert/missions/${slug}/phases/TASK-XX-<name>.md\`
+            4. Each task file must have YAML frontmatter with: id, title, wave, phase, depends, model_tier
+            5. Commit all task files to branch \`${branch}\`
+
+            ## Quality Criteria
+            - Tasks are small enough for a single Copilot session (< 500 lines changed)
+            - Dependencies between tasks are explicit
+            - Wave ordering allows maximum parallelism
+            - Model tiers assigned: opus (complex), sonnet (standard), haiku (simple)
+            - Each task has clear acceptance criteria
+
+            ## Task Frontmatter Format
+            \`\`\`yaml
+            ---
+            id: TASK-01
+            title: Project setup and configuration
+            wave: 1
+            phase: 1
+            depends: []
+            model_tier: haiku
+            ---
+            \`\`\`
+
+            <!-- concert-meta: {"stage": "planning", "parent": ${parentNumber}, "slug": "${slug}", "branch": "${branch}"} -->`;
+
+            const subIssue = await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `📝 Plan Tasks — ${slug}`,
+              body: body,
+              labels: ['concert/agent-work', 'concert/planning'],
+              assignees: ['copilot'],
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: parentNumber,
+              body: `🤖 Task planning started → #${subIssue.data.number}`,
+            });
+
+  # ─────────────────────────────────────────────────────────────
+  # AGENT WORK SUB-ISSUE CLOSED → Advance Parent State
+  # ─────────────────────────────────────────────────────────────
+  agent-work-completed:
+    if: >-
+      github.event.action == 'closed' &&
+      contains(github.event.issue.labels.*.name, 'concert/agent-work')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse sub-issue metadata and advance parent
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const metaMatch = body.match(/<!-- concert-meta: ({.+?}) -->/);
+            if (!metaMatch) {
+              core.info('No concert metadata found in issue body, skipping.');
+              return;
+            }
+
+            const meta = JSON.parse(metaMatch[1]);
+            const parentNumber = meta.parent;
+            const stage = meta.stage;
+
+            // Stage transition map: what happens when each stage's agent work completes
+            const transitions = {
+              'requirements': { removeLabel: 'concert/requirements-pending', addLabel: 'concert/requirements-review', message: '📋 Requirements generated. Please review the PR diff and comment `/accept` or `/revise: <feedback>`.' },
+              'architecture': { removeLabel: 'concert/architecture-pending', addLabel: 'concert/architecture-review', message: '🏗️ Architecture generated. Please review the PR diff and comment `/accept` or `/revise: <feedback>`.' },
+              'ux':           { removeLabel: 'concert/ux-pending', addLabel: 'concert/ux-review', message: '🎨 UX design generated. Please review the PR diff and comment `/accept` or `/revise: <feedback>`.' },
+              'planning':     { removeLabel: 'concert/planning-pending', addLabel: 'concert/planning-review', message: '📝 Task planning complete. Please review and comment `/accept` to begin execution, or `/revise: <feedback>`.' },
+            };
+
+            const transition = transitions[stage];
+            if (!transition) {
+              core.info(`No transition defined for stage: ${stage}`);
+              return;
+            }
+
+            // Remove old label
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: parentNumber, name: transition.removeLabel,
+              });
+            } catch (e) {}
+
+            // Add new label
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: parentNumber, labels: [transition.addLabel],
+            });
+
+            // Comment on parent
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: parentNumber,
+              body: transition.message,
+            });

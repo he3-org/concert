@@ -1,0 +1,407 @@
+# Concert 3 — Task Execution & Quality Loop
+# Handles task dispatch, code review, and the fix-review cycle.
+# Zero agent nesting — each step is a flat, independent Copilot session.
+
+name: "🎵 Concert Execute"
+
+on:
+  issues:
+    types: [labeled, closed]
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ─────────────────────────────────────────────────────────────
+  # PLANNING ACCEPTED → Parse tasks and begin execution
+  # ─────────────────────────────────────────────────────────────
+  begin-execution:
+    if: >-
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'concert/planning-accepted' &&
+      contains(github.event.issue.labels.*.name, 'concert/mission')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract mission metadata
+        id: meta
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const slugMatch = body.match(/<!-- concert-slug: (.+?) -->/);
+            const branchMatch = body.match(/<!-- concert-branch: (.+?) -->/);
+            const slug = slugMatch ? slugMatch[1] : issue.title.replace(/🎵 Mission: /, '').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+            const branch = branchMatch ? branchMatch[1] : `concert/${slug}`;
+            core.setOutput('slug', slug);
+            core.setOutput('branch', branch);
+            core.setOutput('parent_number', issue.number);
+
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.meta.outputs.branch }}
+
+      - name: Parse task files and create sub-issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const slug = '${{ steps.meta.outputs.slug }}';
+            const branch = '${{ steps.meta.outputs.branch }}';
+            const parentNumber = ${{ steps.meta.outputs.parent_number }};
+
+            const tasksDir = `.concert/missions/${slug}/phases`;
+            if (!fs.existsSync(tasksDir)) {
+              core.setFailed(`Tasks directory not found: ${tasksDir}`);
+              return;
+            }
+
+            // Read all task files
+            const taskFiles = fs.readdirSync(tasksDir)
+              .filter(f => f.startsWith('TASK-') && f.endsWith('.md'))
+              .sort();
+
+            const tasks = [];
+            for (const file of taskFiles) {
+              const content = fs.readFileSync(path.join(tasksDir, file), 'utf-8');
+
+              // Parse YAML frontmatter
+              const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+              if (!fmMatch) continue;
+
+              const fm = {};
+              fmMatch[1].split('\n').forEach(line => {
+                const [key, ...valueParts] = line.split(':');
+                if (key && valueParts.length) {
+                  const value = valueParts.join(':').trim();
+                  fm[key.trim()] = value;
+                }
+              });
+
+              // Extract body (everything after frontmatter)
+              const taskBody = content.replace(/^---\n[\s\S]*?\n---\n?/, '').trim();
+
+              tasks.push({
+                file,
+                id: fm.id || file.replace('.md', ''),
+                title: fm.title || file,
+                wave: parseInt(fm.wave || '1'),
+                phase: parseInt(fm.phase || '1'),
+                depends: fm.depends ? fm.depends.replace(/[\[\]]/g, '').split(',').map(d => d.trim()).filter(Boolean) : [],
+                model_tier: fm.model_tier || 'sonnet',
+                body: taskBody,
+              });
+            }
+
+            // Sort by wave then by ID
+            tasks.sort((a, b) => a.wave - b.wave || a.id.localeCompare(b.id));
+
+            // Transition labels
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: parentNumber, name: 'concert/planning-accepted',
+              });
+            } catch (e) {}
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: parentNumber, name: 'concert/planning-review',
+              });
+            } catch (e) {}
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: parentNumber, labels: ['concert/execution', 'concert/phase-1'],
+            });
+
+            // Create sub-issues for wave 1 tasks (assign to @copilot)
+            // Later waves will be dispatched as previous tasks complete
+            let createdCount = 0;
+            for (const task of tasks) {
+              const taskBody = `## Role
+            You are a senior software developer implementing a specific task using TDD.
+
+            ## Context
+            - **Mission:** ${slug}
+            - **Branch:** ${branch}
+            - **Parent Issue:** #${parentNumber}
+            - **Task:** ${task.id} — ${task.title}
+            - **Model Tier:** ${task.model_tier}
+
+            ## Task Description
+            ${task.body}
+
+            ## Development Process
+            1. Write failing tests first (Red)
+            2. Write minimal code to pass tests (Green)
+            3. Refactor for quality (Refactor)
+            4. Ensure all existing tests still pass
+            5. Commit to branch \`${branch}\`
+
+            ## Quality Criteria
+            - All tests pass
+            - No linting errors
+            - Code follows project conventions
+            - Changes are focused on this task only
+
+            <!-- concert-meta: {"stage": "task", "parent": ${parentNumber}, "slug": "${slug}", "branch": "${branch}", "task_id": "${task.id}", "wave": ${task.wave}, "model_tier": "${task.model_tier}", "depends": ${JSON.stringify(task.depends)}} -->`;
+
+              const labels = ['concert/task', `concert/wave-${task.wave}`];
+              const assignees = task.wave === 1 && task.depends.length === 0 ? ['copilot'] : [];
+
+              const subIssue = await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title: `⚡ ${task.id}: ${task.title} — ${slug}`,
+                body: taskBody,
+                labels: labels,
+                assignees: assignees,
+              });
+
+              createdCount++;
+              core.info(`Created task issue #${subIssue.data.number}: ${task.id}`);
+            }
+
+            // Progress comment
+            const wave1Count = tasks.filter(t => t.wave === 1 && t.depends.length === 0).length;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: parentNumber,
+              body: `🚀 **Execution started!**\n\n- ${createdCount} task issues created\n- ${wave1Count} wave-1 tasks assigned to @copilot\n- Remaining tasks will be dispatched as dependencies complete`,
+            });
+
+  # ─────────────────────────────────────────────────────────────
+  # TASK CLOSED → Create code review, then dispatch next task
+  # ─────────────────────────────────────────────────────────────
+  task-completed:
+    if: >-
+      github.event.action == 'closed' &&
+      contains(github.event.issue.labels.*.name, 'concert/task') &&
+      !contains(github.event.issue.labels.*.name, 'concert/task-review') &&
+      !contains(github.event.issue.labels.*.name, 'concert/task-complete')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create code review sub-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const metaMatch = body.match(/<!-- concert-meta: ({.+?}) -->/);
+            if (!metaMatch) return;
+
+            const meta = JSON.parse(metaMatch[1]);
+
+            const reviewBody = `## Role
+            You are a senior code reviewer. Review the changes made for this task
+            with a focus on correctness, security, and maintainability.
+
+            ## Context
+            - **Mission:** ${meta.slug}
+            - **Branch:** ${meta.branch}
+            - **Parent Issue:** #${meta.parent}
+            - **Task:** ${meta.task_id}
+            - **Original Task Issue:** #${issue.number}
+
+            ## Task
+            1. Review the diff on the branch \`${meta.branch}\` for changes related to ${meta.task_id}
+            2. Rate each finding as: **CRIT** (must fix), **MAJ** (should fix), **MIN** (nice to fix), **NTH** (cosmetic)
+            3. Post your review as a structured comment
+            4. If no CRIT/MAJ findings, comment \`REVIEW: PASS\`
+            5. If CRIT/MAJ findings exist, comment \`REVIEW: NEEDS_FIX\` followed by the findings list
+
+            ## Review Criteria
+            - Correctness: Does the code do what the task requires?
+            - Security: Are there injection, auth, or data exposure risks?
+            - Tests: Are tests comprehensive and meaningful?
+            - Performance: Any obvious bottlenecks?
+            - Style: Does it follow project conventions?
+
+            <!-- concert-meta: {"stage": "task-review", "parent": ${meta.parent}, "slug": "${meta.slug}", "branch": "${meta.branch}", "task_id": "${meta.task_id}", "task_issue": ${issue.number}, "iteration": 1} -->`;
+
+            const reviewIssue = await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `🔍 Review ${meta.task_id} — ${meta.slug}`,
+              body: reviewBody,
+              labels: ['concert/task-review', 'concert/agent-work'],
+              assignees: ['copilot'],
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: meta.parent,
+              body: `🔍 Code review started for **${meta.task_id}** → #${reviewIssue.data.number}`,
+            });
+
+  # ─────────────────────────────────────────────────────────────
+  # REVIEW CLOSED → Parse outcome, fix or advance
+  # ─────────────────────────────────────────────────────────────
+  review-completed:
+    if: >-
+      github.event.action == 'closed' &&
+      contains(github.event.issue.labels.*.name, 'concert/task-review')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse review outcome and act
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const metaMatch = body.match(/<!-- concert-meta: ({.+?}) -->/);
+            if (!metaMatch) return;
+
+            const meta = JSON.parse(metaMatch[1]);
+            const iteration = meta.iteration || 1;
+            const maxIterations = 3;
+
+            // Check comments for review outcome
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issue.number,
+            });
+
+            const reviewComments = comments.data.filter(c =>
+              c.body.includes('REVIEW: PASS') || c.body.includes('REVIEW: NEEDS_FIX')
+            );
+
+            const lastReview = reviewComments.length > 0
+              ? reviewComments[reviewComments.length - 1]
+              : null;
+
+            const passed = !lastReview || lastReview.body.includes('REVIEW: PASS') || iteration >= maxIterations;
+
+            if (passed) {
+              // Mark task as complete
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: meta.task_issue, labels: ['concert/task-complete'],
+              });
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: meta.parent,
+                body: `✅ **${meta.task_id}** completed and reviewed!${iteration >= maxIterations && !lastReview?.body.includes('REVIEW: PASS') ? ' (max iterations reached)' : ''}`,
+              });
+
+              // Dispatch next available tasks
+              // Find all task issues for this mission, check which can now be started
+              const allIssues = await github.rest.issues.listForRepo({
+                owner: context.repo.owner, repo: context.repo.repo,
+                labels: 'concert/task',
+                state: 'open',
+                per_page: 100,
+              });
+
+              const missionTasks = allIssues.data.filter(i => {
+                const m = i.body?.match(/<!-- concert-meta: ({.+?}) -->/);
+                return m && JSON.parse(m[1]).parent === meta.parent;
+              });
+
+              // Find completed task IDs
+              const completedIssues = await github.rest.issues.listForRepo({
+                owner: context.repo.owner, repo: context.repo.repo,
+                labels: 'concert/task-complete',
+                state: 'all',
+                per_page: 100,
+              });
+
+              const completedIds = new Set();
+              for (const ci of completedIssues.data) {
+                const m = ci.body?.match(/<!-- concert-meta: ({.+?}) -->/);
+                if (m) {
+                  const cmeta = JSON.parse(m[1]);
+                  if (cmeta.parent === meta.parent) completedIds.add(cmeta.task_id);
+                }
+              }
+              completedIds.add(meta.task_id); // Current task just completed
+
+              // Assign tasks whose dependencies are all met
+              for (const taskIssue of missionTasks) {
+                if (taskIssue.assignees?.length > 0) continue; // Already assigned
+                const tm = taskIssue.body?.match(/<!-- concert-meta: ({.+?}) -->/);
+                if (!tm) continue;
+                const tmeta = JSON.parse(tm[1]);
+                const deps = tmeta.depends || [];
+                const allDepsComplete = deps.every(d => completedIds.has(d));
+
+                if (allDepsComplete) {
+                  await github.rest.issues.addAssignees({
+                    owner: context.repo.owner, repo: context.repo.repo,
+                    issue_number: taskIssue.number,
+                    assignees: ['copilot'],
+                  });
+                  core.info(`Dispatched task #${taskIssue.number}: ${tmeta.task_id}`);
+                }
+              }
+
+              // Check if all tasks are complete → mission done
+              // missionTasks only contains OPEN task issues for this mission.
+              // completedIds tracks all completed task IDs (including the one just finished).
+              // Only trigger completion if there are completed tasks AND no open tasks remain.
+              if (missionTasks.length === 0 && completedIds.size > 0) {
+                // All tasks are done!
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: meta.parent,
+                  body: `🎉 **All tasks complete!** Mission execution finished.\n\nPlease review the final PR and merge when ready.`,
+                });
+
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner, repo: context.repo.repo,
+                    issue_number: meta.parent, name: 'concert/execution',
+                  });
+                } catch (e) {}
+
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: meta.parent, labels: ['concert/complete'],
+                });
+              }
+
+            } else {
+              // Create fix sub-issue
+              const findings = lastReview ? lastReview.body : 'Review findings not parsed — please check the review issue.';
+
+              const fixBody = `## Role
+            You are fixing code review findings for task ${meta.task_id}.
+
+            ## Context
+            - **Mission:** ${meta.slug}
+            - **Branch:** ${meta.branch}
+            - **Parent Issue:** #${meta.parent}
+            - **Task:** ${meta.task_id}
+            - **Review Issue:** #${issue.number}
+            - **Iteration:** ${iteration + 1} of ${maxIterations}
+
+            ## Review Findings to Address
+            ${findings}
+
+            ## Task
+            1. Read the review findings above
+            2. Fix all CRIT and MAJ issues
+            3. Address MIN issues if straightforward
+            4. Run tests to ensure nothing is broken
+            5. Commit fixes to branch \`${meta.branch}\`
+
+            <!-- concert-meta: {"stage": "task", "parent": ${meta.parent}, "slug": "${meta.slug}", "branch": "${meta.branch}", "task_id": "${meta.task_id}", "task_issue": ${meta.task_issue}, "iteration": ${iteration + 1}} -->`;
+
+              const fixIssue = await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title: `🔧 Fix ${meta.task_id} review findings (iteration ${iteration + 1}) — ${meta.slug}`,
+                body: fixBody,
+                labels: ['concert/task', 'concert/fix'],
+                assignees: ['copilot'],
+              });
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: meta.parent,
+                body: `🔧 Fix requested for **${meta.task_id}** (iteration ${iteration + 1}/${maxIterations}) → #${fixIssue.data.number}`,
+              });
+            }

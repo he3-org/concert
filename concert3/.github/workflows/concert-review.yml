@@ -1,0 +1,206 @@
+# Concert 3 — Review Commands Handler
+# Handles /accept and /revise commands from issue comments.
+# This is the human-in-the-loop mechanism for Concert 3.
+
+name: "🎵 Concert Review"
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ─────────────────────────────────────────────────────────────
+  # /accept — Approve current stage and advance pipeline
+  # ─────────────────────────────────────────────────────────────
+  handle-accept:
+    if: >-
+      github.event.issue.pull_request == null &&
+      contains(github.event.issue.labels.*.name, 'concert/mission') &&
+      startsWith(github.event.comment.body, '/accept')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine current review stage and advance
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(l => l.name);
+
+            // Map review labels to accepted labels
+            const reviewToAccepted = {
+              'concert/vision-draft':          'concert/vision-accepted',
+              'concert/requirements-review':   'concert/requirements-accepted',
+              'concert/architecture-review':   'concert/architecture-accepted',
+              'concert/ux-review':             'concert/ux-accepted',
+              'concert/planning-review':       'concert/planning-accepted',
+            };
+
+            let found = false;
+            for (const [reviewLabel, acceptedLabel] of Object.entries(reviewToAccepted)) {
+              if (labels.includes(reviewLabel)) {
+                // Remove review label
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner, repo: context.repo.repo,
+                    issue_number: issue.number, name: reviewLabel,
+                  });
+                } catch (e) {}
+
+                // Add accepted label (triggers orchestrator)
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: issue.number, labels: [acceptedLabel],
+                });
+
+                // React to the comment
+                await github.rest.reactions.createForIssueComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  comment_id: context.payload.comment.id,
+                  content: '+1',
+                });
+
+                const stageName = reviewLabel.replace('concert/', '').replace('-review', '').replace('-draft', '');
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `✅ **${stageName}** accepted! Advancing pipeline...`,
+                });
+
+                found = true;
+                break;
+              }
+            }
+
+            // Special case: planning-accepted triggers execution
+            if (labels.includes('concert/planning-review') || (!found && labels.includes('concert/planning-accepted'))) {
+              // This will be handled by concert-execute.yml
+              core.info('Planning accepted — execution will be triggered by concert-execute.yml');
+            }
+
+            if (!found) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `⚠️ No reviewable stage found. Current labels: ${labels.filter(l => l.startsWith('concert/')).join(', ')}`,
+              });
+            }
+
+  # ─────────────────────────────────────────────────────────────
+  # /revise — Request changes to current stage
+  # ─────────────────────────────────────────────────────────────
+  handle-revise:
+    if: >-
+      github.event.issue.pull_request == null &&
+      contains(github.event.issue.labels.*.name, 'concert/mission') &&
+      startsWith(github.event.comment.body, '/revise')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create revision sub-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const comment = context.payload.comment.body;
+            const labels = issue.labels.map(l => l.name);
+
+            // Extract feedback from /revise: <feedback>
+            const feedback = comment.replace(/^\/revise:?\s*/i, '').trim();
+            if (!feedback) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '⚠️ Please provide feedback: `/revise: <your feedback here>`',
+              });
+              return;
+            }
+
+            // Determine which stage is being revised
+            const body = issue.body || '';
+            const slugMatch = body.match(/<!-- concert-slug: (.+?) -->/);
+            const branchMatch = body.match(/<!-- concert-branch: (.+?) -->/);
+            const slug = slugMatch ? slugMatch[1] : issue.title.replace(/🎵 Mission: /, '').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+            const branch = branchMatch ? branchMatch[1] : `concert/${slug}`;
+
+            // Find which review stage we're in
+            const stageMap = {
+              'concert/requirements-review': { stage: 'requirements', emoji: '📋', doc: 'REQUIREMENTS.md' },
+              'concert/architecture-review': { stage: 'architecture', emoji: '🏗️', doc: 'ARCHITECTURE.md' },
+              'concert/ux-review':           { stage: 'ux', emoji: '🎨', doc: 'UX.md' },
+              'concert/planning-review':     { stage: 'planning', emoji: '📝', doc: 'Task files' },
+            };
+
+            let currentStage = null;
+            for (const [label, info] of Object.entries(stageMap)) {
+              if (labels.includes(label)) {
+                currentStage = { label, ...info };
+                break;
+              }
+            }
+
+            if (!currentStage) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '⚠️ No stage currently under review.',
+              });
+              return;
+            }
+
+            // Create a revision sub-issue (flat — no nesting)
+            const revisionBody = `## Role
+            You are revising the **${currentStage.stage}** document based on reviewer feedback.
+
+            ## Context
+            - **Mission:** ${slug}
+            - **Branch:** ${branch}
+            - **Parent Issue:** #${issue.number}
+            - **Document:** \`.concert/missions/${slug}/${currentStage.doc}\`
+
+            ## Revision Feedback
+            ${feedback}
+
+            ## Task
+            1. Read the current ${currentStage.doc} from branch \`${branch}\`
+            2. Apply the requested changes based on the feedback above
+            3. Commit the updated document to branch \`${branch}\`
+            4. Ensure all original quality criteria are still met
+
+            <!-- concert-meta: {"stage": "${currentStage.stage}", "parent": ${issue.number}, "slug": "${slug}", "branch": "${branch}"} -->`;
+
+            const subIssue = await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `${currentStage.emoji} Revise ${currentStage.stage} — ${slug}`,
+              body: revisionBody,
+              labels: ['concert/agent-work', `concert/${currentStage.stage}`, 'concert/revision'],
+              assignees: ['copilot'],
+            });
+
+            // Transition from review back to pending
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, name: currentStage.label,
+              });
+            } catch (e) {}
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issue.number, labels: [`concert/${currentStage.stage}-pending`],
+            });
+
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes',
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `🔄 Revision requested for **${currentStage.stage}** → #${subIssue.data.number}\n\n> ${feedback}`,
+            });

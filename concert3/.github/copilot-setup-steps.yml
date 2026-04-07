@@ -1,0 +1,16 @@
+# Concert 3 — Copilot Setup Steps
+# Configures the environment for Copilot Coding Agent sessions.
+
+steps:
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: "20"
+
+  - name: Install dependencies (if any)
+    run: |
+      if [ -f package-lock.json ]; then
+        npm ci
+      elif [ -f package.json ]; then
+        npm install
+      fi

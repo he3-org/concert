@@ -132,7 +132,7 @@ export async function runUpdate(cwd: string): Promise<number> {
 
   // Update live files (agents, workflows, skills, commands, GitHub agents)
   // Always overwrite — these are managed by Concert
-  const liveResult = copyLiveFiles(packageRoot, cwd, true);
+  const liveResult = copyLiveFiles(packageRoot, cwd, true, version);
   const updatedFiles: Array<{ path: string; from: string; to: string }> = [];
   const skippedFiles: Array<{ path: string; version: string }> = [];
   for (const f of liveResult.overwritten) {

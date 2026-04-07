@@ -17,8 +17,7 @@
     ".claude/rules",
     ".claude/commands/concert",
     ".github/agents",
-    ".github/workflows/concert-ci.yml",
-    ".github/workflows/concert-version-check.yml"
+    ".github/workflows"
   ],
   "scripts": {
     "build": "tsup",

@@ -73,6 +73,11 @@ Boot sequence — read these before doing anything:
      - Mid-task (task not in telemetry) → resume from last commit in that task
      - Between tasks (task just completed) → start next task in the file
      - Between task files (file just completed) → start next task file in the phase
+       **Model-tier breakpoint check (GitHub environments only):** Before starting the
+       next task file, compare its `model` frontmatter to the completed task file's model.
+       If transitioning between model groups (haiku/sonnet ↔ opus), stop execution and
+       set `next_action` to `await_user` with reason `model_tier_change`. See
+       `CONCERT-WORKFLOW-EXECUTION.md` § Model-Tier Breakpoints for the full protocol.
      - Between phases (phase just completed) → start next phase
      - All phases done → run verification
 

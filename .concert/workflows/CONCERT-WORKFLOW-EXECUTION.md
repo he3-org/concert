@@ -94,10 +94,14 @@ For each wave in order (wave 1, wave 2, ... wave N):
 1. Read each task file in the wave
 2. For each task file:
    a. Read the `model` frontmatter field (haiku | sonnet | opus)
-   b. Determine execution mode:
+   b. Check for model-tier breakpoint (GitHub environments only):
+      - Compare this task file's model tier to the previous task file's model tier
+      - If transitioning between model groups (haiku/sonnet ↔ opus) → stop execution
+        (see Model-Tier Breakpoints below)
+   c. Determine execution mode:
       - Claude Code: spawn subagent via Task tool with model parameter
       - GitHub Agents UI: execute directly (user selected model at launch)
-   c. Execute using orchestrator-coder-reviewer loop
+   d. Execute using orchestrator-coder-reviewer loop
       → Refer to: CONCERT-WORKFLOW-CODE-QUALITY.md
 3. Per task within a file:
    a. Read task instructions (files to modify, requirements, tests, skills)
@@ -148,6 +152,86 @@ The filename also includes the model suffix (e.g., `TASK-2026-03-22-db-schema-ha
 | **Copilot CLI**           | Auto mode recommended  | Copilot auto-selects; user can override by filename suffix                      |
 | **GitHub Agents UI**      | User selects at launch | Use Sonnet for haiku+sonnet tasks, Opus only for opus tasks                     |
 | **GitHub Actions**        | Configured per run     | Group haiku+sonnet tasks (Sonnet) and opus tasks (Opus) separately              |
+
+---
+
+## Model-Tier Breakpoints
+
+In GitHub environments (GitHub Agents UI, GitHub Actions), the user selects a model at
+session launch and cannot change it mid-session. When execution moves from a task file
+that uses one model group to a task file that uses a different model group, the workflow
+must stop so the user can restart with the appropriate model.
+
+### Model Groups
+
+Models are grouped into two tiers for breakpoint purposes:
+
+| Group        | Models        | Typical GitHub model selection |
+| ------------ | ------------- | ------------------------------ |
+| **Standard** | haiku, sonnet | Sonnet                         |
+| **Premium**  | opus          | Opus                           |
+
+### When Breakpoints Trigger
+
+A model-tier breakpoint triggers when the **next** task file's model group differs from
+the **previous** task file's model group:
+
+| Previous task file model | Next task file model | Breakpoint? |
+| ------------------------ | -------------------- | ----------- |
+| haiku                    | sonnet               | No          |
+| sonnet                   | haiku                | No          |
+| haiku or sonnet          | opus                 | **Yes**     |
+| opus                     | haiku or sonnet      | **Yes**     |
+| opus                     | opus                 | No          |
+| (none — first task file) | any                  | No          |
+
+### Breakpoint Behavior
+
+When a model-tier breakpoint triggers:
+
+1. **Stop execution** — Do NOT start the next task file.
+2. **Write `next_action` to state.json:**
+
+   ```json
+   {
+     "next_action": {
+       "type": "await_user",
+       "target": "continue",
+       "context": {
+         "reason": "model_tier_change",
+         "previous_model": "<previous_model>",
+         "next_model": "<next_model>"
+       },
+       "message": "⏸️ Model change required: next task file uses <next_model> (previous used <previous_model>). Please restart with the appropriate model and run /concert:continue (@concert-continue in Copilot)."
+     }
+   }
+   ```
+
+3. **Output user guidance:**
+
+   ```
+   ⏸️ Execution paused — model change required.
+
+   The completed task file used model: <previous_model>
+   The next task file requires model: <next_model>
+
+   📋 To continue:
+     1. Change your model selection to <recommended_model>
+     2. Resume execution:  /concert:continue  (@concert-continue in Copilot)
+   ```
+
+   Where `<recommended_model>` is:
+   - **Opus** when transitioning from haiku/sonnet → opus
+   - **Sonnet** when transitioning from opus → haiku/sonnet
+
+### Environments Where Breakpoints Apply
+
+| Environment               | Breakpoints? | Reason                                                  |
+| ------------------------- | ------------ | ------------------------------------------------------- |
+| **Claude Code** (CLI/web) | No           | Model is selected per-task automatically via Task tool  |
+| **Copilot CLI**           | No           | Auto mode selects model; breakpoints are not needed     |
+| **GitHub Agents UI**      | **Yes**      | User selects model at launch; cannot change mid-session |
+| **GitHub Actions**        | **Yes**      | Model is configured per workflow run                    |
 
 ---
 
@@ -248,6 +332,7 @@ Reviews trigger at natural breakpoints, not on timers:
 3. **User-triggered** — `/concert:review` at any time
 4. **Inferred breakpoints** — Orchestrator detects major transitions and suggests review
 5. **Threshold-based** — Configurable via `concert.jsonc` (e.g., after N task files complete)
+6. **Model-tier breakpoints** — In GitHub environments, execution stops when the next task file's model group differs from the previous (haiku/sonnet ↔ opus). See § Model-Tier Breakpoints.
 
 ---
 

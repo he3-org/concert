@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.12.0](https://github.com/he3-org/concert/compare/v1.11.0...v1.12.0) (2026-04-07)
+
+
+### Features
+
+* **skills:** copy 4 skills from streamline-technology/web-store ([#55](https://github.com/he3-org/concert/issues/55)) ([28f257d](https://github.com/he3-org/concert/commit/28f257da1d886f32263dbd8c0790666c72d328f8))
+* standardize skill headers and make content application-agnostic ([#57](https://github.com/he3-org/concert/issues/57)) ([18b99ea](https://github.com/he3-org/concert/commit/18b99ead3c6b805eacaafa74f58d7ca7b32fe2d8))
+
+
+### Bug Fixes
+
+* dynamic agent delegation rule, /concert: command support, and auto-continue workflow deployment ([#58](https://github.com/he3-org/concert/issues/58)) ([4a5ce6d](https://github.com/he3-org/concert/commit/4a5ce6ddeed39128597dc2ccf348b86deb320323))
+
 ## [1.11.0](https://github.com/he3-org/concert/compare/v1.10.1...v1.11.0) (2026-04-07)
 
 ### Features

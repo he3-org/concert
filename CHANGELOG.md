@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.14.0](https://github.com/he3-org/concert/compare/v1.13.0...v1.14.0) (2026-04-08)
+
+
+### Features
+
+* add concert-vision agent for creating comprehensive VISION.md documents ([#64](https://github.com/he3-org/concert/issues/64)) ([bc47dfe](https://github.com/he3-org/concert/commit/bc47dfea6247cb9d86e76264397e4c119c6af60f))
+* Concert 3 — GitHub-native SDLC orchestration ([#62](https://github.com/he3-org/concert/issues/62)) ([15558c7](https://github.com/he3-org/concert/commit/15558c779f2911f53aa099233a428441344a5620))
+
 ## [1.13.0](https://github.com/he3-org/concert/compare/v1.12.0...v1.13.0) (2026-04-07)
 
 

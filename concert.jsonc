@@ -1,6 +1,6 @@
 {
   // Concert configuration — see https://github.com/he3-org/concert
-  "project_name": "concert2",
+  "project_name": "concert",
   "concert_version": "dev",
 
   "project": {

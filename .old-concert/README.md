@@ -1,3 +1,5 @@
+<!-- ARCHIVED: This file is archived and must not be used by coding agents or humans. -->
+
 # Concert
 
 This directory contains Concert orchestration files.

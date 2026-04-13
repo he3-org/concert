@@ -9,15 +9,8 @@
   "files": [
     "dist",
     "templates",
-    ".claude/agents",
-    ".concert/workflows",
-    ".concert/templates",
-    ".concert/stage-registry.jsonc",
-    ".claude/skills",
-    ".claude/rules",
-    ".claude/commands/concert",
     ".github/agents",
-    ".github/workflows"
+    ".claude/commands"
   ],
   "scripts": {
     "build": "tsup",

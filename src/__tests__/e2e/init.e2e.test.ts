@@ -161,9 +161,11 @@ describe('concert init e2e', () => {
     } finally {
       restore();
     }
-    const agentsDir = path.join(tmpDir, '.claude', 'agents');
+    const agentsDir = path.join(tmpDir, '.github', 'agents');
     if (!fs.existsSync(agentsDir)) return;
-    const agents = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
+    const agents = fs
+      .readdirSync(agentsDir)
+      .filter((f) => f.startsWith('concert-') && f.endsWith('.agent.md'));
     expect(agents.length).toBeGreaterThan(0);
     for (const agent of agents) {
       const content = fs.readFileSync(path.join(agentsDir, agent), 'utf-8');

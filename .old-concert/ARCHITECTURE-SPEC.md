@@ -1,3 +1,5 @@
+<!-- ARCHIVED: This file is archived and must not be used by coding agents or humans. -->
+
 # Architecture: Concert 2 v1
 
 ## 1. System Overview

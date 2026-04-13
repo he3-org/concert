@@ -1,3 +1,5 @@
+<!-- ARCHIVED: This file is archived and must not be used by coding agents or humans. -->
+
 # UX Design: Concert 2 v1
 
 ## 1. Design Principles

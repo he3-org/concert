@@ -1,3 +1,5 @@
+<!-- ARCHIVED: This file is archived and must not be used by coding agents or humans. -->
+
 # Vision: Concert 2 v1
 
 ## Problem Statement

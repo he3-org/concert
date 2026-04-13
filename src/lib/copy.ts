@@ -26,7 +26,6 @@ function copyFileWithVersionStamp(srcFile: string, destFile: string, version: st
 
 /**
  * Resolve the package root directory (parent of dist/).
- * Live files (agents, workflows, skills, commands, GitHub agents) ship here.
  */
 export function resolvePackageRoot(): string {
   // __dirname points to dist/ when bundled
@@ -43,28 +42,22 @@ export function resolvePackageRoot(): string {
 }
 
 /**
- * Resolve the path to the templates directory inside the npm package.
- * When bundled by tsup, the dist/ folder is a sibling of templates/.
- */
-export function resolveTemplatesDir(): string {
-  return path.join(resolvePackageRoot(), 'templates');
-}
-
-/**
  * Copy all files from source directory to target directory recursively.
  *
  * @param srcDir - Source directory (templates/)
  * @param targetDir - Target directory (user's project root)
  * @param overwrite - Whether to overwrite existing files
+ * @param version - If provided, stamp managed headers with this version
  * @returns Summary of files created, skipped, and overwritten
  */
 export function copyTemplates(
   srcDir: string,
   targetDir: string,
-  overwrite: boolean = false
+  overwrite: boolean = false,
+  version?: string
 ): CopyResult {
   const result: CopyResult = { created: [], skipped: [], overwritten: [] };
-  copyRecursive(srcDir, targetDir, '', overwrite, result);
+  copyRecursive(srcDir, targetDir, '', overwrite, result, version);
   return result;
 }
 
@@ -118,165 +111,18 @@ function copyRecursive(
 }
 
 /**
- * Copy only managed files from source to target (for update).
- * Only overwrites files that have the managed header in the target.
- */
-export function copyManagedFiles(srcDir: string, targetDir: string): CopyResult {
-  const result: CopyResult = { created: [], skipped: [], overwritten: [] };
-  copyManagedRecursive(srcDir, targetDir, '', result);
-  return result;
-}
-
-function copyManagedRecursive(
-  srcDir: string,
-  targetDir: string,
-  relativePath: string,
-  result: CopyResult
-): void {
-  const srcPath = path.join(srcDir, relativePath);
-  const entries = fs.readdirSync(srcPath, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const relPath = relativePath ? path.join(relativePath, entry.name) : entry.name;
-    const srcFile = path.join(srcDir, relPath);
-    const targetFile = path.join(targetDir, relPath);
-
-    if (entry.isDirectory()) {
-      copyManagedRecursive(srcDir, targetDir, relPath, result);
-    } else {
-      if (!fs.existsSync(targetFile)) {
-        // New file in template that doesn't exist in target — create it
-        const dir = path.dirname(targetFile);
-        if (!fs.existsSync(dir)) {
-          fs.mkdirSync(dir, { recursive: true });
-        }
-        fs.copyFileSync(srcFile, targetFile);
-        result.created.push(relPath);
-      } else {
-        // File exists — only overwrite if it's a managed file
-        const content = fs.readFileSync(targetFile, 'utf-8');
-        if (isManagedFile(content)) {
-          fs.copyFileSync(srcFile, targetFile);
-          result.overwritten.push(relPath);
-        } else {
-          result.skipped.push(relPath);
-        }
-      }
-    }
-  }
-}
-
-/**
- * Count files in a directory by category.
- * Returns counts like { agents: 14, workflows: 8, skills: 7 }.
- */
-export function countTemplateFiles(dir: string): Record<string, number> {
-  const counts: Record<string, number> = {};
-  countRecursive(dir, '', counts);
-  return counts;
-}
-
-function countRecursive(
-  baseDir: string,
-  relativePath: string,
-  counts: Record<string, number>
-): void {
-  const dirPath = relativePath ? path.join(baseDir, relativePath) : baseDir;
-  if (!fs.existsSync(dirPath)) return;
-  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const relPath = relativePath ? path.join(relativePath, entry.name) : entry.name;
-    if (entry.isDirectory()) {
-      countRecursive(baseDir, relPath, counts);
-    } else if (entry.name !== '.gitkeep') {
-      // Categorize by parent directory
-      const parts = relPath.split(path.sep);
-      const category = parts.length > 1 ? (parts[parts.length - 2] ?? 'root') : 'root';
-      counts[category] = (counts[category] ?? 0) + 1;
-    }
-  }
-}
-
-/**
- * Skills excluded from shipping. These are specific to the Concert repo
- * and not useful for target repos. Everything else in .claude/skills/ ships.
- */
-export const EXCLUDED_SKILLS: readonly string[] = [];
-
-/**
- * Rules excluded from shipping. These are specific to the Concert repo
- * and not useful for target repos. Everything else in .claude/rules/ ships.
- */
-export const EXCLUDED_RULES: readonly string[] = [
-  'concert-managed-file-headers.md',
-  'concert-repo-managed-files.md',
-];
-
-/**
- * Workflow files excluded from shipping. These are specific to the Concert repo
- * and not useful for target repos. Everything else matching concert-*.yml ships.
- */
-export const EXCLUDED_WORKFLOWS: readonly string[] = ['concert-ci.yml'];
-
-/**
  * Live file sources that ship directly from the package (not templates).
  * Each entry maps a source directory (relative to package root) to a target
- * directory (relative to user's project root).
+ * directory (relative to user's project root), with a filename pattern filter.
  */
 export const LIVE_FILE_SOURCES = [
-  { src: '.claude/agents', target: '.claude/agents' },
-  { src: '.concert/workflows', target: '.concert/workflows' },
-  { src: '.concert/templates', target: '.concert/templates' },
-  { src: '.claude/commands/concert', target: '.claude/commands/concert' },
   { src: '.github/agents', target: '.github/agents', pattern: /^concert-.*\.agent\.md$/ },
-  { src: '.github/workflows', target: '.github/workflows', pattern: /^concert-.*\.yml$/ },
+  { src: '.claude/commands', target: '.claude/commands', pattern: /^concert-.*\.md$/ },
 ] as const;
-
-/**
- * Individual files in .concert/ that ship as live files.
- * These are copied individually (not as directory contents).
- */
-export const LIVE_INDIVIDUAL_FILES = [
-  { src: '.concert/stage-registry.jsonc', target: '.concert/stage-registry.jsonc' },
-] as const;
-
-/**
- * Discover all skill directories that should ship, excluding EXCLUDED_SKILLS.
- */
-export function discoverSkills(packageRoot: string): Array<{ src: string; target: string }> {
-  const skillsDir = path.join(packageRoot, '.claude', 'skills');
-  if (!fs.existsSync(skillsDir)) return [];
-  return fs
-    .readdirSync(skillsDir, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && !EXCLUDED_SKILLS.includes(e.name))
-    .map((e) => ({
-      src: `.claude/skills/${e.name}`,
-      target: `.claude/skills/${e.name}`,
-    }));
-}
-
-/**
- * Discover all rule files that should ship, excluding EXCLUDED_RULES.
- */
-export function discoverRules(
-  packageRoot: string
-): Array<{ src: string; target: string; file: string }> {
-  const rulesDir = path.join(packageRoot, '.claude', 'rules');
-  if (!fs.existsSync(rulesDir)) return [];
-  return fs
-    .readdirSync(rulesDir, { withFileTypes: true })
-    .filter((e) => e.isFile() && e.name.endsWith('.md') && !EXCLUDED_RULES.includes(e.name))
-    .map((e) => ({
-      src: '.claude/rules',
-      target: '.claude/rules',
-      file: e.name,
-    }));
-}
 
 /**
  * Copy live files from the package root to the target directory.
- * Copies entire directories, always overwriting managed files.
+ * Only copies files matching LIVE_FILE_SOURCES patterns.
  * When version is provided, stamps the current version into managed file headers.
  */
 export function copyLiveFiles(
@@ -287,74 +133,7 @@ export function copyLiveFiles(
 ): CopyResult {
   const result: CopyResult = { created: [], skipped: [], overwritten: [] };
 
-  // Combine static sources with dynamically discovered skills
-  const allSources = [...LIVE_FILE_SOURCES, ...discoverSkills(packageRoot)];
-
-  // Copy individual live files (e.g., stage-registry.jsonc)
-  for (const file of LIVE_INDIVIDUAL_FILES) {
-    const srcFile = path.join(packageRoot, file.src);
-    if (!fs.existsSync(srcFile)) continue;
-    const destFile = path.join(targetDir, file.target);
-    const destDir = path.dirname(destFile);
-    if (!fs.existsSync(destDir)) {
-      fs.mkdirSync(destDir, { recursive: true });
-    }
-    if (fs.existsSync(destFile)) {
-      if (overwrite) {
-        if (version) {
-          copyFileWithVersionStamp(srcFile, destFile, version);
-        } else {
-          fs.copyFileSync(srcFile, destFile);
-        }
-        result.overwritten.push(file.target);
-      } else {
-        result.skipped.push(file.target);
-      }
-    } else {
-      if (version) {
-        copyFileWithVersionStamp(srcFile, destFile, version);
-      } else {
-        fs.copyFileSync(srcFile, destFile);
-      }
-      result.created.push(file.target);
-    }
-  }
-
-  // Copy individual rule files (not a full directory copy)
-  const rules = discoverRules(packageRoot);
-  if (rules.length > 0) {
-    const rulesTargetDir = path.join(targetDir, '.claude', 'rules');
-    if (!fs.existsSync(rulesTargetDir)) {
-      fs.mkdirSync(rulesTargetDir, { recursive: true });
-    }
-    for (const rule of rules) {
-      const srcFile = path.join(packageRoot, rule.src, rule.file);
-      const destFile = path.join(rulesTargetDir, rule.file);
-      const relPath = path.join(rule.target, rule.file);
-
-      if (fs.existsSync(destFile)) {
-        if (overwrite) {
-          if (version) {
-            copyFileWithVersionStamp(srcFile, destFile, version);
-          } else {
-            fs.copyFileSync(srcFile, destFile);
-          }
-          result.overwritten.push(relPath);
-        } else {
-          result.skipped.push(relPath);
-        }
-      } else {
-        if (version) {
-          copyFileWithVersionStamp(srcFile, destFile, version);
-        } else {
-          fs.copyFileSync(srcFile, destFile);
-        }
-        result.created.push(relPath);
-      }
-    }
-  }
-
-  for (const source of allSources) {
+  for (const source of LIVE_FILE_SOURCES) {
     const srcDir = path.join(packageRoot, source.src);
     if (!fs.existsSync(srcDir)) continue;
 
@@ -365,17 +144,9 @@ export function copyLiveFiles(
 
     const entries = fs.readdirSync(srcDir, { withFileTypes: true });
     for (const entry of entries) {
-      if (entry.isDirectory()) {
-        // Copy subdirectories recursively
-        copyRecursive(srcDir, targetPath, entry.name, overwrite, result, version);
-        continue;
-      }
-      if ('pattern' in source && source.pattern && !source.pattern.test(entry.name)) {
-        continue;
-      }
-      if (source.src === '.github/workflows' && EXCLUDED_WORKFLOWS.includes(entry.name)) {
-        continue;
-      }
+      if (!entry.isFile()) continue;
+      if (!source.pattern.test(entry.name)) continue;
+
       const srcFile = path.join(srcDir, entry.name);
       const destFile = path.join(targetPath, entry.name);
       const relPath = path.join(source.target, entry.name);
@@ -410,35 +181,16 @@ export function copyLiveFiles(
  */
 export function countLiveFiles(packageRoot: string): Record<string, number> {
   const counts: Record<string, number> = {};
-  // Count individual live files
-  for (const file of LIVE_INDIVIDUAL_FILES) {
-    const srcFile = path.join(packageRoot, file.src);
-    if (!fs.existsSync(srcFile)) continue;
-    const category = path.basename(path.dirname(file.src));
-    counts[category] = (counts[category] ?? 0) + 1;
-  }
-  const allSources = [...LIVE_FILE_SOURCES, ...discoverSkills(packageRoot)];
-  for (const source of allSources) {
+  for (const source of LIVE_FILE_SOURCES) {
     const srcDir = path.join(packageRoot, source.src);
     if (!fs.existsSync(srcDir)) continue;
     const category = path.basename(source.src);
     const entries = fs.readdirSync(srcDir, { withFileTypes: true });
     for (const entry of entries) {
-      if (entry.isDirectory()) continue;
-      if ('pattern' in source && source.pattern && !source.pattern.test(entry.name)) continue;
-      if (source.src === '.github/workflows' && EXCLUDED_WORKFLOWS.includes(entry.name)) continue;
+      if (!entry.isFile()) continue;
+      if (!source.pattern.test(entry.name)) continue;
       counts[category] = (counts[category] ?? 0) + 1;
     }
-  }
-  // Roll up individual skill counts into a single "skills" count
-  const skills = discoverSkills(packageRoot);
-  if (skills.length > 0) {
-    counts['skills'] = skills.length;
-  }
-  // Count rules
-  const rules = discoverRules(packageRoot);
-  if (rules.length > 0) {
-    counts['rules'] = rules.length;
   }
   return counts;
 }
@@ -462,13 +214,10 @@ export function cleanupStaleFiles(targetDir: string, currentVersion: string): Cl
   const result: CleanupResult = { deleted: [] };
 
   // Directories to scan for stale Concert-managed files.
-  const scanDirs: Array<{ dir: string; pattern?: RegExp }> = [
-    { dir: '.claude/agents', pattern: /^concert-.*\.md$/ },
-    { dir: '.claude/commands/concert', pattern: /\.md$/ },
+  // These match the LIVE_FILE_SOURCES patterns.
+  const scanDirs: Array<{ dir: string; pattern: RegExp }> = [
     { dir: '.github/agents', pattern: /^concert-.*\.agent\.md$/ },
-    { dir: '.concert/workflows', pattern: /^CONCERT-WORKFLOW-.*\.md$/ },
-    { dir: '.concert/templates', pattern: /\.md$/ },
-    { dir: '.github/workflows', pattern: /^concert-.*\.yml$/ },
+    { dir: '.claude/commands', pattern: /^concert-.*\.md$/ },
   ];
 
   for (const { dir, pattern } of scanDirs) {
@@ -477,7 +226,7 @@ export function cleanupStaleFiles(targetDir: string, currentVersion: string): Cl
     const entries = fs.readdirSync(fullDir, { withFileTypes: true });
     for (const entry of entries) {
       if (!entry.isFile()) continue;
-      if (pattern && !pattern.test(entry.name)) continue;
+      if (!pattern.test(entry.name)) continue;
       const filePath = path.join(fullDir, entry.name);
       const content = fs.readFileSync(filePath, 'utf-8');
       if (!isManagedFile(content)) continue;
@@ -487,56 +236,6 @@ export function cleanupStaleFiles(targetDir: string, currentVersion: string): Cl
         fs.unlinkSync(filePath);
         result.deleted.push(path.join(dir, entry.name));
       }
-    }
-  }
-
-  // Scan skills: check each skill directory's SKILL.md
-  const skillsDir = path.join(targetDir, '.claude', 'skills');
-  if (fs.existsSync(skillsDir)) {
-    const skillEntries = fs.readdirSync(skillsDir, { withFileTypes: true });
-    for (const entry of skillEntries) {
-      if (!entry.isDirectory()) continue;
-      const skillMdPath = path.join(skillsDir, entry.name, 'SKILL.md');
-      if (!fs.existsSync(skillMdPath)) continue;
-      const content = fs.readFileSync(skillMdPath, 'utf-8');
-      if (!isManagedFile(content)) continue;
-      const fileVersion = extractHeaderVersion(content);
-      if (fileVersion !== null && fileVersion !== currentVersion) {
-        // Delete entire skill directory
-        fs.rmSync(path.join(skillsDir, entry.name), { recursive: true, force: true });
-        result.deleted.push(path.join('.claude', 'skills', entry.name));
-      }
-    }
-  }
-
-  // Scan rules
-  const rulesDir = path.join(targetDir, '.claude', 'rules');
-  if (fs.existsSync(rulesDir)) {
-    const ruleEntries = fs.readdirSync(rulesDir, { withFileTypes: true });
-    for (const entry of ruleEntries) {
-      if (!entry.isFile() || !entry.name.endsWith('.md')) continue;
-      const filePath = path.join(rulesDir, entry.name);
-      const content = fs.readFileSync(filePath, 'utf-8');
-      if (!isManagedFile(content)) continue;
-      const fileVersion = extractHeaderVersion(content);
-      if (fileVersion !== null && fileVersion !== currentVersion) {
-        fs.unlinkSync(filePath);
-        result.deleted.push(path.join('.claude', 'rules', entry.name));
-      }
-    }
-  }
-
-  // Scan individual live files (e.g., stage-registry.jsonc)
-  const individualFiles = ['.concert/stage-registry.jsonc'];
-  for (const relPath of individualFiles) {
-    const filePath = path.join(targetDir, relPath);
-    if (!fs.existsSync(filePath)) continue;
-    const content = fs.readFileSync(filePath, 'utf-8');
-    if (!isManagedFile(content)) continue;
-    const fileVersion = extractHeaderVersion(content);
-    if (fileVersion !== null && fileVersion !== currentVersion) {
-      fs.unlinkSync(filePath);
-      result.deleted.push(relPath);
     }
   }
 

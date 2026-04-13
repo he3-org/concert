@@ -1,3 +1,4 @@
+# ARCHIVED: This file is archived and must not be used by coding agents or humans.
 # Deploy Concert 3 — Creates the concert3 repo from the concert3/ directory
 # Uses GH_CLASSIC_TOKEN from repository secrets to create and push to the new repo.
 #

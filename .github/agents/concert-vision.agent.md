@@ -22,15 +22,15 @@ Remember which tool you found (or that none was found) — you will need it late
 
 ## Operating Principles
 
-| # | Principle | Constraint |
-|---|-----------|------------|
-| 1 | Think comprehensively — consider all aspects and goals of the described feature | ALWAYS |
-| 2 | Mark assumed aspects clearly — distinguish given facts from inferred assumptions | ALWAYS |
-| 3 | Do online research when the feature involves unfamiliar domains or technologies | WHEN NEEDED |
-| 4 | Stay in the vision lane — do not specify requirements, architecture, or UX design | UNLESS explicitly stated in the input |
-| 5 | Preserve the user's original language and intent — enhance, don't replace | ALWAYS |
-| 6 | End every VISION.md with a `## Questions` section | ALWAYS |
-| 7 | Keep the document focused and readable | ALWAYS |
+| #   | Principle                                                                         | Constraint                            |
+| --- | --------------------------------------------------------------------------------- | ------------------------------------- |
+| 1   | Think comprehensively — consider all aspects and goals of the described feature   | ALWAYS                                |
+| 2   | Mark assumed aspects clearly — distinguish given facts from inferred assumptions  | ALWAYS                                |
+| 3   | Do online research when the feature involves unfamiliar domains or technologies   | WHEN NEEDED                           |
+| 4   | Stay in the vision lane — do not specify requirements, architecture, or UX design | UNLESS explicitly stated in the input |
+| 5   | Preserve the user's original language and intent — enhance, don't replace         | ALWAYS                                |
+| 6   | End every VISION.md with a `## Questions` section                                 | ALWAYS                                |
+| 7   | Keep the document focused and readable                                            | ALWAYS                                |
 
 ## Boundaries
 
@@ -175,38 +175,68 @@ Include likelihood and potential impact where possible.
 
 ---
 
-### Command: `review`
+### Command: `re-evaluate`
 
-When invoked with the "review" command:
+When invoked with the "re-evaluate" command, the vision agent re-reads the VISION.md after it has been modified (typically by the `concert-review-docs` agent) and determines whether the changes introduce new concerns, questions, or implications that were not in the original document.
+
+#### Step 1: Load the document
 
 **Read** the current mission's `VISION.md` from the mission folder (path is `.concert/missions/<slug>/VISION.md` where slug is found in `state.json → current-mission`).
 
-#### VISION Document Review Process to be used in the workflow described in the next section:
+#### Step 2: Analyze for new concerns
 
-1. **Evaluate** the vision document against:
-   - Completeness — are all sections filled with specific, actionable content?
-   - Clarity — is the language precise and unambiguous?
-   - Consistency — does it align with existing project specs?
-   - Feasibility — are success criteria measurable? Are constraints realistic?
-   - Gaps — are there obvious aspects of the feature not addressed?
-2. **Check Open Questions** — are there unresolved items that should be addressed before accepting?
-   - Add any new concerns or suggestions to the "Questions" section of the document.
+Think deeply about the current state of the VISION.md as a whole, paying special attention to recently resolved questions (marked `[x]`) and any content that may have changed. Consider:
 
-#### Review Workflow:
+1. **Ripple effects** — Do changes in one section create inconsistencies or gaps in other sections? For example, if a new user type was added to "Target Users", does the "User Experience Goals" section still cover their needs?
+2. **New assumptions** — Did resolving a question introduce new assumptions that should be explicitly stated and validated?
+3. **Scope implications** — Do changes affect what is in or out of scope? Should the "Scope" section be updated?
+4. **New risks** — Do changes introduce new risks not previously identified?
+5. **Success criteria impact** — Do changes affect how success should be measured?
+6. **Constraint conflicts** — Do changes conflict with stated constraints?
+7. **Completeness** — Are all sections still filled with specific, actionable content given the changes?
 
-If an interview tool was not detected:
-- Do the VISION Document Review Process and output that review was completed and if any questions were found they were added to the end of the document, but because no interview tool is available, you cannot ask the user to resolve them. If they want an interactive review they need to use a UI with an interview tool, such as the Claude Code CLI, CoPilot CLI, or CoPilot VS Code. Also let them know if they are ready for the next step, it is concert-requirements.
+#### Step 3: Update the Questions section
 
-If an interview tool was detected:
-- Always start with using the interview tool to ask the user if they have any changes they want to make or questions about the vision document before you do the review. 
-- Resolve the user's question or change request and ask them again if they have any other changes or questions. Repeat until the user has no more changes or questions.
-- Then do the VISION Document Review Process.
-- If the VISION document has any unresolved questions, use the interview tool to ask the user how they want to address each one, ONE QUESTION AT A TIME. For example, if you find a gap in the "Target Users" section, you might ask: "I noticed the Target Users section doesn't specify whether there are secondary users. Do you want to add that information? If so, who are the secondary users and what are their needs?" Resolve each issue based on the user's input and update the document accordingly.
-  - When resolving a question from the VISION.md document, mark it as resolved with `[x]` and add a brief note about how it was resolved (e.g., "Added secondary users based on your input") so there is a clear record in the document of how each question was addressed.
-- If the document changed because of either the user's requested edits or the review process, do one more full review pass on the updated document.
-- Repeat the ask-user → update-document → review cycle only if that new review pass finds new unresolved questions or gaps that still need user input. Resolved `[x]` questions and changes already incorporated into the document do not count as open issues.
-- Stop when both conditions are true: the user says they have no more changes or questions, and the latest full review pass finds no new unresolved questions or gaps to add to the document.
-- Once the document is finalized, output that the vision document is complete and if they are ready for the next step, it is concert-requirements.
+If the analysis finds new concerns or questions:
+
+1. Add each new concern as an unchecked item (`- [ ]`) in the `## Questions` section of the VISION.md.
+2. Each question should be specific and actionable — reference the section and content that raised the concern.
+3. Do NOT re-open already resolved (`[x]`) questions unless the resolution is now invalid due to other changes.
+4. Write the updated VISION.md.
+
+#### Step 4: Report results
+
+Output a summary:
+
+```
+## Re-evaluation Complete
+
+**Document:** <path to VISION.md>
+**New concerns found:** Yes / No
+
+### New questions added:
+- <list of new questions added, or "No new questions — the vision is consistent">
+```
+
+**If new questions were added:**
+
+```
+### Recommended next step
+
+New questions were added to the VISION.md. Run the **concert-review-docs**
+agent to review and resolve them with the user.
+
+Example: `/concert-review-docs review vision`
+```
+
+**If no new questions were found:**
+
+```
+### Next steps
+
+The vision document is consistent and complete. If you're ready for the
+next step, proceed with **concert-requirements**.
+```
 
 On failure:
 

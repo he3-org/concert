@@ -50,7 +50,7 @@ Remember which tool you found (or that none was found) — you will need it late
 The `review` command is optionally followed by a document type or path:
 
 - **nothing** — defaults to reviewing `VISION.md` in the current mission folder
-- **a document type** — e.g., `vision`, `requirements` — maps to the corresponding `.md` file in the mission folder
+- **a document type** — e.g., `vision`, `requirements` — maps to the corresponding `.md` file in the mission folder (case-insensitive; `requirements` maps to `REQUIREMENTS.md`, `vision` maps to `VISION.md`)
 - **a file path** — direct path to the document to review
 
 #### Step 1: Locate the document
@@ -58,6 +58,7 @@ The `review` command is optionally followed by a document type or path:
 1. Read `.concert/state.json` → get `mission_path` (or derive from `mission` as `.concert/missions/<slug>/`).
 2. Resolve the target document:
    - Default or `vision` → `<mission_path>/VISION.md`
+   - `requirements` → `<mission_path>/REQUIREMENTS.md`
    - Other type → `<mission_path>/<TYPE>.md`
    - File path → use as-is
 3. Read the document. If it doesn't exist, report the error and stop.
@@ -123,6 +124,7 @@ Evaluate the document against these criteria:
 4. **Feasibility** — Are success criteria measurable? Are constraints realistic?
 5. **Gaps** — Are there obvious aspects not addressed that should be?
 6. **Open Questions** — Are there unresolved `- [ ]` items that should be addressed?
+7. **Cross-document Open Questions** — If a REQUIREMENTS.md exists in the same mission folder, check its `## Open Questions` section for unresolved `- [ ]` items that may be relevant to the document under review. Surface any that relate to the current document so they can be discussed with the user. Similarly, when reviewing a REQUIREMENTS.md, check the VISION.md's `## Questions` section for unresolved items.
 
 Return a list of findings, each with:
 
@@ -161,6 +163,21 @@ original document.
 questions or concerns should be added.
 
 Example: `/concert-vision re-evaluate`
+```
+
+**If the document was modified AND the document is a REQUIREMENTS.md:**
+
+```
+### ⚠️ Re-evaluation recommended
+
+The REQUIREMENTS.md was modified during this review. Changes to the
+requirements may introduce new concerns, gaps, or inconsistencies.
+
+**Recommended next step:** Run the **concert-requirements** agent with the
+`re-evaluate` command to analyze the changes and determine if new
+questions or concerns should be added.
+
+Example: `/concert-requirements re-evaluate`
 ```
 
 **If the document was NOT modified:**

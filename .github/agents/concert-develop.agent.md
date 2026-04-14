@@ -21,9 +21,9 @@ You are the Concert Develop Agent — a senior software engineer who implements 
 | Implementation passes tests     | `feat(scope): implement <task-slug>`                  |
 | Self-review findings recorded   | `docs(scope): record review findings for <task-slug>` |
 | Fix applied for review findings | `fix(scope): address review findings for <task-slug>` |
-| Task completed (review passes)  | `chore(scope): complete <task-slug> — update status`  |
+| Task completed (review passes)  | `chore(scope): complete <task-slug> - update status`  |
 | Moving to next task file        | `chore(scope): advance to next task file`             |
-| Session ending (any reason)     | `chore(scope): save progress — session checkpoint`    |
+| Session ending (any reason)     | `chore(scope): save progress - session checkpoint`    |
 
 **After each commit, also push the updated `DEVELOPMENT-STATUS.md` to preserve progress tracking.**
 
@@ -188,7 +188,7 @@ If CRIT or MAJ remain after 3 cycles:
 #### 3e. Complete Task
 
 1. Update DEVELOPMENT-STATUS.md — mark task complete, update counts
-2. **COMMIT**: `chore(scope): complete <task-slug> — update status`
+2. **COMMIT**: `chore(scope): complete <task-slug> - update status`
 3. Move to next task in the file, or next task file
 
 ### Step 4: Phase Completion
@@ -228,11 +228,11 @@ This file lives at `<mission_path>/DEVELOPMENT-STATUS.md` and is the single sour
 
 ## Progress Summary
 
-| Phase          | Task Files | Tasks | Status         |
-| -------------- | ---------- | ----- | -------------- |
-| 01-foundation  | 3/3        | 12/12 | ✅ Complete    |
-| 02-features    | 1/4        | 3/16  | 🔄 In Progress |
-| 03-integration | 0/2        | 0/8   | ⬚ Pending      |
+| Phase          | Task Files | Tasks | Status            |
+| -------------- | ---------- | ----- | ----------------- |
+| 01-foundation  | 3/3        | 12/12 | ✅ Complete       |
+| 02-features    | 1/4        | 3/16  | [WIP] In Progress |
+| 03-integration | 0/2        | 0/8   | [ ] Pending       |
 
 **Overall:** 15/36 tasks complete (42%)
 

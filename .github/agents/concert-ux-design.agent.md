@@ -256,7 +256,11 @@ If the analysis finds new concerns or questions:
 3. Do NOT re-open already resolved (`[x]`) questions unless the resolution is now invalid due to other changes.
 4. Write the updated UX-DESIGN.md.
 
-#### Step 4: Report results
+#### Step 4: Clear the modification flag
+
+After completing re-evaluation, **remove** the `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` line from the UX-DESIGN.md if it is present. This marks the document as re-evaluated.
+
+#### Step 5: Report results
 
 Output a summary:
 

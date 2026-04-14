@@ -147,7 +147,20 @@ Return a list of findings, each with:
 - The specific issue
 - A suggested resolution or question to ask the user
 
-#### Step 5: Wrap-up and next steps
+#### Step 5: Set the modification flag
+
+If `document_was_modified` is true, add (or ensure the presence of) the following HTML comment on the line immediately after the document's top-level heading (`# …`):
+
+```
+<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->
+```
+
+This flag tells the `re-evaluate-all` command (and individual specialist `re-evaluate` commands) that the document has been changed since its last re-evaluation.
+
+- If the flag is already present, leave it as-is.
+- If the document was NOT modified, do NOT add or remove the flag.
+
+#### Step 6: Wrap-up and next steps
 
 Output a summary of the review:
 
@@ -246,6 +259,118 @@ Example: `/concert-alignment re-evaluate`
 
 The document is ready. If you're ready for the next stage, proceed with
 the appropriate Concert agent.
+```
+
+**In ALL cases where the document was modified**, also include:
+
+```
+### 💡 Tip: Re-evaluate all documents at once
+
+Instead of running individual re-evaluate commands, you can use the
+**concert-review-docs** agent to re-evaluate ALL modified documents
+in pipeline order with a single command:
+
+Example: `/concert-review-docs re-evaluate-all`
+
+This will check all mission documents for the modification flag and
+re-evaluate only those that need it, in the correct sequence.
+```
+
+---
+
+### Command: `re-evaluate-all`
+
+The `re-evaluate-all` command acts as a supervisor — it scans all mission documents for the `CONCERT:MODIFIED` flag and runs the appropriate re-evaluation logic for each flagged document, in pipeline order.
+
+#### Step 1: Load all mission documents
+
+1. Read `.concert/state.json` → get `mission` and derive mission path as `.concert/missions/<slug>/`.
+2. Scan the mission folder for all available documents:
+   - `VISION.md`
+   - `REQUIREMENTS.md`
+   - `ARCHITECTURE.md`
+   - `UX-DESIGN.md`
+   - `ALIGNMENT.md`
+3. Read all documents that exist. Note which ones contain the modification flag:
+   ```
+   <!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->
+   ```
+4. If NO documents have the flag, report that nothing needs re-evaluation and stop.
+
+#### Step 2: Re-evaluate in pipeline order
+
+Process flagged documents in this strict order (to ensure upstream changes are processed before downstream ones):
+
+1. **VISION.md** (if flagged) — Apply the vision re-evaluation checks from the `concert-vision` agent's `re-evaluate` command:
+   - Check for ripple effects across sections
+   - Check for new assumptions, scope implications, new risks
+   - Check for success criteria impact, constraint conflicts, completeness
+   - Add any new concerns as `- [ ]` items in the `## Questions` section
+
+2. **REQUIREMENTS.md** (if flagged) — Apply the requirements re-evaluation checks from the `concert-requirements` agent's `re-evaluate` command:
+   - Check vision alignment, completeness, consistency
+   - Check dependency impact, testability, assumption validity, scope creep
+   - Add any new concerns as `- [ ]` items in the `## Open Questions` section
+
+3. **ARCHITECTURE.md** (if flagged) — Apply the architect re-evaluation checks from the `concert-architect` agent's `re-evaluate` command:
+   - Check requirements coverage, component consistency, technology coherence
+   - Check data model integrity, security/performance impact, ADR validity, scope alignment
+   - Add any new concerns as `- [ ]` items in the `## Open Questions` section
+
+4. **UX-DESIGN.md** (if flagged) — Apply the UX design re-evaluation checks from the `concert-ux-design` agent's `re-evaluate` command:
+   - Check requirements coverage, flow consistency, component coherence
+   - Check accessibility compliance, architecture alignment, UX consistency, scope alignment
+   - Add any new concerns as `- [ ]` items in the `## Open Questions` section
+
+5. **ALIGNMENT.md** (if flagged) — Apply the alignment re-evaluation checks from the `concert-alignment` agent's `re-evaluate` command:
+   - Re-run all alignment checks across all document pairs
+   - Compare with previous findings, mark resolved, add new
+   - Update the traceability matrix and summary counts
+
+#### Step 3: Clear the modification flag
+
+After successfully re-evaluating each document, **remove** the `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` line from the document. This marks it as re-evaluated.
+
+#### Step 4: Report results
+
+Output a consolidated summary:
+
+```
+## Re-evaluation Complete
+
+### Documents processed:
+- <list of documents that were re-evaluated>
+
+### Documents skipped (no modification flag):
+- <list of documents that did not have the flag>
+
+### New questions added:
+
+**VISION.md:** <count new questions, or "No new questions">
+**REQUIREMENTS.md:** <count new questions, or "No new questions">
+**ARCHITECTURE.md:** <count new questions, or "No new questions">
+**UX-DESIGN.md:** <count new questions, or "No new questions">
+**ALIGNMENT.md:** <count new findings, or "No new findings">
+```
+
+**If any document had new questions added:**
+
+```
+### Recommended next step
+
+New questions were added during re-evaluation. Run the **concert-review-docs**
+agent to review and resolve them:
+
+- `/concert-review-docs review <document-type>` for each document with new questions
+```
+
+**If no new questions were found in any document:**
+
+```
+### Next steps
+
+All modified documents have been re-evaluated and are consistent. The mission
+documents are ready for the next stage — proceed with planning and implementation.
 ```
 
 ## On Failure

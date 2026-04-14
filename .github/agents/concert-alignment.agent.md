@@ -227,7 +227,11 @@ Write the updated ALIGNMENT.md with:
 - Updated traceability matrix
 - Updated summary
 
-#### Step 5: Report results
+#### Step 5: Clear the modification flag
+
+After completing re-evaluation, **remove** the `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` line from the ALIGNMENT.md if it is present. This marks the document as re-evaluated.
+
+#### Step 6: Report results
 
 Output a summary:
 

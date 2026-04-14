@@ -50,12 +50,13 @@ Remember which tool you found (or that none was found) — you will need it late
 The `review` command is optionally followed by a document type or path:
 
 - **nothing** — defaults to reviewing `VISION.md` in the current mission folder
-- **a document type** — e.g., `vision`, `requirements`, `architecture`, `ux-design`, `alignment` — maps to the corresponding `.md` file in the mission folder. Mappings (case-insensitive):
+- **a document type** — e.g., `vision`, `requirements`, `architecture`, `ux-design`, `alignment`, `plan` — maps to the corresponding `.md` file in the mission folder. Mappings (case-insensitive):
   - `vision` → `VISION.md`
   - `requirements` → `REQUIREMENTS.md`
   - `architecture` → `ARCHITECTURE.md`
   - `ux-design` → `UX-DESIGN.md`
   - `alignment` → `ALIGNMENT.md`
+  - `plan` → `PLAN.md`
 - **a file path** — direct path to the document to review
 
 #### Step 1: Locate the document
@@ -67,6 +68,7 @@ The `review` command is optionally followed by a document type or path:
    - `architecture` → `<mission_path>/ARCHITECTURE.md`
    - `ux-design` → `<mission_path>/UX-DESIGN.md`
    - `alignment` → `<mission_path>/ALIGNMENT.md`
+   - `plan` → `<mission_path>/PLAN.md`
    - Other type → `<mission_path>/<TYPE>.md`
    - File path → use as-is
 3. Read the document. If it doesn't exist, report the error and stop.
@@ -138,6 +140,7 @@ Evaluate the document against these criteria:
    - `ARCHITECTURE.md` → `## Open Questions` section
    - `UX-DESIGN.md` → `## Open Questions` section
    - `ALIGNMENT.md` → `## Open Questions` section
+   - `PLAN.md` → `## Open Questions` section
 
    Surface any unresolved items from other documents that may be relevant to the document under review so they can be discussed with the user.
 
@@ -252,6 +255,22 @@ alignment report may need to be re-verified against all source documents.
 Example: `/concert-alignment re-evaluate`
 ```
 
+**If the document was modified AND the document is a PLAN.md:**
+
+```
+### ⚠️ Re-evaluation recommended
+
+The PLAN.md was modified during this review. Changes to the plan
+may affect task dependencies, model tier assignments, or requirements
+coverage.
+
+**Recommended next step:** Run the **concert-planner** agent with the
+`re-evaluate` command to analyze the changes and determine if new
+questions or concerns should be added.
+
+Example: `/concert-planner re-evaluate`
+```
+
 **If the document was NOT modified:**
 
 ```
@@ -291,6 +310,7 @@ The `re-evaluate-all` command acts as a supervisor — it scans all mission docu
    - `ARCHITECTURE.md`
    - `UX-DESIGN.md`
    - `ALIGNMENT.md`
+   - `PLAN.md`
 3. Read all documents that exist. Note which ones contain the modification flag:
    ```
    <!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->
@@ -327,6 +347,11 @@ Process flagged documents in this strict order (to ensure upstream changes are p
    - Compare with previous findings, mark resolved, add new
    - Update the traceability matrix and summary counts
 
+6. **PLAN.md** (if flagged) — Apply the planner re-evaluation checks from the `concert-planner` agent's `re-evaluate` command:
+   - Check requirements coverage, dependency validity, wave ordering
+   - Check model tier appropriateness, file coverage, acceptance criteria validity, scope alignment
+   - Add any new concerns as `- [ ]` items in the `## Open Questions` section
+
 #### Step 3: Clear the modification flag
 
 After successfully re-evaluating each document, **remove** the `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` line from the document. This marks it as re-evaluated.
@@ -351,6 +376,7 @@ Output a consolidated summary:
 **ARCHITECTURE.md:** <count new questions, or "No new questions">
 **UX-DESIGN.md:** <count new questions, or "No new questions">
 **ALIGNMENT.md:** <count new findings, or "No new findings">
+**PLAN.md:** <count new questions, or "No new questions">
 ```
 
 **If any document had new questions added:**

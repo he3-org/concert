@@ -50,7 +50,12 @@ Remember which tool you found (or that none was found) — you will need it late
 The `review` command is optionally followed by a document type or path:
 
 - **nothing** — defaults to reviewing `VISION.md` in the current mission folder
-- **a document type** — e.g., `vision`, `requirements`, `architecture`, `ux-design`, `alignment` — maps to the corresponding `.md` file in the mission folder (case-insensitive; `requirements` maps to `REQUIREMENTS.md`, `vision` maps to `VISION.md`, `architecture` maps to `ARCHITECTURE.md`, `ux-design` maps to `UX-DESIGN.md`, `alignment` maps to `ALIGNMENT.md`)
+- **a document type** — e.g., `vision`, `requirements`, `architecture`, `ux-design`, `alignment` — maps to the corresponding `.md` file in the mission folder. Mappings (case-insensitive):
+  - `vision` → `VISION.md`
+  - `requirements` → `REQUIREMENTS.md`
+  - `architecture` → `ARCHITECTURE.md`
+  - `ux-design` → `UX-DESIGN.md`
+  - `alignment` → `ALIGNMENT.md`
 - **a file path** — direct path to the document to review
 
 #### Step 1: Locate the document
@@ -127,7 +132,14 @@ Evaluate the document against these criteria:
 4. **Feasibility** — Are success criteria measurable? Are constraints realistic?
 5. **Gaps** — Are there obvious aspects not addressed that should be?
 6. **Open Questions** — Are there unresolved `- [ ]` items that should be addressed?
-7. **Cross-document Open Questions** — Check all other mission documents in the same mission folder (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md, ALIGNMENT.md) for unresolved `- [ ]` items in their open questions sections (`## Questions` for VISION.md, `## Open Questions` for all others). Surface any unresolved items from other documents that may be relevant to the document under review so they can be discussed with the user.
+7. **Cross-document Open Questions** — Check all other mission documents in the same mission folder for unresolved `- [ ]` items in their open questions sections. Documents to check:
+   - `VISION.md` → `## Questions` section
+   - `REQUIREMENTS.md` → `## Open Questions` section
+   - `ARCHITECTURE.md` → `## Open Questions` section
+   - `UX-DESIGN.md` → `## Open Questions` section
+   - `ALIGNMENT.md` → `## Open Questions` section
+
+   Surface any unresolved items from other documents that may be relevant to the document under review so they can be discussed with the user.
 
 Return a list of findings, each with:
 

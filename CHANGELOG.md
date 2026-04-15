@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1](https://github.com/he3-org/concert/compare/v1.15.0...v1.15.1) (2026-04-15)
+
+
+### Bug Fixes
+
+* stamp X.Y.Z placeholder versions and deploy rules via init/update ([#70](https://github.com/he3-org/concert/issues/70)) ([5ccfe31](https://github.com/he3-org/concert/commit/5ccfe316e8cea357c2d2ce960a89d565aba7b5c8))
+
 ## [1.15.0](https://github.com/he3-org/concert/compare/v1.14.0...v1.15.0) (2026-04-15)
 
 

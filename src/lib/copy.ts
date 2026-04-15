@@ -111,13 +111,26 @@ function copyRecursive(
 }
 
 /**
+ * Rules that are specific to the Concert source repo and should NOT
+ * be deployed to target repos.
+ */
+export const EXCLUDED_RULES = ['concert-repo-managed-files.md', 'concert-managed-file-headers.md'];
+
+/**
  * Live file sources that ship directly from the package (not templates).
  * Each entry maps a source directory (relative to package root) to a target
- * directory (relative to user's project root), with a filename pattern filter.
+ * directory (relative to user's project root), with a filename pattern filter
+ * and an optional exclusion list for files that should not be shipped.
  */
 export const LIVE_FILE_SOURCES = [
   { src: '.github/agents', target: '.github/agents', pattern: /^concert-.*\.agent\.md$/ },
   { src: '.claude/commands', target: '.claude/commands', pattern: /^concert-.*\.md$/ },
+  {
+    src: '.claude/rules',
+    target: '.claude/rules',
+    pattern: /^concert-.*\.md$/,
+    exclude: EXCLUDED_RULES,
+  },
 ] as const;
 
 /**
@@ -146,6 +159,7 @@ export function copyLiveFiles(
     for (const entry of entries) {
       if (!entry.isFile()) continue;
       if (!source.pattern.test(entry.name)) continue;
+      if ('exclude' in source && source.exclude.includes(entry.name)) continue;
 
       const srcFile = path.join(srcDir, entry.name);
       const destFile = path.join(targetPath, entry.name);
@@ -189,6 +203,7 @@ export function countLiveFiles(packageRoot: string): Record<string, number> {
     for (const entry of entries) {
       if (!entry.isFile()) continue;
       if (!source.pattern.test(entry.name)) continue;
+      if ('exclude' in source && source.exclude.includes(entry.name)) continue;
       counts[category] = (counts[category] ?? 0) + 1;
     }
   }
@@ -215,18 +230,20 @@ export function cleanupStaleFiles(targetDir: string, currentVersion: string): Cl
 
   // Directories to scan for stale Concert-managed files.
   // These match the LIVE_FILE_SOURCES patterns.
-  const scanDirs: Array<{ dir: string; pattern: RegExp }> = [
+  const scanDirs: Array<{ dir: string; pattern: RegExp; exclude?: readonly string[] }> = [
     { dir: '.github/agents', pattern: /^concert-.*\.agent\.md$/ },
     { dir: '.claude/commands', pattern: /^concert-.*\.md$/ },
+    { dir: '.claude/rules', pattern: /^concert-.*\.md$/, exclude: EXCLUDED_RULES },
   ];
 
-  for (const { dir, pattern } of scanDirs) {
+  for (const { dir, pattern, exclude } of scanDirs) {
     const fullDir = path.join(targetDir, dir);
     if (!fs.existsSync(fullDir)) continue;
     const entries = fs.readdirSync(fullDir, { withFileTypes: true });
     for (const entry of entries) {
       if (!entry.isFile()) continue;
       if (!pattern.test(entry.name)) continue;
+      if (exclude?.includes(entry.name)) continue;
       const filePath = path.join(fullDir, entry.name);
       const content = fs.readFileSync(filePath, 'utf-8');
       if (!isManagedFile(content)) continue;

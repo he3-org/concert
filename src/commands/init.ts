@@ -33,6 +33,7 @@ The following paths are managed by Concert and must not be modified by other age
 
 - \`.github/agents/concert-*.agent.md\`
 - \`.claude/commands/concert-*.md\`
+- \`.claude/rules/concert-*.md\`
 - \`concert.jsonc\` (modify manually only — Concert preserves your changes on update)
 
 ${CLAUDE_SECTION_END}`;
@@ -129,6 +130,7 @@ export async function runInit(cwd: string): Promise<number> {
   const liveCounts = countLiveFiles(packageRoot);
   const agentCount = liveCounts['agents'] ?? 0;
   const commandCount = liveCounts['commands'] ?? 0;
+  const ruleCount = liveCounts['rules'] ?? 0;
 
   // Output success
   process.stdout.write(`Concert v${version} initialized in ${cwd}
@@ -138,6 +140,7 @@ export async function runInit(cwd: string): Promise<number> {
     .concert/                     (state and missions)
     .github/agents/               (${agentCount} GitHub agent definitions)
     .claude/commands/             (${commandCount} command files)
+    .claude/rules/                (${ruleCount} rule files)
     CLAUDE.md                     (Concert section appended)
 
   Files: ${result.created.length} created

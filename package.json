@@ -10,7 +10,8 @@
     "dist",
     "templates",
     ".github/agents",
-    ".claude/commands"
+    ".claude/commands",
+    ".claude/rules"
   ],
   "scripts": {
     "build": "tsup",

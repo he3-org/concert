@@ -22,36 +22,19 @@ This project uses [Concert](https://github.com/he3-org/concert) for agentic deve
 
 ### Commands
 
-- \`/concert:init\` — Start a new mission
-- \`/concert:review\` — Review a stage
-- \`/concert:accept\` — Accept a stage
-- \`/concert:status\` — Check current status
-- \`/concert:continue\` — Continue to next stage or resume execution
-- \`/concert:debug\` — Debug an issue
-- \`/concert:verify\` — Verify work
-- \`/concert:quick\` — Run a quick task
-- \`/concert:restart\` — Restart a stage
-- \`/concert:replan\` — Replan from a stage
-- \`/concert:delete\` — Delete completed mission and reset state
+- \`/concert-vision\` — Create a comprehensive VISION.md from a feature description
 
 ### State
 
 - Configuration: \`concert.jsonc\`
 - State: \`.concert/state.json\`
-- Agents: \`.claude/agents/\`
-- Workflows: \`.concert/workflows/\`
-- Skills: \`.claude/skills/\`
-- Missions: \`.concert/missions/\`
 
 ### Do Not Modify
 
 The following paths are managed by Concert and must not be modified by other agents, refactoring tools, or automated processes. They will be overwritten on \`concert update\`:
 
-- \`.claude/agents/\`
-- \`.concert/workflows/\`
-- \`.claude/skills/\`
-- \`.claude/commands/concert/\`
 - \`.github/agents/concert-*.agent.md\`
+- \`.claude/commands/concert-*.md\`
 - \`concert.jsonc\` (modify manually only — Concert preserves your changes on update)
 
 ${CLAUDE_SECTION_END}`;
@@ -130,11 +113,10 @@ export async function runUpdate(cwd: string): Promise<number> {
 
   const templatesDir = path.join(packageRoot, 'templates');
 
-  // Update live files (agents, workflows, skills, commands, GitHub agents)
+  // Update live files (GitHub agents, Claude commands)
   // Always overwrite — these are managed by Concert
   const liveResult = copyLiveFiles(packageRoot, cwd, true, version);
   const updatedFiles: Array<{ path: string; from: string; to: string }> = [];
-  const skippedFiles: Array<{ path: string; version: string }> = [];
   for (const f of liveResult.overwritten) {
     updatedFiles.push({ path: f, from: 'previous', to: `v${version}` });
   }
@@ -190,11 +172,11 @@ export async function runUpdate(cwd: string): Promise<number> {
   if (allCurrent) {
     process.stdout.write(`Concert is up to date (v${version})
 
-  All ${skippedFiles.length} managed files are at the current version.
+  All managed files are at the current version.
   No configuration changes needed.
 
   Next steps:
-    1. Continue your mission:  /concert:status
+    1. Continue using Concert agents in your project
 `);
     return 0;
   }
@@ -214,17 +196,6 @@ export async function runUpdate(cwd: string): Promise<number> {
     output += `  Removed stale files from previous version:\n`;
     for (const f of cleanupResult.deleted) {
       output += `    ${f}\n`;
-    }
-    output += '\n';
-  }
-
-  if (skippedFiles.length > 0) {
-    output += `  Skipped (already current):\n`;
-    for (const f of skippedFiles.slice(0, 5)) {
-      output += `    ${f.path}  (${f.version})\n`;
-    }
-    if (skippedFiles.length > 5) {
-      output += `    ... and ${skippedFiles.length - 5} more\n`;
     }
     output += '\n';
   }
@@ -254,7 +225,7 @@ export async function runUpdate(cwd: string): Promise<number> {
 
   output += `  Next steps:\n`;
   output += `    1. Review concert.jsonc for new configuration options\n`;
-  output += `    2. Continue your mission:  /concert:status\n`;
+  output += `    2. Continue using Concert agents in your project\n`;
 
   process.stdout.write(output);
   return 0;

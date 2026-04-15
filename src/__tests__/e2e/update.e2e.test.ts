@@ -45,8 +45,8 @@ describe('concert update e2e', () => {
       restore();
     }
 
-    // Corrupt a managed file (but keep the managed header)
-    const agentPath = path.join(tmpDir, '.claude', 'agents', 'concert-init.md');
+    // Corrupt a managed GitHub agent file (but keep the managed header)
+    const agentPath = path.join(tmpDir, '.github', 'agents', 'concert-vision.agent.md');
     if (fs.existsSync(agentPath)) {
       const content = fs.readFileSync(agentPath, 'utf-8');
       const firstLine = content.split('\n')[0] ?? '';
@@ -66,7 +66,6 @@ describe('concert update e2e', () => {
     if (fs.existsSync(agentPath)) {
       const updated = fs.readFileSync(agentPath, 'utf-8');
       expect(updated).not.toContain('CORRUPTED CONTENT');
-      expect(updated).toContain('<role>');
     }
   });
 

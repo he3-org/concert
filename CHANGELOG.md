@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0](https://github.com/he3-org/concert/compare/v1.14.0...v1.15.0) (2026-04-15)
+
+
+### Features
+
+* reintroduce release workflow for automated publishing ([60271a5](https://github.com/he3-org/concert/commit/60271a5c715323efdb6c769366c6d8c18db11a3b))
+
 ## [1.14.0](https://github.com/he3-org/concert/compare/v1.13.0...v1.14.0) (2026-04-08)
 
 

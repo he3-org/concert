@@ -35,6 +35,7 @@ The following paths are managed by Concert and must not be modified by other age
 
 - \`.github/agents/concert-*.agent.md\`
 - \`.claude/commands/concert-*.md\`
+- \`.claude/rules/concert-*.md\`
 - \`concert.jsonc\` (modify manually only — Concert preserves your changes on update)
 
 ${CLAUDE_SECTION_END}`;

@@ -47,7 +47,9 @@ Stages and commits any pending state changes, then pushes the current branch to 
 Concert structures development as a pipeline of specialized agents. Each agent produces a document that feeds the next stage. You drive each stage by invoking the corresponding agent.
 
 ```
-Vision → Review → Requirements → Alignment → Review → Architecture → Review → UX Design → Review → Planning → Development
+Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development
+                        ↕                      ↕                      ↕
+                    Alignment              Alignment              Alignment
 ```
 
 ### Where to Run Each Stage

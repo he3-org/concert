@@ -361,8 +361,11 @@ describe('copyLiveFiles version stamping', () => {
       '# Not a concert agent'
     );
     const result = copyLiveFiles(packageRoot, targetDir, true, '2.0.0');
-    // Should only copy concert-test.agent.md, concert-test.md, and concert-conventional-commits.md
-    expect(result.created).toHaveLength(3);
+    // Non-matching file should NOT be copied
     expect(fs.existsSync(path.join(targetDir, '.github', 'agents', 'not-concert.md'))).toBe(false);
+    // Excluded rule files should NOT be copied
+    for (const excluded of EXCLUDED_RULES) {
+      expect(result.created).not.toContain(path.join('.claude', 'rules', excluded));
+    }
   });
 });

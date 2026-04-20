@@ -47,7 +47,7 @@ Stages and commits any pending state changes, then pushes the current branch to 
 Concert structures development as a pipeline of specialized agents. Each agent produces a document that feeds the next stage. You drive each stage by invoking the corresponding agent.
 
 ```
-Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development
+Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development → Development Review
                         ↕                      ↕                      ↕
                     Alignment              Alignment              Alignment
 ```
@@ -57,7 +57,7 @@ Vision → Review → Requirements → Review → Architecture → Review → UX
 | Stages                                        | Recommended Environment                | Why                                                                                                                                                                                                                |
 | --------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Vision, Requirements, Architecture, UX Design | **Claude Code CLI** or **Copilot CLI** | The review-docs agent conducts interactive conversations — it asks you questions one at a time and refines the document based on your answers. This requires an environment that supports back-and-forth dialogue. |
-| Planning, Development                         | **GitHub Copilot cloud agents**        | These stages are autonomous (no conversation needed) and can be long-running. Cloud agents are more cost-effective for model usage and can run unattended.                                                         |
+| Planning, Development, Development Review     | **GitHub Copilot cloud agents**        | These stages are autonomous (no conversation needed) and can be long-running. Cloud agents are more cost-effective for model usage and can run unattended.                                                         |
 
 ---
 
@@ -206,6 +206,24 @@ Other develop commands:
 - `implement <path-to-task-file>` — start a specific task
 - `status` — show current progress without doing work
 
+### Stage 7: Development Review
+
+Validate that the implementation is complete and accurate against the mission specification documents.
+
+**GitHub Copilot (cloud agent):**
+
+> Select `concert-develop-review`, then type: `review`
+
+The develop-review agent reads all specification documents (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md) alongside the actual implementation, then produces a `DEVELOPMENT-REVIEW.md` with a requirements traceability matrix, architecture compliance check, and a categorized list of deviations and gaps. It does not modify code or specs — it only reviews and reports.
+
+Other develop-review commands:
+
+- `review --scope requirements` — review only against REQUIREMENTS.md
+- `review --scope architecture` — review only against ARCHITECTURE.md
+- `review --scope ux` — review only against UX-DESIGN.md
+- `review --scope phase <phase-slug>` — review only a specific implementation phase
+- `status` — show current DEVELOPMENT-STATUS.md and any existing DEVELOPMENT-REVIEW.md summary
+
 ## Project Structure
 
 After initialization and running through the SDLC, your repo will contain:
@@ -224,6 +242,7 @@ your-repo/
 │   │       ├── UX-DESIGN.md               # Stage 4 output (if applicable)
 │   │       ├── PLAN.md                    # Stage 5 output
 │   │       ├── DEVELOPMENT-STATUS.md      # Stage 6 progress tracker
+│   │       ├── DEVELOPMENT-REVIEW.md      # Stage 7 output
 │   │       └── phases/
 │   │           ├── 01-foundation/
 │   │           │   ├── TASK-setup-config-haiku.md

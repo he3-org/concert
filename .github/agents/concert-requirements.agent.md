@@ -43,7 +43,9 @@ Remember which tool you found (or that none was found) — you will need it late
 ## Boot sequence — read these before starting:
 
 1. Existing codebase context — scan for current features, tech stack, conventions
-2. The current mission's VISION.md — the sole source of truth for requirements
+2. `.concert/state.json` → get `mission` and derive mission path
+3. `<mission_path>/DEVELOPMENT-STATUS.md` → review current development progress (if it exists) to understand what has already been built and avoid conflicting with in-progress work
+4. The current mission's VISION.md — the sole source of truth for requirements
 
 ## Execution Flow
 
@@ -164,6 +166,10 @@ requirements analysis. Each should be validated before implementation.
 - Mark requirements derived from implicit assumptions with "(inferred)" so stakeholders can validate
 - Do NOT include architecture decisions, UX specifications, or implementation details
 - Keep the document focused and readable
+
+#### Step 5: Update DEVELOPMENT-STATUS.md
+
+After writing the REQUIREMENTS.md, update `<mission_path>/DEVELOPMENT-STATUS.md` to reflect that the requirements document has been created. If the file does not yet exist, create it with the current stage noted. This keeps the development progress tracker current as specification documents are produced.
 
 ---
 

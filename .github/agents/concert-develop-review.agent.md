@@ -236,10 +236,19 @@ behavior.
 
 Each gap must include a **Recommended Model** field indicating which model tier is appropriate to fix it. Use these criteria:
 
-| Recommended Model | When to assign                                                                                                                                                                                                |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Opus**          | Complex architectural changes, multi-file refactors affecting core abstractions, security-critical fixes requiring deep reasoning, novel algorithm implementation, or changes with broad cross-cutting impact |
-| **Sonnet**        | Straightforward implementation of well-defined requirements, adding tests, wiring up existing patterns, configuration changes, single-file fixes, or changes that follow established patterns in the codebase |
+**Opus** — assign when the gap involves:
+
+- Complex architectural changes or multi-file refactors affecting core abstractions
+- Security-critical fixes requiring deep reasoning
+- Novel algorithm implementation
+- Changes with broad cross-cutting impact across the codebase
+
+**Sonnet** — assign when the gap involves:
+
+- Straightforward implementation of well-defined requirements
+- Adding tests or wiring up existing patterns
+- Configuration changes or single-file fixes
+- Changes that follow established patterns in the codebase
 
 When in doubt, prefer **Opus** — it is better to over-classify than to assign a complex gap to a model that may produce incomplete fixes.
 

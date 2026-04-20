@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/he3-org/concert/compare/v1.15.1...v1.16.0) (2026-04-20)
+
+
+### Features
+
+* add concert-develop-review agent, skill suggestions, and DEVELOPMENT-STATUS.md tracking ([#72](https://github.com/he3-org/concert/issues/72)) ([9fc4569](https://github.com/he3-org/concert/commit/9fc45697b67311be70d4b4e2f254ede633397e72))
+
 ## [1.15.1](https://github.com/he3-org/concert/compare/v1.15.0...v1.15.1) (2026-04-15)
 
 

@@ -169,6 +169,7 @@ behavior that must be fixed.
 #### DEV-G001: <Gap Title>
 
 **Severity:** Critical
+**Recommended Model:** <Opus | Sonnet — see model tier guidance below>
 **Specification:** <Document> → <Requirement ID/Section> — <What was required>
 **Current State:** <What exists now — or "Not implemented">
 **Acceptance Criteria Not Met:**
@@ -184,6 +185,8 @@ should be addressed.
 
 #### DEV-G002: <Gap Title>
 
+**Severity:** Major
+**Recommended Model:** <Opus | Sonnet>
 ...
 
 ### Minor Gaps
@@ -193,6 +196,8 @@ behavior.
 
 #### DEV-G003: <Gap Title>
 
+**Severity:** Minor
+**Recommended Model:** <Opus | Sonnet>
 ...
 
 ## Requirements Traceability
@@ -227,11 +232,23 @@ behavior.
 | FR-002      | `tests/feature/config.test.ts`  | —                               | ❌ Missing |
 ```
 
+### Model Tier Guidance for Gaps
+
+Each gap must include a **Recommended Model** field indicating which model tier is appropriate to fix it. Use these criteria:
+
+| Recommended Model | When to assign                                                                                                                                                                                                |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Opus**          | Complex architectural changes, multi-file refactors affecting core abstractions, security-critical fixes requiring deep reasoning, novel algorithm implementation, or changes with broad cross-cutting impact |
+| **Sonnet**        | Straightforward implementation of well-defined requirements, adding tests, wiring up existing patterns, configuration changes, single-file fixes, or changes that follow established patterns in the codebase |
+
+When in doubt, prefer **Opus** — it is better to over-classify than to assign a complex gap to a model that may produce incomplete fixes.
+
 ### Writing Guidelines
 
 - Be factual and specific — cite exact requirement IDs, file paths, and section references
 - Document deviations with their rationale — this information is used to update spec documents later
 - For gaps, provide enough detail that a developer can understand and resolve the issue
+- Assign a **Recommended Model** tier to every gap to guide developers on which model to use when fixing it
 - Do NOT suggest new features, improvements, or optimizations beyond what specs require
 - Do NOT propose alternative architectures or approaches
 - Classify every finding by severity to help prioritize resolution
@@ -277,7 +294,10 @@ the feature is considered complete.
 
 **Recommended next steps:**
 1. Review the DEVELOPMENT-REVIEW.md for detailed gap descriptions
-2. Create task files to address critical and major gaps
+2. Use the develop agent to fix gaps: select `concert-develop`, then type:
+   - `fix-gaps` — fix all gaps, starting with critical
+   - `fix-gaps DEV-G001 DEV-G003` — fix specific gaps by ID
+   - `fix-gaps --severity critical` — fix only critical gaps
 3. After fixing, run the development review again to verify
 ```
 

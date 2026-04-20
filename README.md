@@ -47,7 +47,7 @@ Stages and commits any pending state changes, then pushes the current branch to 
 Concert structures development as a pipeline of specialized agents. Each agent produces a document that feeds the next stage. You drive each stage by invoking the corresponding agent.
 
 ```
-Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development → Development Review
+Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development → Development Review → Fix Gaps → Re-review
                         ↕                      ↕                      ↕
                     Alignment              Alignment              Alignment
 ```
@@ -204,6 +204,9 @@ Other develop commands:
 - `implement --model sonnet` — process only haiku/sonnet tasks, stop before opus
 - `implement --phase 01-foundation` — process tasks in a specific phase
 - `implement <path-to-task-file>` — start a specific task
+- `fix-gaps` — fix all gaps from DEVELOPMENT-REVIEW.md (see Stage 8)
+- `fix-gaps DEV-G001 DEV-G003` — fix specific gaps by ID
+- `fix-gaps --severity critical` — fix only critical/major gaps
 - `status` — show current progress without doing work
 
 ### Stage 7: Development Review
@@ -214,7 +217,7 @@ Validate that the implementation is complete and accurate against the mission sp
 
 > Select `concert-develop-review`, then type: `review`
 
-The develop-review agent reads all specification documents (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md) alongside the actual implementation, then produces a `DEVELOPMENT-REVIEW.md` with a requirements traceability matrix, architecture compliance check, and a categorized list of deviations and gaps. It does not modify code or specs — it only reviews and reports.
+The develop-review agent reads all specification documents (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md) alongside the actual implementation, then produces a `DEVELOPMENT-REVIEW.md` with a requirements traceability matrix, architecture compliance check, and a categorized list of deviations and gaps. Each gap includes a **Recommended Model** tier (Opus or Sonnet) indicating the complexity of the fix. It does not modify code or specs — it only reviews and reports.
 
 Other develop-review commands:
 
@@ -223,6 +226,32 @@ Other develop-review commands:
 - `review --scope ux` — review only against UX-DESIGN.md
 - `review --scope phase <phase-slug>` — review only a specific implementation phase
 - `status` — show current DEVELOPMENT-STATUS.md and any existing DEVELOPMENT-REVIEW.md summary
+
+### Stage 8: Fix Gaps
+
+After the development review produces `DEVELOPMENT-REVIEW.md`, use the develop agent to fix any documented gaps. The develop agent reads the gap descriptions and implements fixes using the same TDD discipline as regular task implementation.
+
+**GitHub Copilot (cloud agent):**
+
+> Select `concert-develop`, then type: `fix-gaps`
+
+This fixes all gaps starting with critical severity. Each gap is treated as an independent mini-task: the agent reads the gap, writes tests for the acceptance criteria, implements the fix, self-reviews, and commits.
+
+**Fix specific gaps:**
+
+> Select `concert-develop`, then type: `fix-gaps DEV-G001 DEV-G003`
+
+**Fix by severity:**
+
+> Select `concert-develop`, then type: `fix-gaps --severity critical`
+
+Severity levels are cumulative: `critical` fixes only critical gaps, `major` fixes critical and major, `minor` fixes all.
+
+Each gap in the review document includes a **Recommended Model** (Opus or Sonnet). If a gap recommends Opus but you are running on a standard-tier model, the agent will warn you and offer to skip that gap.
+
+After fixing gaps, run the development review again to verify all fixes:
+
+> Select `concert-develop-review`, then type: `review`
 
 ## Project Structure
 

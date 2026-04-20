@@ -43,8 +43,10 @@ Remember which tool you found (or that none was found) — you will need it late
 ## Boot sequence — read these before starting:
 
 1. Existing codebase context — scan for current features, tech stack, conventions, architecture patterns
-2. The current mission's VISION.md — for understanding the broader goals
-3. The current mission's REQUIREMENTS.md — the primary source of truth for architectural decisions
+2. `.concert/state.json` → get `mission` and derive mission path
+3. `<mission_path>/DEVELOPMENT-STATUS.md` → review current development progress (if it exists) to understand what has already been built and avoid conflicting with in-progress work
+4. The current mission's VISION.md — for understanding the broader goals
+5. The current mission's REQUIREMENTS.md — the primary source of truth for architectural decisions
 
 ## Execution Flow
 
@@ -175,6 +177,26 @@ security requirements (NFR-xxx).
 Performance-relevant design decisions and how they address
 performance requirements (NFR-xxx).
 
+## Suggested Skills
+
+Recommend skills (`.claude/skills/*.md` files) that would benefit the development
+team when implementing this architecture. Only suggest skills that do NOT already
+exist in the project's `.claude/skills/` directory.
+
+Skills should cover the coding languages, architectural patterns, best practices,
+and technologies used in this architecture. Each suggestion should include a brief
+rationale for why it would be valuable.
+
+- **<skill-name>.md** — <What it covers and why it would help>
+  - Example topics: <key areas the skill should address>
+
+Examples of architectural skills:
+
+- Language best practices (e.g., `typescript-best-practices.md`, `python-best-practices.md`)
+- Architecture patterns (e.g., `clean-architecture.md`, `event-driven-patterns.md`)
+- Framework patterns (e.g., `react-design-patterns.md`, `express-middleware-patterns.md`)
+- Technology guides (e.g., `postgresql-optimization.md`, `redis-caching-patterns.md`)
+
 ## Open Questions
 
 - [ ] Architectural questions or uncertainties that need resolution
@@ -191,6 +213,10 @@ performance requirements (NFR-xxx).
 - Include context from online research with source references where relevant
 - Do NOT include UX specifications, task plans, or implementation sequencing
 - Keep the document focused and readable
+
+#### Step 5: Update DEVELOPMENT-STATUS.md
+
+After writing the ARCHITECTURE.md, update `<mission_path>/DEVELOPMENT-STATUS.md` to reflect that the architecture document has been created. If the file does not yet exist, create it with the current stage noted. This keeps the development progress tracker current as specification documents are produced.
 
 ---
 

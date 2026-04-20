@@ -45,11 +45,13 @@ Remember which tool you found (or that none was found) — you will need it late
 ## Boot sequence — read these before starting:
 
 1. Existing codebase context — scan for current features, tech stack, conventions, architecture patterns, test infrastructure
-2. The current mission's VISION.md — for understanding the broader goals
-3. The current mission's REQUIREMENTS.md — the primary source of truth for what must be built
-4. The current mission's ARCHITECTURE.md — for understanding how to build it
-5. The current mission's UX-DESIGN.md (if it exists) — for understanding user-facing implementation details
-6. The current mission's ALIGNMENT.md (if it exists) — for understanding any remaining cross-document issues
+2. `.concert/state.json` → get `mission` and derive mission path
+3. `<mission_path>/DEVELOPMENT-STATUS.md` → review current development progress (if it exists) to understand what has already been built and avoid conflicting with in-progress work
+4. The current mission's VISION.md — for understanding the broader goals
+5. The current mission's REQUIREMENTS.md — the primary source of truth for what must be built
+6. The current mission's ARCHITECTURE.md — for understanding how to build it
+7. The current mission's UX-DESIGN.md (if it exists) — for understanding user-facing implementation details
+8. The current mission's ALIGNMENT.md (if it exists) — for understanding any remaining cross-document issues
 
 ## Execution Flow
 
@@ -233,7 +235,11 @@ and which must wait for predecessors.
 - [ ] Items that need further clarification before implementation
 ```
 
-#### Step 7: Report results
+#### Step 7: Update DEVELOPMENT-STATUS.md
+
+After writing the PLAN.md and task files, update `<mission_path>/DEVELOPMENT-STATUS.md` to reflect that the plan has been created and task files are ready for implementation. If the file does not yet exist, create it with the current stage noted. This keeps the development progress tracker current as specification documents are produced.
+
+#### Step 8: Report results
 
 Output a summary:
 

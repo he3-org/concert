@@ -43,9 +43,11 @@ Remember which tool you found (or that none was found) — you will need it late
 ## Boot sequence — read these before starting:
 
 1. Existing codebase context — scan for current UI patterns, component libraries, interaction conventions
-2. The current mission's VISION.md — for understanding user experience goals and target users
-3. The current mission's REQUIREMENTS.md — the primary source of truth for UX design decisions
-4. The current mission's ARCHITECTURE.md (if it exists) — for understanding technical constraints that affect UX
+2. `.concert/state.json` → get `mission` and derive mission path
+3. `<mission_path>/DEVELOPMENT-STATUS.md` → review current development progress (if it exists) to understand what has already been built and avoid conflicting with in-progress work
+4. The current mission's VISION.md — for understanding user experience goals and target users
+5. The current mission's REQUIREMENTS.md — the primary source of truth for UX design decisions
+6. The current mission's ARCHITECTURE.md (if it exists) — for understanding technical constraints that affect UX
 
 ## Execution Flow
 
@@ -204,6 +206,26 @@ How the feature adapts to different viewport sizes or contexts
 
 - **<Error condition>:** "<Error message>" — <Recovery guidance>
 
+## Suggested Skills
+
+Recommend skills (`.claude/skills/*.md` files) that would benefit the development
+team when implementing this UX design. Only suggest skills that do NOT already
+exist in the project's `.claude/skills/` directory.
+
+Skills should cover the UI frameworks, component libraries, interaction patterns,
+accessibility standards, and platform conventions relevant to this design. Each
+suggestion should include a brief rationale for why it would be valuable.
+
+- **<skill-name>.md** — <What it covers and why it would help>
+  - Example topics: <key areas the skill should address>
+
+Examples of UX-related skills:
+
+- Component library guides (e.g., `bootstrap-components.md`, `material-ui-patterns.md`)
+- Accessibility guides (e.g., `wcag-compliance.md`, `aria-patterns.md`)
+- Platform UX conventions (e.g., `cli-ux-guide.md`, `mobile-ux-patterns.md`)
+- Interaction patterns (e.g., `form-validation-patterns.md`, `data-table-ux.md`)
+
 ## Open Questions
 
 - [ ] UX questions or uncertainties that need resolution
@@ -222,6 +244,10 @@ How the feature adapts to different viewport sizes or contexts
 - Include context from online research with source references where relevant
 - Do NOT include architecture decisions, task plans, or implementation details
 - Keep the document focused and readable
+
+#### Step 5: Update DEVELOPMENT-STATUS.md
+
+After writing the UX-DESIGN.md, update `<mission_path>/DEVELOPMENT-STATUS.md` to reflect that the UX design document has been created. If the file does not yet exist, create it with the current stage noted. This keeps the development progress tracker current as specification documents are produced.
 
 ---
 

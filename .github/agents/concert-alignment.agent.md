@@ -43,7 +43,9 @@ Remember which tool you found (or that none was found) — you will need it late
 ## Boot sequence — read these before starting:
 
 1. Existing codebase context — scan for current features, tech stack, conventions
-2. All mission documents in the current mission folder
+2. `.concert/state.json` → get `mission` and derive mission path
+3. `<mission_path>/DEVELOPMENT-STATUS.md` → review current development progress (if it exists) to understand what has already been built and avoid conflicting with in-progress work
+4. All mission documents in the current mission folder
 
 ## Execution Flow
 
@@ -194,6 +196,10 @@ Summary of coverage across documents.
 - Do NOT make changes to any documents — only report findings
 - Do NOT make subjective quality judgments — focus on factual alignment
 - Keep the report focused and readable
+
+#### Step 4: Update DEVELOPMENT-STATUS.md
+
+After writing the ALIGNMENT.md, update `<mission_path>/DEVELOPMENT-STATUS.md` to reflect that the alignment check has been completed. If the file does not yet exist, create it with the current stage noted. This keeps the development progress tracker current as specification documents are produced.
 
 ---
 

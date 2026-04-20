@@ -41,7 +41,8 @@ Remember which tool you found (or that none was found) — you will need it late
 ## Boot Sequence
 
 1. Read `.concert/state.json` to find the current mission and mission path.
-2. Determine which document to review based on the command or context.
+2. Read `<mission_path>/DEVELOPMENT-STATUS.md` (if it exists) to understand current development progress before reviewing documents.
+3. Determine which document to review based on the command or context.
 
 ## Execution Flow
 

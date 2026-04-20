@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.0](https://github.com/he3-org/concert/compare/v1.16.0...v1.17.0) (2026-04-20)
+
+
+### Features
+
+* add model tier guidance to review gaps and fix-gaps command to develop agent ([#75](https://github.com/he3-org/concert/issues/75)) ([6ac0b2a](https://github.com/he3-org/concert/commit/6ac0b2a88d4ca96d486c7162e05b422589a14594))
+
 ## [1.16.0](https://github.com/he3-org/concert/compare/v1.15.1...v1.16.0) (2026-04-20)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.18.0](https://github.com/he3-org/concert/compare/v1.17.0...v1.18.0) (2026-04-22)
+
+
+### Features
+
+* add concert-develop-finish agent, slash command, and SDLC docs ([#77](https://github.com/he3-org/concert/issues/77)) ([5cc002b](https://github.com/he3-org/concert/commit/5cc002b26d4ef0256e4fbc75f51a52f51abd6dd6))
+
 ## [1.17.0](https://github.com/he3-org/concert/compare/v1.16.0...v1.17.0) (2026-04-20)
 
 

@@ -47,7 +47,7 @@ Stages and commits any pending state changes, then pushes the current branch to 
 Concert structures development as a pipeline of specialized agents. Each agent produces a document that feeds the next stage. You drive each stage by invoking the corresponding agent.
 
 ```
-Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development → Development Review → Fix Gaps → Re-review
+Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development → Development Review → Fix Gaps → Re-review → Finish
                         ↕                      ↕                      ↕
                     Alignment              Alignment              Alignment
 ```
@@ -57,7 +57,7 @@ Vision → Review → Requirements → Review → Architecture → Review → UX
 | Stages                                        | Recommended Environment                | Why                                                                                                                                                                                                                |
 | --------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Vision, Requirements, Architecture, UX Design | **Claude Code CLI** or **Copilot CLI** | The review-docs agent conducts interactive conversations — it asks you questions one at a time and refines the document based on your answers. This requires an environment that supports back-and-forth dialogue. |
-| Planning, Development, Development Review     | **GitHub Copilot cloud agents**        | These stages are autonomous (no conversation needed) and can be long-running. Cloud agents are more cost-effective for model usage and can run unattended.                                                         |
+| Planning, Development, Development Review, Finish | **GitHub Copilot cloud agents**    | These stages are autonomous (no conversation needed) and can be long-running. Cloud agents are more cost-effective for model usage and can run unattended.                                                         |
 
 ---
 
@@ -253,6 +253,35 @@ After fixing gaps, run the development review again to verify all fixes:
 
 > Select `concert-develop-review`, then type: `review`
 
+### Stage 9: Finish
+
+After all development and review are complete, archive the mission's working documents and produce durable application reference documentation.
+
+**GitHub Copilot (cloud agent):**
+
+> Select `concert-develop-finish`, then type: `finish`
+
+The finish agent:
+
+1. **Archives** all working documents (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md, PLAN.md, DEVELOPMENT-STATUS.md, DEVELOPMENT-REVIEW.md, task files, etc.) into a `DELETE-ME/` subfolder within the mission folder. This is your safety net — inspect it and delete it when satisfied.
+2. **Synthesizes** information from all archived documents to write one or more application reference `.md` files in the mission folder. These are developer-facing reference docs — not user guides — that document what was built, how it is structured, and crucially **why** key decisions were made.
+
+The generated documentation captures:
+
+- What problem the feature solves and how it fits the broader application
+- Component and data flow architecture
+- Key design decisions with context, rationale, and trade-offs (sourced from ADRs and DEVELOPMENT-REVIEW.md deviations)
+- API surfaces, data models, and configuration options
+- Known limitations, technical debt, and out-of-scope items
+
+Other finish commands:
+
+- `finish --dry-run` — preview the document structure without making any changes
+- `docs-only` — regenerate documentation without re-archiving (use if DELETE-ME already exists)
+- `status` — show the current state of the mission folder
+
+After the agent completes, move the generated `.md` file(s) to your project's documentation folder and delete the `DELETE-ME/` folder.
+
 ## Project Structure
 
 After initialization and running through the SDLC, your repo will contain:
@@ -272,6 +301,11 @@ your-repo/
 │   │       ├── PLAN.md                    # Stage 5 output
 │   │       ├── DEVELOPMENT-STATUS.md      # Stage 6 progress tracker
 │   │       ├── DEVELOPMENT-REVIEW.md      # Stage 7 output
+│   │       ├── <FEATURE-SLUG>.md          # Stage 9 output — application reference doc(s)
+│   │       ├── DELETE-ME/                 # Stage 9 archive — delete when satisfied
+│   │       │   ├── VISION.md
+│   │       │   ├── REQUIREMENTS.md
+│   │       │   └── ...                    # All working documents moved here
 │   │       └── phases/
 │   │           ├── 01-foundation/
 │   │           │   ├── TASK-setup-config-haiku.md

@@ -87,10 +87,9 @@ Move all current contents of the mission folder into a `DELETE-ME` subfolder. Th
 1. Create `<mission_path>/DELETE-ME/`.
 2. Move every file and folder currently in `<mission_path>/` into `<mission_path>/DELETE-ME/`, **except**:
    - The `DELETE-ME` folder itself
-   - The `phases/` subdirectory (task files are part of the plan record — move these too)
-   - Any `.md` files that were already produced by this agent in a previous run (check for the absence of managed Concert headers and the presence of a doc header pattern — see below)
+   - Any `.md` files that were already produced by this agent in a previous run (identifiable by having no Concert `AUTO-GENERATED` header and a top-level `# ` heading on or near line 1)
 
-   Move everything else: VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md, PLAN.md, ALIGNMENT.md, DEVELOPMENT-STATUS.md, DEVELOPMENT-REVIEW.md, and any other files present.
+   Move everything else: VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md, PLAN.md, ALIGNMENT.md, DEVELOPMENT-STATUS.md, DEVELOPMENT-REVIEW.md, the `phases/` subdirectory, and any other files or folders present.
 
 3. After moving, confirm that `<mission_path>/DELETE-ME/` contains the expected files and that `<mission_path>/` contains only the `DELETE-ME` folder.
 

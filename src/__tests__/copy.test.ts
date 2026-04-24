@@ -2,7 +2,13 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { copyTemplates, cleanupStaleFiles, copyLiveFiles, EXCLUDED_RULES } from '../lib/copy.js';
+import {
+  copyTemplates,
+  cleanupStaleFiles,
+  copyLiveFiles,
+  copyReadme,
+  EXCLUDED_RULES,
+} from '../lib/copy.js';
 
 let tmpSrc: string;
 let tmpTarget: string;
@@ -367,5 +373,81 @@ describe('copyLiveFiles version stamping', () => {
     for (const excluded of EXCLUDED_RULES) {
       expect(result.created).not.toContain(path.join('.claude', 'rules', excluded));
     }
+  });
+});
+
+describe('copyReadme', () => {
+  let pkgRoot: string;
+  let targetDir: string;
+
+  beforeEach(() => {
+    pkgRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'concert-readme-src-'));
+    targetDir = fs.mkdtempSync(path.join(os.tmpdir(), 'concert-readme-target-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(pkgRoot, { recursive: true, force: true });
+    fs.rmSync(targetDir, { recursive: true, force: true });
+  });
+
+  it('copies README.md to .concert/ when it does not exist', () => {
+    fs.writeFileSync(path.join(pkgRoot, 'README.md'), '# Concert\n\nReadme content.');
+    fs.mkdirSync(path.join(targetDir, '.concert'), { recursive: true });
+
+    const result = copyReadme(pkgRoot, targetDir, false);
+
+    expect(result.created).toContain(path.join('.concert', 'README.md'));
+    expect(result.skipped).toHaveLength(0);
+    expect(result.overwritten).toHaveLength(0);
+    expect(fs.readFileSync(path.join(targetDir, '.concert', 'README.md'), 'utf-8')).toBe(
+      '# Concert\n\nReadme content.'
+    );
+  });
+
+  it('skips existing README.md when overwrite is false', () => {
+    fs.writeFileSync(path.join(pkgRoot, 'README.md'), '# Concert\n\nNew content.');
+    fs.mkdirSync(path.join(targetDir, '.concert'), { recursive: true });
+    fs.writeFileSync(path.join(targetDir, '.concert', 'README.md'), '# Old content');
+
+    const result = copyReadme(pkgRoot, targetDir, false);
+
+    expect(result.skipped).toContain(path.join('.concert', 'README.md'));
+    expect(result.created).toHaveLength(0);
+    expect(result.overwritten).toHaveLength(0);
+    expect(fs.readFileSync(path.join(targetDir, '.concert', 'README.md'), 'utf-8')).toBe(
+      '# Old content'
+    );
+  });
+
+  it('overwrites existing README.md when overwrite is true', () => {
+    fs.writeFileSync(path.join(pkgRoot, 'README.md'), '# Concert\n\nUpdated content.');
+    fs.mkdirSync(path.join(targetDir, '.concert'), { recursive: true });
+    fs.writeFileSync(path.join(targetDir, '.concert', 'README.md'), '# Old content');
+
+    const result = copyReadme(pkgRoot, targetDir, true);
+
+    expect(result.overwritten).toContain(path.join('.concert', 'README.md'));
+    expect(result.created).toHaveLength(0);
+    expect(result.skipped).toHaveLength(0);
+    expect(fs.readFileSync(path.join(targetDir, '.concert', 'README.md'), 'utf-8')).toBe(
+      '# Concert\n\nUpdated content.'
+    );
+  });
+
+  it('creates .concert/ directory if it does not exist', () => {
+    fs.writeFileSync(path.join(pkgRoot, 'README.md'), '# Concert\n\nReadme content.');
+
+    const result = copyReadme(pkgRoot, targetDir, false);
+
+    expect(fs.existsSync(path.join(targetDir, '.concert'))).toBe(true);
+    expect(result.created).toContain(path.join('.concert', 'README.md'));
+  });
+
+  it('returns empty result when source README.md does not exist', () => {
+    const result = copyReadme(pkgRoot, targetDir, false);
+
+    expect(result.created).toHaveLength(0);
+    expect(result.skipped).toHaveLength(0);
+    expect(result.overwritten).toHaveLength(0);
   });
 });

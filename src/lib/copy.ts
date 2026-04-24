@@ -211,6 +211,43 @@ export function countLiveFiles(packageRoot: string): Record<string, number> {
 }
 
 /**
+ * Copy the Concert README.md from the package root to the target repo's .concert/ directory.
+ * This gives users in-repo guidance on how to use Concert.
+ *
+ * @param packageRoot - The Concert package root directory
+ * @param targetDir - The user's project root directory
+ * @param overwrite - Whether to overwrite an existing README.md in .concert/
+ * @returns Summary of files created, skipped, and overwritten
+ */
+export function copyReadme(packageRoot: string, targetDir: string, overwrite: boolean): CopyResult {
+  const result: CopyResult = { created: [], skipped: [], overwritten: [] };
+  const srcFile = path.join(packageRoot, 'README.md');
+  if (!fs.existsSync(srcFile)) return result;
+
+  const concertDir = path.join(targetDir, '.concert');
+  if (!fs.existsSync(concertDir)) {
+    fs.mkdirSync(concertDir, { recursive: true });
+  }
+
+  const destFile = path.join(concertDir, 'README.md');
+  const relPath = path.join('.concert', 'README.md');
+
+  if (fs.existsSync(destFile)) {
+    if (overwrite) {
+      fs.copyFileSync(srcFile, destFile);
+      result.overwritten.push(relPath);
+    } else {
+      result.skipped.push(relPath);
+    }
+  } else {
+    fs.copyFileSync(srcFile, destFile);
+    result.created.push(relPath);
+  }
+
+  return result;
+}
+
+/**
  * Clean up stale Concert-managed files in a target directory.
  *
  * Scans known directories for files that have the managed header

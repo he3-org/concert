@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { resolvePackageRoot, copyLiveFiles, cleanupStaleFiles } from '../lib/copy.js';
+import { resolvePackageRoot, copyLiveFiles, cleanupStaleFiles, copyReadme } from '../lib/copy.js';
 import { readConfigRaw, writeConfig, readConfig, modifyConfigField } from '../lib/config.js';
 import { readState, writeState } from '../lib/state.js';
 import { getPackageVersion } from '../lib/version.js';
@@ -122,6 +122,15 @@ export async function runUpdate(cwd: string): Promise<number> {
     updatedFiles.push({ path: f, from: 'previous', to: `v${version}` });
   }
   for (const f of liveResult.created) {
+    updatedFiles.push({ path: f, from: 'none', to: `v${version}` });
+  }
+
+  // Update README.md in .concert/ — always overwrite
+  const readmeResult = copyReadme(packageRoot, cwd, true);
+  for (const f of readmeResult.overwritten) {
+    updatedFiles.push({ path: f, from: 'previous', to: `v${version}` });
+  }
+  for (const f of readmeResult.created) {
     updatedFiles.push({ path: f, from: 'none', to: `v${version}` });
   }
 

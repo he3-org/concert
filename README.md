@@ -315,6 +315,49 @@ Other develop commands for refactor work:
 
 After applying refactors, run `concert-refactor update` to refresh the plan and confirm what was resolved.
 
+## Skills
+
+Concert ships only a small core of agents and commands so `concert init` and `concert update` stay tidy. Optional GitHub Copilot **skills** — focused, reusable guides Copilot can load on demand — live in a separate public repo: [`he3-org/concert-assets`](https://github.com/he3-org/concert-assets), under `.github/skills/<skill-name>/SKILL.md`.
+
+The Concert CLI lets you browse that catalog and pull just the skills you want into your repo's `.github/skills/` folder, without any of the others cluttering your tree.
+
+### List available skills
+
+```bash
+npx @he3-org/concert skills list
+```
+
+Fetches the catalog from the assets repo and prints each skill's name and description.
+
+### Search by name or description
+
+```bash
+npx @he3-org/concert skills search commit
+```
+
+Filters the catalog with a case-insensitive substring match against both the skill name and its description.
+
+### Install one or more skills
+
+```bash
+npx @he3-org/concert skills add skill-authoring conventional-commits
+```
+
+Downloads each named skill folder (recursively) and writes it to `.github/skills/<skill-name>/` in the current repo. If a skill of the same name already exists locally, it is overwritten — re-run the command at any time to pull updated content.
+
+Installed skill files are normal files in your repository — commit them like any other code. They are **not** tracked or removed by `concert update`; you choose which skills your project uses and when to refresh them.
+
+### Pinning to a specific source
+
+Both the source repo and the git ref can be overridden with environment variables, which is useful for trying a fork or pinning to a tag:
+
+```bash
+CONCERT_ASSETS_REPO=my-org/my-fork CONCERT_ASSETS_REF=v1.2.3 \
+  npx @he3-org/concert skills list
+```
+
+Defaults are `he3-org/concert-assets` and `HEAD`.
+
 ## Project Structure
 
 After initialization and running through the SDLC, your repo will contain:

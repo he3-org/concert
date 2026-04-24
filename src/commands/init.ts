@@ -28,6 +28,16 @@ This project uses [Concert](https://github.com/he3-org/concert) for agentic deve
 
 - \`/concert-vision\` — Create a comprehensive VISION.md from a feature description
 
+### Skills
+
+Browse and install optional Copilot skills (kept in [\`he3-org/concert-assets\`](https://github.com/he3-org/concert-assets)) into \`.github/skills/\`:
+
+- \`npx @he3-org/concert skills list\` — list available skills
+- \`npx @he3-org/concert skills search <term>\` — find a skill by name or description
+- \`npx @he3-org/concert skills add <name>...\` — install one or more skills
+
+Installed skill files live under \`.github/skills/<name>/\` and are tracked by your repo (not managed by \`concert update\`).
+
 ### State
 
 - Configuration: \`concert.jsonc\`

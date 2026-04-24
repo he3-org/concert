@@ -1,7 +1,13 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { isGitRepo } from '../lib/git.js';
-import { copyTemplates, resolvePackageRoot, copyLiveFiles, countLiveFiles } from '../lib/copy.js';
+import {
+  copyTemplates,
+  resolvePackageRoot,
+  copyLiveFiles,
+  countLiveFiles,
+  copyReadme,
+} from '../lib/copy.js';
 import { readConfigRaw, writeConfig, modifyConfigField, detectProjectName } from '../lib/config.js';
 import { getPackageVersion } from '../lib/version.js';
 import { CLAUDE_SECTION_START, CLAUDE_SECTION_END } from '../types.js';
@@ -113,6 +119,11 @@ export async function runInit(cwd: string): Promise<number> {
   const liveResult = copyLiveFiles(packageRoot, cwd, false, version);
   result.created.push(...liveResult.created);
   result.skipped.push(...liveResult.skipped);
+
+  // Copy README.md to .concert/
+  const readmeResult = copyReadme(packageRoot, cwd, false);
+  result.created.push(...readmeResult.created);
+  result.skipped.push(...readmeResult.skipped);
 
   // Set project_name and concert_version in concert.jsonc
   const projectName = detectProjectName(cwd);

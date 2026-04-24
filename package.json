@@ -11,7 +11,8 @@
     "templates",
     ".github/agents",
     ".claude/commands",
-    ".claude/rules"
+    ".claude/rules",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",

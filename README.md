@@ -315,6 +315,90 @@ Other develop commands for refactor work:
 
 After applying refactors, run `concert-refactor update` to refresh the plan and confirm what was resolved.
 
+## Skills
+
+Concert ships only a small core of agents and commands so `concert init` and `concert update` stay tidy. Optional GitHub Copilot **skills** — focused, reusable guides Copilot can load on demand — live in a separate public repo: [`he3-org/concert-assets`](https://github.com/he3-org/concert-assets), under `.github/skills/<skill-name>/SKILL.md`.
+
+The Concert CLI lets you browse that catalog and pull just the skills you want into your repo's `.github/skills/` folder, without any of the others cluttering your tree.
+
+### List available skills
+
+```bash
+npx @he3-org/concert skills list
+```
+
+Fetches the catalog from the assets repo and prints each skill's name and description.
+
+### Search by name or description
+
+```bash
+npx @he3-org/concert skills search commit
+```
+
+Filters the catalog with a case-insensitive substring match against both the skill name and its description.
+
+### Install one or more skills
+
+```bash
+npx @he3-org/concert skills add skill-authoring conventional-commits
+```
+
+Downloads each named skill folder (recursively) and writes it to `.github/skills/<skill-name>/` in the current repo. If a skill of the same name already exists locally, it is overwritten — re-run the command at any time to pull updated content.
+
+Installed skill files are normal files in your repository — commit them like any other code. They are **not** tracked or removed by `concert update`; you choose which skills your project uses and when to refresh them.
+
+### Pinning to a specific source
+
+Both the source repo and the git ref can be overridden with environment variables, which is useful for trying a fork or pinning to a tag:
+
+```bash
+CONCERT_ASSETS_REPO=my-org/my-fork CONCERT_ASSETS_REF=v1.2.3 \
+  npx @he3-org/concert skills list
+```
+
+Defaults are `he3-org/concert-assets` and `HEAD`.
+
+## Rules
+
+Optional Claude Code **rules** — focused project conventions Claude should follow (commit message format, PR descriptions, code style, etc.) — live in the same [`he3-org/concert-assets`](https://github.com/he3-org/concert-assets) repo, but as flat `.md` files under `.claude/rules/`.
+
+The CLI mirrors the Skills feature: browse the catalog and pull just the rules you want into your repo's `.claude/rules/` folder.
+
+### List available rules
+
+```bash
+npx @he3-org/concert rules list
+```
+
+Fetches the catalog from the assets repo and prints each rule's name and a one-line summary.
+
+### Search by name or description
+
+```bash
+npx @he3-org/concert rules search commit
+```
+
+Filters the catalog with a case-insensitive substring match against both the rule name and its summary.
+
+### Install one or more rules
+
+```bash
+npx @he3-org/concert rules add conventional-commits
+```
+
+Downloads each named rule and writes it to `.claude/rules/<rule-name>.md` in the current repo. If a rule of the same name already exists locally, it is overwritten — re-run the command at any time to pull updated content.
+
+Installed rule files are normal files in your repository — commit them like any other code. They are **not** tracked or removed by `concert update`; you choose which rules your project uses and when to refresh them.
+
+### Pinning to a specific source
+
+The same `CONCERT_ASSETS_REPO` and `CONCERT_ASSETS_REF` environment variables described above for Skills also apply to Rules:
+
+```bash
+CONCERT_ASSETS_REPO=my-org/my-fork CONCERT_ASSETS_REF=v1.2.3 \
+  npx @he3-org/concert rules list
+```
+
 ## Project Structure
 
 After initialization and running through the SDLC, your repo will contain:

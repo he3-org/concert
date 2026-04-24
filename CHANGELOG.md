@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.0](https://github.com/he3-org/concert/compare/v1.19.0...v1.20.0) (2026-04-24)
+
+
+### Features
+
+* add concert-refactor agent and command, wire into develop ([#81](https://github.com/he3-org/concert/issues/81)) ([5b59ce0](https://github.com/he3-org/concert/commit/5b59ce0c0d41e870fc6d89ec4cabbe163d394e5b))
+
 ## [1.19.0](https://github.com/he3-org/concert/compare/v1.18.0...v1.19.0) (2026-04-24)
 
 

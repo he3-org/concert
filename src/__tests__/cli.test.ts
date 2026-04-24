@@ -38,6 +38,7 @@ describe('CLI stub', () => {
     expect(result.stdout).toContain('update');
     expect(result.stdout).toContain('push');
     expect(result.stdout).toContain('skills');
+    expect(result.stdout).toContain('rules');
   });
 
   it('-h prints usage and exits 0', () => {
@@ -103,6 +104,37 @@ describe('CLI stub', () => {
   it('skills search with no args exits 2', () => {
     if (!fs.existsSync(CLI_PATH)) return;
     const result = runCLI('skills search');
+    expect(result.exitCode).toBe(2);
+    expect(result.stderr).toContain('search requires a term');
+  });
+
+  it('rules with no subcommand prints usage and exits 2', () => {
+    if (!fs.existsSync(CLI_PATH)) return;
+    const result = runCLI('rules');
+    expect(result.exitCode).toBe(2);
+    expect(result.stdout).toContain('Usage: concert rules');
+    expect(result.stdout).toContain('list');
+    expect(result.stdout).toContain('search');
+    expect(result.stdout).toContain('add');
+  });
+
+  it('rules --help prints usage and exits 0', () => {
+    if (!fs.existsSync(CLI_PATH)) return;
+    const result = runCLI('rules --help');
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Usage: concert rules');
+  });
+
+  it('rules add with no args exits 2', () => {
+    if (!fs.existsSync(CLI_PATH)) return;
+    const result = runCLI('rules add');
+    expect(result.exitCode).toBe(2);
+    expect(result.stderr).toContain('add requires at least one rule name');
+  });
+
+  it('rules search with no args exits 2', () => {
+    if (!fs.existsSync(CLI_PATH)) return;
+    const result = runCLI('rules search');
     expect(result.exitCode).toBe(2);
     expect(result.stderr).toContain('search requires a term');
   });

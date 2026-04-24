@@ -86,8 +86,7 @@ async function runSkillsList(): Promise<number> {
   }
   process.stdout.write(formatSkillsTable(skills));
   process.stdout.write(
-    `\n  ${skills.length} skill${skills.length === 1 ? '' : 's'} available.` +
-      `  Run \`concert skills add <name>\` to install one into this repo.\n`
+    `\n  ${skills.length} skill${skills.length === 1 ? '' : 's'} available.  Run \`concert skills add <name>\` to install one into this repo.\n`
   );
   return 0;
 }

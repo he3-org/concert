@@ -34,10 +34,15 @@ async function main(): Promise<void> {
       const { runSkills } = await import('./commands/skills.js');
       process.exit(await runSkills(cwd, args.slice(1)));
     }
+    case 'rules':
+    case 'rule': {
+      const { runRules } = await import('./commands/rules.js');
+      process.exit(await runRules(cwd, args.slice(1)));
+    }
     default:
       console.error(`Error: unknown command "${command}"
 
-  Available commands: init, update, push, skills
+  Available commands: init, update, push, skills, rules
 
   Run "concert --help" for usage information.`);
       process.exit(2);
@@ -52,12 +57,13 @@ Commands:
   update   Update Concert files to latest version
   push     Push current branch to origin
   skills   List, search, and install skills from the Concert assets repo
+  rules    List, search, and install rules from the Concert assets repo
 
 Options:
   --help, -h       Show this help message
   --version, -V    Show version number
 
-Run "concert skills --help" for skills subcommand usage.`);
+Run "concert skills --help" or "concert rules --help" for subcommand usage.`);
 }
 
 main().catch((err) => {

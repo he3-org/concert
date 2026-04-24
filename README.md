@@ -358,6 +358,47 @@ CONCERT_ASSETS_REPO=my-org/my-fork CONCERT_ASSETS_REF=v1.2.3 \
 
 Defaults are `he3-org/concert-assets` and `HEAD`.
 
+## Rules
+
+Optional Claude Code **rules** — focused project conventions Claude should follow (commit message format, PR descriptions, code style, etc.) — live in the same [`he3-org/concert-assets`](https://github.com/he3-org/concert-assets) repo, but as flat `.md` files under `.claude/rules/`.
+
+The CLI mirrors the Skills feature: browse the catalog and pull just the rules you want into your repo's `.claude/rules/` folder.
+
+### List available rules
+
+```bash
+npx @he3-org/concert rules list
+```
+
+Fetches the catalog from the assets repo and prints each rule's name and a one-line summary.
+
+### Search by name or description
+
+```bash
+npx @he3-org/concert rules search commit
+```
+
+Filters the catalog with a case-insensitive substring match against both the rule name and its summary.
+
+### Install one or more rules
+
+```bash
+npx @he3-org/concert rules add conventional-commits
+```
+
+Downloads each named rule and writes it to `.claude/rules/<rule-name>.md` in the current repo. If a rule of the same name already exists locally, it is overwritten — re-run the command at any time to pull updated content.
+
+Installed rule files are normal files in your repository — commit them like any other code. They are **not** tracked or removed by `concert update`; you choose which rules your project uses and when to refresh them.
+
+### Pinning to a specific source
+
+The same `CONCERT_ASSETS_REPO` and `CONCERT_ASSETS_REF` environment variables described above for Skills also apply to Rules:
+
+```bash
+CONCERT_ASSETS_REPO=my-org/my-fork CONCERT_ASSETS_REF=v1.2.3 \
+  npx @he3-org/concert rules list
+```
+
 ## Project Structure
 
 After initialization and running through the SDLC, your repo will contain:

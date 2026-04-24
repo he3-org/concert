@@ -34,6 +34,16 @@ Browse and install optional Copilot skills (kept in [\`he3-org/concert-assets\`]
 
 Installed skill files live under \`.github/skills/<name>/\` and are tracked by your repo (not managed by \`concert update\`).
 
+### Rules
+
+Browse and install optional Claude Code rules from the same assets repo into \`.claude/rules/\`:
+
+- \`npx @he3-org/concert rules list\` — list available rules
+- \`npx @he3-org/concert rules search <term>\` — find a rule by name or description
+- \`npx @he3-org/concert rules add <name>...\` — install one or more rules
+
+Installed rule files live under \`.claude/rules/<name>.md\` and are tracked by your repo (not managed by \`concert update\`).
+
 ### State
 
 - Configuration: \`concert.jsonc\`

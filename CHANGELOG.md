@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0](https://github.com/he3-org/concert/compare/v1.18.0...v1.19.0) (2026-04-24)
+
+
+### Features
+
+* copy README.md to .concert/ on init and update ([#79](https://github.com/he3-org/concert/issues/79)) ([3058ecb](https://github.com/he3-org/concert/commit/3058ecb7e762d19021e2a2a4cd91e73a138290b9))
+
 ## [1.18.0](https://github.com/he3-org/concert/compare/v1.17.0...v1.18.0) (2026-04-22)
 
 

@@ -47,17 +47,17 @@ Stages and commits any pending state changes, then pushes the current branch to 
 Concert structures development as a pipeline of specialized agents. Each agent produces a document that feeds the next stage. You drive each stage by invoking the corresponding agent.
 
 ```
-Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development → Development Review → Fix Gaps → Re-review → Finish
+Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development → Development Review → Fix Gaps → Re-review → Finish → Refactor
                         ↕                      ↕                      ↕
                     Alignment              Alignment              Alignment
 ```
 
 ### Where to Run Each Stage
 
-| Stages                                        | Recommended Environment                | Why                                                                                                                                                                                                                |
-| --------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Vision, Requirements, Architecture, UX Design | **Claude Code CLI** or **Copilot CLI** | The review-docs agent conducts interactive conversations — it asks you questions one at a time and refines the document based on your answers. This requires an environment that supports back-and-forth dialogue. |
-| Planning, Development, Development Review, Finish | **GitHub Copilot cloud agents**    | These stages are autonomous (no conversation needed) and can be long-running. Cloud agents are more cost-effective for model usage and can run unattended.                                                         |
+| Stages                                                      | Recommended Environment                | Why                                                                                                                                                                                                                |
+| ----------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Vision, Requirements, Architecture, UX Design               | **Claude Code CLI** or **Copilot CLI** | The review-docs agent conducts interactive conversations — it asks you questions one at a time and refines the document based on your answers. This requires an environment that supports back-and-forth dialogue. |
+| Planning, Development, Development Review, Finish, Refactor | **GitHub Copilot cloud agents**        | These stages are autonomous (no conversation needed) and can be long-running. Cloud agents are more cost-effective for model usage and can run unattended.                                                         |
 
 ---
 
@@ -282,6 +282,39 @@ Other finish commands:
 
 After the agent completes, move the generated `.md` file(s) to your project's documentation folder and delete the `DELETE-ME/` folder.
 
+### Stage 10: Refactor (recommended after every feature)
+
+Refactoring after a feature lands — while the design tradeoffs are still fresh — is one of the highest-leverage things you can do for long-term code health. Concert ships a dedicated agent for this.
+
+**GitHub Copilot (cloud agent):**
+
+> Select `concert-refactor`, then type: `create`
+
+The refactor agent surveys the repository, identifies behavior-preserving improvements (duplication, cohesion, coupling, naming, dead code, complexity, error handling, test quality, type safety, etc.), and writes a ranked plan to `.concert/REFACTOR-PLAN-YYYY-MM-DD.md` at the root of `.concert/`. Each item is ranked using the same severity scheme as the development review agent (Critical / Major / Minor / Nice-to-have) and includes reasoning plus enough guidance for `concert-develop` to pick it up and resolve it without re-investigating.
+
+Other refactor commands:
+
+- `create --scope <path>` — limit analysis to a directory or file glob
+- `create --scope mission` — limit to code touched by the current mission
+- `create --scope tests` — focus on test code only
+- `update` — refresh the most recent plan in place (preserves item statuses, marks resolved items, appends new findings)
+- `status` — summarize the most recent plan without re-analyzing
+
+> **💡 Tip:** Although `concert-refactor` is presented here at the end of the SDLC, it is a **utility agent** — you can run it any time you want a structured, ranked view of refactor opportunities. Common uses include: after merging a large feature, before starting a major new initiative, or when onboarding a new contributor who needs a curated list of safe cleanups.
+
+Then hand the plan to the develop agent to apply the changes:
+
+> Select `concert-develop`, then type: `refactor`
+
+The develop agent reads the most recent `REFACTOR-PLAN-*.md`, works through items in priority order (Critical → Major → Minor → Nice-to-have), locks in current behavior with tests where needed, applies each refactor, and **updates the `Status` field of each item directly in the refactor plan** (no DEVELOPMENT-STATUS.md update — refactors are not tied to a mission).
+
+Other develop commands for refactor work:
+
+- `refactor REF-001 REF-003` — apply specific items by ID, in the order given
+- `refactor --severity critical` — apply only Critical items (cumulative: critical | major | minor | nice-to-have)
+
+After applying refactors, run `concert-refactor update` to refresh the plan and confirm what was resolved.
+
 ## Project Structure
 
 After initialization and running through the SDLC, your repo will contain:
@@ -292,6 +325,7 @@ your-repo/
 ├── CLAUDE.md                              # Concert section with agent instructions
 ├── .concert/
 │   ├── state.json                         # Current mission pointer
+│   ├── REFACTOR-PLAN-YYYY-MM-DD.md        # Stage 10 output (utility — runnable any time)
 │   ├── missions/
 │   │   └── <mission-slug>/
 │   │       ├── VISION.md                  # Stage 1 output

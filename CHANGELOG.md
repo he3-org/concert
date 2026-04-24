@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.0](https://github.com/he3-org/concert/compare/v1.20.0...v1.21.0) (2026-04-24)
+
+
+### Features
+
+* add `concert skills` and `concert rules` CLI commands ([#83](https://github.com/he3-org/concert/issues/83)) ([ac88db8](https://github.com/he3-org/concert/commit/ac88db8ea3c4d18c30dd071108507319ff8f8353))
+
 ## [1.20.0](https://github.com/he3-org/concert/compare/v1.19.0...v1.20.0) (2026-04-24)
 
 

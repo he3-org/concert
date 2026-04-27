@@ -36,23 +36,32 @@ Before any command, detect at most one of: `AskUserQuestion` (Claude Code), `ask
 2. `.concert/state.json` → `mission`; derive mission path (for `re-evaluate`).
 3. `<mission_path>/DEVELOPMENT-STATUS.md` if present.
 
-## Command: `create`
+## Command: `create [--branch] [--from-issue <num>]`
 
-Followed by: nothing | inline description | file path.
+Followed by: nothing | inline description | file path. Flags:
+
+- `--branch` — also create and check out a `mission/<slug>` git branch after the mission folder is created. Requires repo write permission. Skip silently with a warning if `git` is unavailable, the working tree is dirty, or the branch already exists.
+- `--from-issue <num>` — read GitHub issue `<num>` (title + body) and use it as the feature description. Requires `gh` CLI or the GitHub MCP `issue_read` tool with `read:issues` scope. If neither is available, report and stop. Equivalent to `from-issue <num>` (below) when invoked as a sub-command.
 
 ### Steps
 
 1. **Resolve description:**
+   - `--from-issue <num>` set → fetch issue (use `gh issue view <num> --json title,body,number,url` if available; else GitHub MCP). Description = `# <title>\n\n<body>`. Remember `issue_url` and `issue_number` for cross-linking.
    - Nothing → interview tool available? Ask for description : report error + example, stop.
    - File path (contains `/`, `\`, or `.md`/`.txt`/`.doc`) → read file, use contents.
    - Otherwise → use inline text.
 2. **Create mission:**
-   - Generate slug: lowercase, hyphen-separated, 3–5 words (e.g., `oauth2-user-authentication`).
-   - Update `.concert/state.json` → `current-mission` = slug.
+   - Generate slug: lowercase, hyphen-separated, 3–5 words (e.g., `oauth2-user-authentication`). When sourced from an issue, prefix with `issue-<num>-` to keep traceability obvious.
+   - Update `.concert/state.json` → `current-mission` = slug. If `issue_url`/`issue_number` are set, also store them on state for downstream agents.
    - Create `.concert/missions/<slug>/`.
-3. **Research:** Scan codebase. Research online if feature involves external APIs, domain-specific concepts, standards, or tech you need to validate.
-4. **Write** `.concert/missions/<slug>/VISION.md` (template below).
-5. **Update** `<mission_path>/DEVELOPMENT-STATUS.md` (create if missing).
+3. **Optional branch (only if `--branch` was passed):**
+   - Run `git status --porcelain`. If non-empty, skip with a one-line warning ("Skipped branch creation — working tree dirty.") and continue.
+   - Run `git rev-parse --verify mission/<slug>`. If it exists, skip with a warning and continue.
+   - Otherwise `git checkout -b mission/<slug>`. Record the branch in `state.json` → `branch`.
+4. **Research:** Scan codebase. Research online if the feature involves external APIs, domain-specific concepts, standards, or tech you need to validate.
+5. **Write** `.concert/missions/<slug>/VISION.md` (template below). When sourced from an issue, include a top "Source" line: `> Sourced from issue #<num>: <issue_url>`.
+6. **Update** `<mission_path>/DEVELOPMENT-STATUS.md` (create if missing). Include the issue link if applicable.
+7. **Optional issue comment (only if `--from-issue` was used and write permission exists):** Post a single comment on the issue with the mission slug and a one-line summary, e.g. `Concert mission \`<slug>\` started — see \`.concert/missions/<slug>/VISION.md\`.` Skip silently if write permission is missing.
 
 ### Output template
 
@@ -132,6 +141,17 @@ Include likelihood and potential impact where possible.
 - Include context from online research with source references.
 - No requirements (FR-xxx), architecture, or UX specs unless explicitly requested.
 
+## Command: `from-issue <num> [--branch]`
+
+Convenience for `create --from-issue <num>` — reads the GitHub issue and uses it as the feature description. Pass `--branch` to also create a `mission/<slug>` git branch (per `create` rules).
+
+### Steps
+
+Identical to `create --from-issue <num>` above. Permissions required:
+
+- Read: `gh` CLI authenticated, or GitHub MCP `issue_read` tool, with `read:issues` scope on the repo.
+- Optional comment-back: `issues:write` scope. Skipped silently if absent.
+
 ## Command: `re-evaluate`
 
 Re-read VISION.md after edits (typically by `concert-review-docs`) and surface new concerns.
@@ -141,7 +161,7 @@ Re-read VISION.md after edits (typically by `concert-review-docs`) and surface n
 1. Read `.concert/state.json` → mission path. Read `VISION.md`.
 2. Analyse for: ripple effects (do changes create inconsistencies?), new assumptions, scope implications, new risks, success criteria impact, constraint conflicts, completeness.
 3. For each new concern, append `- [ ]` to `## Questions` referencing section and content. Do not re-open `[x]` items unless newly invalid.
-4. Remove `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` if present.
+4. Remove all `CONCERT:MODIFIED` markers (whole-doc legacy and `CONCERT:MODIFIED:<slug>` per-section) if present.
 5. Write the file.
 6. Output the report below.
 

@@ -21,12 +21,13 @@ Run review-docs after every spec document and alignment after every change.
 - \`/concert-requirements\` — derive \`REQUIREMENTS.md\` from the vision
 - \`/concert-architect\` — produce \`ARCHITECTURE.md\` from the requirements
 - \`/concert-ux-design\` — produce \`UX-DESIGN.md\` (skip for non-UI features)
-- \`/concert-review-docs\` — interactive review and \`re-evaluate-all\` for any spec doc
+- \`/concert-review-docs\` — interactive review (\`review\`, \`review-and-reconcile\`, \`re-evaluate-all\`); auto-runs alignment after edits
 - \`/concert-alignment\` — cross-check spec docs for contradictions and gaps
 - \`/concert-planner\` — break the architecture into phased \`TASK-*.md\` files
 - \`/concert-develop\` — TDD implementation, \`fix-gaps\`, and \`refactor\` execution
 - \`/concert-develop-review\` — produce \`DEVELOPMENT-REVIEW.md\` against the specs
 - \`/concert-develop-finish\` — archive working docs and emit reference documentation
+- \`/concert-status\` — read-only snapshot: stage, modified docs, gaps, refactor items, next action
 - \`/concert-refactor\` — ranked, behavior-preserving refactor plan (utility, runnable any time)
 - \`/concert-token-optimizer\` — audit agents and instruction files for token waste
 

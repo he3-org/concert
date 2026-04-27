@@ -131,7 +131,7 @@ Re-read REQUIREMENTS.md after edits (typically by `concert-review-docs`) and sur
 1. Read `.concert/state.json` → mission path. Read `REQUIREMENTS.md` and `VISION.md`.
 2. Analyse for: vision alignment (still traces?), completeness (new gaps?), consistency (contradictions?), dependency impact, testability, assumption validity, scope creep beyond VISION.md.
 3. For each new concern, append `- [ ]` to `## Open Questions` referencing the requirement ID and content. Do not re-open `[x]` items unless newly invalid.
-4. Remove `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` if present.
+4. Remove all `CONCERT:MODIFIED` markers (whole-doc legacy and `CONCERT:MODIFIED:<slug>` per-section) if present.
 5. Write the file.
 6. Output the report below.
 

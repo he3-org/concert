@@ -185,7 +185,7 @@ Re-read ARCHITECTURE.md after edits (typically by `concert-review-docs`) and sur
 1. Read `.concert/state.json` → mission path. Read `ARCHITECTURE.md`, `REQUIREMENTS.md`, `VISION.md`.
 2. Analyse for: requirements coverage, component consistency, technology coherence, data model integrity, security/performance impact, ADR validity, scope alignment.
 3. For each new concern, append `- [ ]` to `## Open Questions` referencing the component, ADR, or section. Do not re-open `[x]` items unless newly invalid.
-4. Remove `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` if present.
+4. Remove all `CONCERT:MODIFIED` markers (whole-doc legacy and `CONCERT:MODIFIED:<slug>` per-section) if present.
 5. Write the file.
 6. Output the report below.
 

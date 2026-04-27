@@ -139,7 +139,7 @@ Re-read all mission documents and existing ALIGNMENT.md to determine if previous
 2. **Re-run alignment checks** (as in `check` Step 2).
 3. **Compare with previous findings:** Mark resolved, add new, update traceability matrix, update summary counts.
 4. **Write updated ALIGNMENT.md:** Resolved findings marked ~~strikethrough~~ with resolution note; new findings marked "NEW"; updated matrix and summary.
-5. Remove `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` if present.
+5. Remove all `CONCERT:MODIFIED` markers (whole-doc legacy and `CONCERT:MODIFIED:<slug>` per-section) if present.
 6. Write the file.
 7. Output the report below.
 

@@ -6,8 +6,6 @@ Guidance for AI coding agents working on the Concert repository. Optimised for l
 
 `@he3-org/concert` is a CLI npm package (TypeScript, built with `tsup`, tested with `vitest`) that installs AI agent definitions and slash commands into target repos. Three commands: `init`, `update`, `push`. Skills and rules are fetched on demand from `he3-org/concert-assets`.
 
-See `AGENTS.md` for the full architecture summary. Do not duplicate it here.
-
 ## Build, test, typecheck
 
 ```bash

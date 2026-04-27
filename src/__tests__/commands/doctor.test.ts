@@ -93,7 +93,13 @@ describe('runDoctor', () => {
     const code = await runDoctor(tmpDir);
     expect(code).toBe(0);
     const out = stdoutBuf.join('');
-    expect(out).not.toContain('Agents\n');
-    expect(out).not.toContain('Skills');
+    // Category headers are written as "\n<label>\n" by the formatter.
+    // We assert the absence of every category header except the AGENTS.md
+    // instruction-file label, which is distinct from the "Agents" agents-dir label.
+    expect(out).not.toContain('\nAgents\n');
+    expect(out).not.toContain('\nSkills\n');
+    expect(out).not.toContain('\nClaude commands\n');
+    expect(out).not.toContain('\nClaude rules\n');
+    expect(out).toContain('\nInstruction file: AGENTS.md\n');
   });
 });

@@ -39,10 +39,14 @@ async function main(): Promise<void> {
       const { runRules } = await import('./commands/rules.js');
       process.exit(await runRules(cwd, args.slice(1)));
     }
+    case 'doctor': {
+      const { runDoctor } = await import('./commands/doctor.js');
+      process.exit(await runDoctor(cwd));
+    }
     default:
       console.error(`Error: unknown command "${command}"
 
-  Available commands: init, update, push, skills, rules
+  Available commands: init, update, push, skills, rules, doctor
 
   Run "concert --help" for usage information.`);
       process.exit(2);
@@ -58,6 +62,7 @@ Commands:
   push     Push current branch to origin
   skills   List, search, and install skills from the Concert assets repo
   rules    List, search, and install rules from the Concert assets repo
+  doctor   Report token cost of Concert-managed files (read-only)
 
 Options:
   --help, -h       Show this help message

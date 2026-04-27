@@ -39,6 +39,7 @@ describe('CLI stub', () => {
     expect(result.stdout).toContain('push');
     expect(result.stdout).toContain('skills');
     expect(result.stdout).toContain('rules');
+    expect(result.stdout).toContain('doctor');
   });
 
   it('-h prints usage and exits 0', () => {

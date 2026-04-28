@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.0](https://github.com/he3-org/concert/compare/v1.21.0...v1.22.0) (2026-04-28)
+
+
+### Features
+
+* optimize token usuage ([5bbf0e3](https://github.com/he3-org/concert/commit/5bbf0e3dd57e472785c4bd82af1e5993c82f5cfa))
+
 ## [1.21.0](https://github.com/he3-org/concert/compare/v1.20.0...v1.21.0) (2026-04-24)
 
 

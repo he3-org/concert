@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
 import { resolveActiveMissionPath } from '../../lib/missions.js';
-import { insertOrRefreshMarker, removeMarker } from '../../lib/section-edit.js';
+import { insertOrRefreshMarker, removeMarker, escapeRegExp } from '../../lib/section-edit.js';
 import { atomicWriteFile } from '../../lib/atomic-write.js';
 import { withMissionLock } from '../../lib/file-lock.js';
 import { appendEventSafe } from '../../cache/cache.js';
@@ -84,15 +84,13 @@ export async function handler(
 
     const result = await withMissionLock(missionPath, async () => {
       const content = fs.readFileSync(docPath, 'utf-8');
-      const markerPattern = new RegExp(`CONCERT:MODIFIED:${args.section}`, 'i');
+      const markerPattern = new RegExp(`CONCERT:MODIFIED:${escapeRegExp(args.section)}`, 'i');
       const alreadyMarked = markerPattern.test(content);
 
       let updated: string;
       try {
-        updated = alreadyMarked
-          ? insertOrRefreshMarker(content, args.section, args.source)
-          : insertOrRefreshMarker(content, args.section, args.source);
-      } catch (err: unknown) {
+        updated = insertOrRefreshMarker(content, args.section, args.source);
+      } catch {
         throw new Error(`section not found: ${args.section}`);
       }
 

@@ -8,6 +8,7 @@ import { MIGRATIONS } from '../../cache/migrations/index.js';
 // Skip when better-sqlite3 native module isn't installed (it's an optional dep).
 const hasSqlite = await (async () => {
   try {
+    // @ts-expect-error -- optional native dep, lazy-loaded
     await import('better-sqlite3');
     return true;
   } catch {

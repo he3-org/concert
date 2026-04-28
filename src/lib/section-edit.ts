@@ -1,5 +1,14 @@
 import { parseSections } from './markdown-section.js';
 
+/**
+ * Escape regex metacharacters from an arbitrary string so it can be safely
+ * embedded inside a `RegExp` constructor. Slug values come from CLI args /
+ * MCP tool inputs — we never want a `.` or `+` to act as a metacharacter.
+ */
+export function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export function insertOrRefreshMarker(md: string, sectionSlug: string, source?: string): string {
   const sections = parseSections(md);
   const target = sections.find((s) => s.slug === sectionSlug);
@@ -12,7 +21,10 @@ export function insertOrRefreshMarker(md: string, sectionSlug: string, source?: 
   const bodyStart = target.bodyOffset;
   const bodyEnd = bodyStart + target.bodyLength;
 
-  const markerPattern = new RegExp(`^\\s*<!--\\s*CONCERT:MODIFIED:${sectionSlug}`, 'i');
+  const markerPattern = new RegExp(
+    `^\\s*<!--\\s*CONCERT:MODIFIED:${escapeRegExp(sectionSlug)}`,
+    'i'
+  );
   let markerLineIndex = -1;
   for (let i = bodyStart; i < bodyEnd; i++) {
     if (markerPattern.test(lines[i])) {
@@ -45,7 +57,10 @@ export function removeMarker(md: string, sectionSlug: string): string {
   const bodyStart = target.bodyOffset;
   const bodyEnd = bodyStart + target.bodyLength;
 
-  const markerPattern = new RegExp(`^\\s*<!--\\s*CONCERT:MODIFIED:${sectionSlug}`, 'i');
+  const markerPattern = new RegExp(
+    `^\\s*<!--\\s*CONCERT:MODIFIED:${escapeRegExp(sectionSlug)}`,
+    'i'
+  );
   const filtered = [];
   for (let i = 0; i < lines.length; i++) {
     if (i >= bodyStart && i < bodyEnd && markerPattern.test(lines[i])) {

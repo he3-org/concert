@@ -42,7 +42,10 @@ export async function openCache(cwd: string): Promise<CacheHandle | null> {
   // @ts-expect-error -- optional native dep
   const db = new Database(dbPath) as {
     exec(sql: string): void;
-    prepare(sql: string): { get(...args: unknown[]): unknown };
+    prepare(sql: string): {
+      get(...args: unknown[]): unknown;
+      run(...args: unknown[]): unknown;
+    };
     close(): void;
   };
 
@@ -83,15 +86,20 @@ function getCurrentSchemaVersion(db: {
 
 function applyMigrations(db: {
   exec(sql: string): void;
-  prepare(sql: string): { get(...args: unknown[]): unknown };
+  prepare(sql: string): {
+    get(...args: unknown[]): unknown;
+    run(...args: unknown[]): unknown;
+  };
 }): void {
   const currentVersion = getCurrentSchemaVersion(db);
   for (const migration of MIGRATIONS) {
     if (migration.version <= currentVersion) continue;
     db.exec(migration.sql);
   }
-  // Single-quote escape: ISO timestamps never contain apostrophes.
-  db.exec(
-    `INSERT OR REPLACE INTO meta (key, value) VALUES ('built_at', '${new Date().toISOString()}')`
+  // Single-quote escape: ISO timestamps never contain apostrophes, but use a
+  // prepared statement anyway so this pattern is safe to copy.
+  db.prepare('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)').run(
+    'built_at',
+    new Date().toISOString()
   );
 }

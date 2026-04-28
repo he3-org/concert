@@ -77,6 +77,11 @@ export async function startStdioServer(cwd: string): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  // Block indefinitely — server runs until the stdio transport closes.
-  await new Promise<void>(() => {});
+  // Block until the stdio transport closes (process kill or client disconnect).
+  // The transport handles teardown; this Promise just keeps the event loop alive.
+  await new Promise<void>((resolve) => {
+    process.once('SIGINT', () => resolve());
+    process.once('SIGTERM', () => resolve());
+    transport.onclose = (): void => resolve();
+  });
 }

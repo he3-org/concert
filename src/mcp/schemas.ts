@@ -37,6 +37,25 @@ export const getStateOutputSchema = {
     nextAction: { type: ['string', 'null'] },
     blockers: { type: 'array', items: { type: 'string' } },
     recentFailures: { type: 'array' },
+    recentToolCalls: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['id', 'ts', 'tool', 'ok', 'duration_ms'],
+        additionalProperties: false,
+        properties: {
+          id: { type: 'integer' },
+          ts: { type: 'string' },
+          mission_slug: { type: ['string', 'null'] },
+          tool: { type: 'string' },
+          ok: { type: 'boolean' },
+          error_class: { type: ['string', 'null'] },
+          duration_ms: { type: 'integer' },
+          doc: { type: ['string', 'null'] },
+          section: { type: ['string', 'null'] },
+        },
+      },
+    },
     found: { type: 'boolean' },
   },
   required: [
@@ -631,4 +650,46 @@ export const getSummaryOutputSchema = {
   },
   required: ['missions', 'generatedAt'],
   additionalProperties: false,
+} as const;
+
+// === concert.get_events ===
+
+export const getEventsInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    mission: { type: 'string', description: 'Filter by mission slug' },
+    limit: { type: 'integer', minimum: 1, maximum: 100, default: 20 },
+  },
+  additionalProperties: false,
+} as const;
+
+export const getEventsOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  required: ['events', 'total', 'generatedAt'],
+  additionalProperties: false,
+  properties: {
+    events: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['id', 'ts', 'tool', 'ok', 'duration_ms'],
+        additionalProperties: false,
+        properties: {
+          id: { type: 'integer' },
+          ts: { type: 'string' },
+          mission_slug: { type: ['string', 'null'] },
+          tool: { type: 'string' },
+          ok: { type: 'boolean' },
+          error_class: { type: ['string', 'null'] },
+          duration_ms: { type: 'integer' },
+          doc: { type: ['string', 'null'] },
+          section: { type: ['string', 'null'] },
+        },
+      },
+    },
+    total: { type: 'integer' },
+    generatedAt: { type: 'string' },
+  },
 } as const;

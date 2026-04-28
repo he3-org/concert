@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "concert": {
+      "type": "stdio",
+      "command": "concert",
+      "args": ["serve"]
+    }
+  }
+}

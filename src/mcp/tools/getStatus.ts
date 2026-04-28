@@ -6,6 +6,7 @@ import { findModifiedMarkers } from '../../lib/markdown-section.js';
 import { resolveActiveMissionPath } from '../../lib/missions.js';
 import { getStatusInputSchema, getStatusOutputSchema } from '../schemas.js';
 import { parseGapItems, parseRefactorItems } from '../../lib/review-parse.js';
+import { withCache } from '../../cache/cache.js';
 
 export interface GetStatusInput {
   mission?: string;
@@ -78,11 +79,24 @@ export async function handler(args: GetStatusInput, ctx: ToolContext): Promise<G
     };
   }
 
+  const missionSlug = path.basename(state.mission_path);
   const missionPath = path.resolve(ctx.cwd, state.mission_path);
   const branch = getCurrentBranch(ctx.cwd);
   const modifiedDocuments = scanModifiedDocuments(missionPath);
-  const developmentReviewGaps = parseReviewGaps(missionPath);
-  const refactorPlan = parseRefactorPlan(missionPath);
+
+  // Cache-accelerated gap/refactor counts with file-scan fallback
+  const developmentReviewGaps = await withCache(
+    ctx.cwd,
+    (handle) => gapsFromCache(handle.db, missionSlug),
+    () => parseReviewGaps(missionPath)
+  );
+
+  const refactorPlan = await withCache(
+    ctx.cwd,
+    (handle) => refactorFromCache(handle.db, missionSlug),
+    () => parseRefactorPlan(missionPath)
+  );
+
   const recentFailures = state.failure_log.slice(-3);
   const nextRecommendedAction = computeNextAction(
     state,
@@ -143,6 +157,50 @@ function scanModifiedDocuments(missionPath: string): ModifiedDocument[] {
   }
 
   return results;
+}
+
+function gapsFromCache(db: unknown, missionSlug: string): GapCounts | null {
+  const typed = db as { prepare(sql: string): { all(...args: unknown[]): unknown[] } };
+  const rows = typed
+    .prepare('SELECT severity, resolved FROM gaps WHERE mission_slug = ?')
+    .all(missionSlug) as { severity: 'critical' | 'major' | 'minor' | 'nice'; resolved: number }[];
+  if (rows.length === 0) return null;
+  const counts: GapCounts = {
+    critical: { open: 0, total: 0 },
+    major: { open: 0, total: 0 },
+    minor: { open: 0, total: 0 },
+    nice: { open: 0, total: 0 },
+  };
+  for (const row of rows) {
+    counts[row.severity].total++;
+    if (!row.resolved) counts[row.severity].open++;
+  }
+  return counts;
+}
+
+function refactorFromCache(
+  db: unknown,
+  missionSlug: string
+): {
+  p0: SeverityCounts;
+  p1: SeverityCounts;
+  p2: SeverityCounts;
+} | null {
+  const typed = db as { prepare(sql: string): { all(...args: unknown[]): unknown[] } };
+  const rows = typed
+    .prepare('SELECT priority, resolved FROM refactor_items WHERE mission_slug = ?')
+    .all(missionSlug) as { priority: 'p0' | 'p1' | 'p2'; resolved: number }[];
+  if (rows.length === 0) return null;
+  const counts = {
+    p0: { open: 0, total: 0 },
+    p1: { open: 0, total: 0 },
+    p2: { open: 0, total: 0 },
+  };
+  for (const row of rows) {
+    counts[row.priority].total++;
+    if (!row.resolved) counts[row.priority].open++;
+  }
+  return counts;
 }
 
 function parseReviewGaps(missionPath: string): GapCounts | null {

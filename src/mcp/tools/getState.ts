@@ -1,6 +1,9 @@
 import type { FailureSummary } from '../../types.js';
 import { readState } from '../../lib/state.js';
 import { getStateInputSchema, getStateOutputSchema } from '../schemas.js';
+import { withCache } from '../../cache/cache.js';
+import type { EventRow } from './getEvents.js';
+import * as path from 'node:path';
 
 export interface GetStateInput {
   mission?: string;
@@ -22,6 +25,7 @@ export interface GetStateOutput {
   nextAction: string | null;
   blockers: string[];
   recentFailures: FailureSummary[];
+  recentToolCalls?: EventRow[];
   found: boolean;
 }
 
@@ -60,8 +64,28 @@ export async function handler(args: GetStateInput, ctx: ToolContext): Promise<Ge
   }
 
   const recentFailures = state.failure_log.slice(-3);
+  const missionSlug = path.basename(state.mission_path);
 
-  return {
+  // Get last 5 events for the active mission from cache
+  const recentToolCalls = await withCache(
+    ctx.cwd,
+    (handle) => {
+      const db = handle.db as {
+        prepare(sql: string): {
+          all(...args: unknown[]): unknown[];
+        };
+      };
+      const events = db
+        .prepare(
+          'SELECT id, ts, mission_slug, tool, ok, error_class, duration_ms, doc, section FROM events WHERE mission_slug = ? ORDER BY id DESC LIMIT 5'
+        )
+        .all(missionSlug) as EventRow[];
+      return events.map((e) => ({ ...e, ok: Boolean(e.ok) }));
+    },
+    () => undefined
+  );
+
+  const output: GetStateOutput = {
     mission: state.mission,
     missionPath: state.mission_path,
     stage: state.stage,
@@ -79,4 +103,10 @@ export async function handler(args: GetStateInput, ctx: ToolContext): Promise<Ge
     recentFailures,
     found: true,
   };
+
+  if (recentToolCalls !== undefined) {
+    output.recentToolCalls = recentToolCalls;
+  }
+
+  return output;
 }

@@ -344,6 +344,7 @@ async function printCacheInfo(cwd: string): Promise<void> {
         const db = eventsHandle.db as {
           prepare(sql: string): {
             get(...args: unknown[]): unknown;
+            all(...args: unknown[]): unknown[];
           };
         };
         const countRow = db.prepare('SELECT COUNT(*) as count FROM events').get() as
@@ -357,6 +358,30 @@ async function printCacheInfo(cwd: string): Promise<void> {
         console.log('\nMutation events:');
         console.log(`  Total:   ${count}`);
         console.log(`  Last:    ${last}`);
+
+        // Per-tool performance stats
+        if (count > 0) {
+          const perToolRows = db
+            .prepare(
+              `SELECT tool, COUNT(*) as calls, SUM(CASE WHEN ok=0 THEN 1 ELSE 0 END) as errors, CAST(AVG(duration_ms) AS INTEGER) as avg_ms
+               FROM events
+               GROUP BY tool
+               ORDER BY calls DESC
+               LIMIT 20`
+            )
+            .all() as { tool: string; calls: number; errors: number; avg_ms: number }[];
+
+          if (perToolRows.length > 0) {
+            console.log('\n  Per-tool (last 100 events):');
+            for (const row of perToolRows) {
+              console.log(
+                `    ${row.tool.padEnd(28)} calls=${row.calls}  errors=${row.errors}  avg=${
+                  row.avg_ms
+                }ms`
+              );
+            }
+          }
+        }
       } finally {
         eventsHandle.close();
       }

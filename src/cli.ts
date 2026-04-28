@@ -59,6 +59,10 @@ async function main(): Promise<void> {
       const { runGetState } = await import('./commands/getState.js');
       process.exit(await runGetState(cwd, args.slice(1)));
     }
+    case 'get-events': {
+      const { runGetEvents } = await import('./commands/getEvents.js');
+      process.exit(await runGetEvents(cwd, args.slice(1)));
+    }
     case 'list-missions': {
       const { runListMissions } = await import('./commands/listMissions.js');
       process.exit(await runListMissions(cwd, args.slice(1)));
@@ -118,7 +122,7 @@ async function main(): Promise<void> {
     default:
       console.error(`Error: unknown command "${command}"
 
-  Available commands: init, update, push, skills, rules, doctor, serve, sync, summary, get-status, get-state, list-missions, get-section, list-modified-sections, mark-section-modified, clear-section-modified, replace-section, append-telemetry, append-history, alignment-check, list-tasks, get-task, set-task-acceptance, render-plan
+  Available commands: init, update, push, skills, rules, doctor, serve, sync, summary, get-status, get-state, get-events, list-missions, get-section, list-modified-sections, mark-section-modified, clear-section-modified, replace-section, append-telemetry, append-history, alignment-check, list-tasks, get-task, set-task-acceptance, render-plan
 
   Run "concert --help" for usage information.`);
       process.exit(2);
@@ -142,6 +146,7 @@ Read-only inspection:
   serve                    Start MCP stdio server (use --inspect for tool catalogue)
   get-status               Get comprehensive mission status snapshot
   get-state                Get mission state from state.json
+  get-events               Get recent tool call events from cache
   list-missions            List all missions
   get-section              Get a markdown section from a mission document
   list-modified-sections   List documents with CONCERT:MODIFIED markers

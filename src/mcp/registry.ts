@@ -14,6 +14,7 @@ import * as listTasks from './tools/listTasks.js';
 import * as getTask from './tools/getTask.js';
 import * as setTaskAcceptance from './tools/setTaskAcceptance.js';
 import * as renderPlan from './tools/renderPlan.js';
+import * as getEvents from './tools/getEvents.js';
 
 export interface ToolContext {
   cwd: string;
@@ -44,6 +45,7 @@ export const TOOLS: ToolDefinition<unknown, unknown>[] = [
   getTask,
   setTaskAcceptance,
   renderPlan,
+  getEvents,
 ];
 
 export function findTool(name: string): ToolDefinition<unknown, unknown> | undefined {

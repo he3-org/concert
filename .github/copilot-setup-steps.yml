@@ -1,0 +1,8 @@
+steps:
+  - name: Install Concert and MCP dependencies
+    run: |
+      npm install -g @he3-org/concert@latest @modelcontextprotocol/sdk
+      # better-sqlite3: native addon — pre-compile for faster cache startup.
+      # Install fails silently if native build tools are missing; Concert
+      # falls back to file-scan mode automatically.
+      npm install -g better-sqlite3 --build-from-source || true

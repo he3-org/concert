@@ -123,12 +123,24 @@ Options:
         const refactorTotal = refactorData?.total ?? 0;
         const refactorOpen = refactorData?.open ?? 0;
 
+        // Show events stats
+        const eventsData = db
+          .prepare(
+            'SELECT COUNT(*) as total, SUM(ok) as ok_count FROM events WHERE mission_slug = ?'
+          )
+          .get(m.slug) as { total: number; ok_count: number } | undefined;
+        const eventsTotal = eventsData?.total ?? 0;
+        const eventsOk = eventsData?.ok_count ?? 0;
+
         console.log(`      Tasks:    ${taskCount}`);
         if (gapsTotal > 0) {
           console.log(`      Gaps:     ${gapsOpen}/${gapsTotal} open`);
         }
         if (refactorTotal > 0) {
           console.log(`      Refactor: ${refactorOpen}/${refactorTotal} open`);
+        }
+        if (eventsTotal > 0) {
+          console.log(`      Events:   ${eventsTotal} events (${eventsOk}/${eventsTotal} ok)`);
         }
       }
       return 0;

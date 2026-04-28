@@ -5,6 +5,7 @@ import { readState } from '../../lib/state.js';
 import { withCache } from '../../cache/cache.js';
 import { parseTaskFrontmatter } from '../../lib/task-frontmatter.js';
 import { parseAcceptance } from '../../lib/section-edit.js';
+import { deriveTaskStatus as deriveStatus } from '../../lib/task-status.js';
 import { listTasksInputSchema, listTasksOutputSchema } from '../schemas.js';
 import type { ToolDefinition, ToolContext } from '../registry.js';
 
@@ -145,12 +146,6 @@ export const handler: ToolDefinition<ListTasksInput, ListTasksOutput>['handler']
 
   return result;
 };
-
-function deriveStatus(total: number, completed: number): 'pending' | 'in-progress' | 'done' {
-  if (total === 0 || completed === 0) return 'pending';
-  if (completed === total) return 'done';
-  return 'in-progress';
-}
 
 async function readTasksFromDisk(missionPath: string, missionSlug: string): Promise<TaskRow[]> {
   const tasks: TaskRow[] = [];

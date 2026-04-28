@@ -113,7 +113,8 @@ export function indexMission(
           content = fs.readFileSync(taskFilePath, 'utf-8');
           stat = fs.statSync(taskFilePath);
         } catch (err) {
-          console.error(`Warning: failed to read task file ${taskFilePath}: ${err}`);
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error(`Warning: failed to read task file ${taskFilePath}: ${msg}`);
           continue;
         }
 

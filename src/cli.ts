@@ -111,10 +111,14 @@ async function main(): Promise<void> {
       const { runRenderPlan } = await import('./commands/renderPlan.js');
       process.exit(await runRenderPlan(cwd, args.slice(1)));
     }
+    case 'summary': {
+      const { runGetSummary } = await import('./commands/getSummary.js');
+      process.exit(await runGetSummary(cwd, args.slice(1)));
+    }
     default:
       console.error(`Error: unknown command "${command}"
 
-  Available commands: init, update, push, skills, rules, doctor, serve, sync, get-status, get-state, list-missions, get-section, list-modified-sections, mark-section-modified, clear-section-modified, replace-section, append-telemetry, append-history, alignment-check, list-tasks, get-task, set-task-acceptance, render-plan
+  Available commands: init, update, push, skills, rules, doctor, serve, sync, summary, get-status, get-state, list-missions, get-section, list-modified-sections, mark-section-modified, clear-section-modified, replace-section, append-telemetry, append-history, alignment-check, list-tasks, get-task, set-task-acceptance, render-plan
 
   Run "concert --help" for usage information.`);
       process.exit(2);
@@ -132,6 +136,7 @@ Commands:
   rules                    List, search, and install rules from the Concert assets repo
   doctor                   Report token cost of Concert-managed files (read-only)
   sync                     Manage the SQLite read cache
+  summary                  Display cross-mission summary (tasks, gaps, refactor items)
 
 Read-only inspection:
   serve                    Start MCP stdio server (use --inspect for tool catalogue)

@@ -5,6 +5,7 @@ import { readState } from '../../lib/state.js';
 import { findModifiedMarkers } from '../../lib/markdown-section.js';
 import { resolveActiveMissionPath } from '../../lib/missions.js';
 import { getStatusInputSchema, getStatusOutputSchema } from '../schemas.js';
+import { parseGapItems, parseRefactorItems } from '../../lib/review-parse.js';
 
 export interface GetStatusInput {
   mission?: string;
@@ -149,7 +150,7 @@ function parseReviewGaps(missionPath: string): GapCounts | null {
   if (!fs.existsSync(reviewPath)) return null;
 
   const content = fs.readFileSync(reviewPath, 'utf-8');
-  const lines = content.split('\n');
+  const items = parseGapItems(content);
 
   const counts: GapCounts = {
     critical: { open: 0, total: 0 },
@@ -158,13 +159,10 @@ function parseReviewGaps(missionPath: string): GapCounts | null {
     nice: { open: 0, total: 0 },
   };
 
-  for (const line of lines) {
-    const severity = extractSeverity(line);
-    if (!severity) continue;
-
-    counts[severity].total++;
-    if (!isResolved(line)) {
-      counts[severity].open++;
+  for (const item of items) {
+    counts[item.severity].total++;
+    if (!item.resolved) {
+      counts[item.severity].open++;
     }
   }
 
@@ -193,7 +191,7 @@ function parseRefactorPlan(missionPath: string): {
   });
 
   const content = fs.readFileSync(latest, 'utf-8');
-  const lines = content.split('\n');
+  const items = parseRefactorItems(content);
 
   const counts = {
     p0: { open: 0, total: 0 },
@@ -201,52 +199,14 @@ function parseRefactorPlan(missionPath: string): {
     p2: { open: 0, total: 0 },
   };
 
-  for (const line of lines) {
-    const priority = extractPriority(line);
-    if (!priority) continue;
-
-    counts[priority].total++;
-    if (!isResolved(line)) {
-      counts[priority].open++;
+  for (const item of items) {
+    counts[item.priority].total++;
+    if (!item.resolved) {
+      counts[item.priority].open++;
     }
   }
 
   return counts;
-}
-
-function extractSeverity(line: string): keyof GapCounts | null {
-  const trimmed = line.trim();
-  if (trimmed.match(/^[-*]\s*\*?\*?Critical/i) || trimmed.match(/^[-*]\s*Critical/i)) {
-    return 'critical';
-  }
-  if (trimmed.match(/^[-*]\s*\*?\*?Major/i) || trimmed.match(/^[-*]\s*Major/i)) {
-    return 'major';
-  }
-  if (trimmed.match(/^[-*]\s*\*?\*?Minor/i) || trimmed.match(/^[-*]\s*Minor/i)) {
-    return 'minor';
-  }
-  if (trimmed.match(/^[-*]\s*\*?\*?Nice[-\s]to[-\s]have/i) || trimmed.match(/^[-*]\s*Nice/i)) {
-    return 'nice';
-  }
-  return null;
-}
-
-function extractPriority(line: string): 'p0' | 'p1' | 'p2' | null {
-  const trimmed = line.trim();
-  if (trimmed.match(/^[-*]\s*\*?\*?P0/i) || trimmed.match(/^[-*]\s*P0/i)) {
-    return 'p0';
-  }
-  if (trimmed.match(/^[-*]\s*\*?\*?P1/i) || trimmed.match(/^[-*]\s*P1/i)) {
-    return 'p1';
-  }
-  if (trimmed.match(/^[-*]\s*\*?\*?P2/i) || trimmed.match(/^[-*]\s*P2/i)) {
-    return 'p2';
-  }
-  return null;
-}
-
-function isResolved(line: string): boolean {
-  return /\[x\]/i.test(line) || /\bResolved\b/i.test(line);
 }
 
 function computeNextAction(

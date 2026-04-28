@@ -576,3 +576,59 @@ export const renderPlanOutputSchema = {
   required: ['ok'],
   additionalProperties: false,
 } as const;
+
+// === concert.get_summary ===
+
+export const getSummaryInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {},
+  additionalProperties: false,
+} as const;
+
+export const getSummaryOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    missions: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          slug: { type: 'string' },
+          stage: { type: ['string', 'null'] },
+          tasksTotal: { type: 'integer' },
+          tasksDone: { type: 'integer' },
+          tasksInProgress: { type: 'integer' },
+          tasksPending: { type: 'integer' },
+          gapsCritical: { type: 'integer' },
+          gapsMajor: { type: 'integer' },
+          gapsMinor: { type: 'integer' },
+          gapsNice: { type: 'integer' },
+          refactorP0: { type: 'integer' },
+          refactorP1: { type: 'integer' },
+          refactorP2: { type: 'integer' },
+        },
+        required: [
+          'slug',
+          'stage',
+          'tasksTotal',
+          'tasksDone',
+          'tasksInProgress',
+          'tasksPending',
+          'gapsCritical',
+          'gapsMajor',
+          'gapsMinor',
+          'gapsNice',
+          'refactorP0',
+          'refactorP1',
+          'refactorP2',
+        ],
+        additionalProperties: false,
+      },
+    },
+    generatedAt: { type: 'string' },
+  },
+  required: ['missions', 'generatedAt'],
+  additionalProperties: false,
+} as const;

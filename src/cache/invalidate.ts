@@ -48,6 +48,11 @@ export function ensureFresh(
     // derived from `<mission>/phases/*/TASK-*.md`. Without this loop, flipping
     // an acceptance criterion never bumps the cached `tasks.completed_acceptance`,
     // so downstream reads (list_tasks, render_plan) silently use stale rows.
+    //
+    // Note: Gap and refactor-item rows are derived from top-level `*.md` files
+    // (`DEVELOPMENT-REVIEW.md`, `REFACTOR-PLAN-*.md`), which are already tracked
+    // in the documents loop above. No additional staleness check is needed for
+    // gaps or refactor_items — changes to those files trigger a full reindex.
     const taskRows = db
       .prepare('SELECT file_path, mtime_ms FROM tasks WHERE mission_slug = ?')
       .all(mission.slug) as { file_path: string; mtime_ms: number }[];

@@ -112,8 +112,41 @@ CREATE INDEX idx_tasks_wave ON tasks(mission_slug, wave);
 INSERT OR REPLACE INTO meta (key, value) VALUES ('schema_version', '3');
 `;
 
+const M0004_GAPS_REFACTOR = `
+CREATE TABLE gaps (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  mission_slug TEXT NOT NULL,
+  doc_path TEXT NOT NULL,
+  severity TEXT NOT NULL,
+  text TEXT NOT NULL,
+  resolved INTEGER NOT NULL DEFAULT 0,
+  line_number INTEGER NOT NULL,
+  indexed_at TEXT NOT NULL
+);
+
+CREATE INDEX idx_gaps_mission ON gaps(mission_slug);
+CREATE INDEX idx_gaps_resolved ON gaps(mission_slug, resolved);
+
+CREATE TABLE refactor_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  mission_slug TEXT NOT NULL,
+  doc_path TEXT NOT NULL,
+  priority TEXT NOT NULL,
+  text TEXT NOT NULL,
+  resolved INTEGER NOT NULL DEFAULT 0,
+  line_number INTEGER NOT NULL,
+  indexed_at TEXT NOT NULL
+);
+
+CREATE INDEX idx_refactor_mission ON refactor_items(mission_slug);
+CREATE INDEX idx_refactor_resolved ON refactor_items(mission_slug, resolved);
+
+INSERT OR REPLACE INTO meta (key, value) VALUES ('schema_version', '4');
+`;
+
 export const MIGRATIONS: Migration[] = [
   { version: 1, sql: M0001_INIT },
   { version: 2, sql: M0002_EVENTS },
   { version: 3, sql: M0003_TASKS },
+  { version: 4, sql: M0004_GAPS_REFACTOR },
 ];

@@ -1,5 +1,6 @@
 import * as getState from './tools/getState.js';
 import * as getStatus from './tools/getStatus.js';
+import * as getSummary from './tools/getSummary.js';
 import * as listMissions from './tools/listMissions.js';
 import * as getSection from './tools/getSection.js';
 import * as listModifiedSections from './tools/listModifiedSections.js';
@@ -29,6 +30,7 @@ export interface ToolDefinition<I = unknown, O = unknown> {
 export const TOOLS: ToolDefinition<unknown, unknown>[] = [
   getState,
   getStatus,
+  getSummary,
   listMissions,
   getSection,
   listModifiedSections,

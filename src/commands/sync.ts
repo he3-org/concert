@@ -54,7 +54,7 @@ Options:
         console.log(`Rebuilt cache: ${results.length} missions indexed`);
         for (const r of results) {
           console.log(
-            `  ${r.missionSlug}: ${r.documentsIndexed} docs, ${r.sectionsIndexed} sections, ${r.markersFound} markers, ${r.tasksIndexed} tasks`
+            `  ${r.missionSlug}: ${r.documentsIndexed} docs, ${r.sectionsIndexed} sections, ${r.markersFound} markers, ${r.tasksIndexed} tasks, ${r.gapsIndexed} gaps, ${r.refactorItemsIndexed} refactor`
           );
         }
       } finally {
@@ -98,6 +98,38 @@ Options:
       console.log(`  Missions indexed: ${missions.length}`);
       for (const m of missions) {
         console.log(`    ${m.slug}: ${m.last_indexed_at}`);
+
+        // Show task stats for this mission
+        const tasksData = db
+          .prepare('SELECT COUNT(*) as count FROM tasks WHERE mission_slug = ?')
+          .all(m.slug) as { count: number }[];
+        const taskCount = tasksData[0]?.count ?? 0;
+
+        // Show gap stats
+        const gapsData = db
+          .prepare(
+            'SELECT COUNT(*) as total, SUM(CASE WHEN resolved = 0 THEN 1 ELSE 0 END) as open FROM gaps WHERE mission_slug = ?'
+          )
+          .get(m.slug) as { total: number; open: number } | undefined;
+        const gapsTotal = gapsData?.total ?? 0;
+        const gapsOpen = gapsData?.open ?? 0;
+
+        // Show refactor stats
+        const refactorData = db
+          .prepare(
+            'SELECT COUNT(*) as total, SUM(CASE WHEN resolved = 0 THEN 1 ELSE 0 END) as open FROM refactor_items WHERE mission_slug = ?'
+          )
+          .get(m.slug) as { total: number; open: number } | undefined;
+        const refactorTotal = refactorData?.total ?? 0;
+        const refactorOpen = refactorData?.open ?? 0;
+
+        console.log(`      Tasks:    ${taskCount}`);
+        if (gapsTotal > 0) {
+          console.log(`      Gaps:     ${gapsOpen}/${gapsTotal} open`);
+        }
+        if (refactorTotal > 0) {
+          console.log(`      Refactor: ${refactorOpen}/${refactorTotal} open`);
+        }
       }
       return 0;
     }

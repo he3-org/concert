@@ -295,6 +295,8 @@ async function printCacheInfo(cwd: string): Promise<void> {
   const hitsDisplay = total > 0 ? `${stats.hits}/${stats.misses}` : '—';
 
   let tasksCount = '—';
+  let gapsCount = '—';
+  let refactorCount = '—';
   if (handle) {
     const tasksHandle = await openCache(cwd);
     if (tasksHandle) {
@@ -308,6 +310,16 @@ async function printCacheInfo(cwd: string): Promise<void> {
           | { count: number }
           | undefined;
         tasksCount = countRow ? countRow.count.toString() : '—';
+
+        const gapsRow = db
+          .prepare('SELECT COUNT(*) as count FROM gaps WHERE resolved = 0')
+          .get() as { count: number } | undefined;
+        gapsCount = gapsRow ? gapsRow.count.toString() : '—';
+
+        const refactorRow = db
+          .prepare('SELECT COUNT(*) as count FROM refactor_items WHERE resolved = 0')
+          .get() as { count: number } | undefined;
+        refactorCount = refactorRow ? refactorRow.count.toString() : '—';
       } finally {
         tasksHandle.close();
       }
@@ -321,6 +333,8 @@ async function printCacheInfo(cwd: string): Promise<void> {
   console.log(`  Last build:  ${builtAt}`);
   console.log(`  Hits/Miss:   ${hitsDisplay} (this process)`);
   console.log(`  Tasks:       ${tasksCount}`);
+  console.log(`  Gaps:        ${gapsCount} open`);
+  console.log(`  Refactor:    ${refactorCount} open`);
 
   // Mutation events section
   if (handle) {

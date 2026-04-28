@@ -5,6 +5,7 @@ import { parseSections, findModifiedMarkers } from '../lib/markdown-section.js';
 import { parseAcceptance } from '../lib/section-edit.js';
 import { parseTaskFrontmatter } from '../lib/task-frontmatter.js';
 import { listMissions } from '../lib/missions.js';
+import { parseGapItems, parseRefactorItems } from '../lib/review-parse.js';
 
 export interface IndexResult {
   missionSlug: string;
@@ -12,6 +13,8 @@ export interface IndexResult {
   sectionsIndexed: number;
   markersFound: number;
   tasksIndexed: number;
+  gapsIndexed: number;
+  refactorItemsIndexed: number;
 }
 
 export function indexMission(
@@ -31,6 +34,8 @@ export function indexMission(
   let sectionsIndexed = 0;
   let markersFound = 0;
   let tasksIndexed = 0;
+  let gapsIndexed = 0;
+  let refactorItemsIndexed = 0;
 
   const stageFile = path.join(missionPath, 'stage.txt');
   const stage = fs.existsSync(stageFile) ? fs.readFileSync(stageFile, 'utf-8').trim() : null;
@@ -48,6 +53,8 @@ export function indexMission(
   db.prepare('DELETE FROM sections WHERE mission_slug = ?').run(missionSlug);
   db.prepare('DELETE FROM modified_markers WHERE mission_slug = ?').run(missionSlug);
   db.prepare('DELETE FROM tasks WHERE mission_slug = ?').run(missionSlug);
+  db.prepare('DELETE FROM gaps WHERE mission_slug = ?').run(missionSlug);
+  db.prepare('DELETE FROM refactor_items WHERE mission_slug = ?').run(missionSlug);
 
   for (const file of mdFiles) {
     const filePath = path.join(missionPath, file.name);
@@ -175,7 +182,67 @@ export function indexMission(
     }
   }
 
-  return { missionSlug, documentsIndexed, sectionsIndexed, markersFound, tasksIndexed };
+  // Gap indexing
+  const reviewPath = path.join(missionPath, 'DEVELOPMENT-REVIEW.md');
+  if (fs.existsSync(reviewPath)) {
+    const reviewContent = fs.readFileSync(reviewPath, 'utf-8');
+    const gapItems = parseGapItems(reviewContent);
+    for (const item of gapItems) {
+      db.prepare(
+        'INSERT INTO gaps (mission_slug, doc_path, severity, text, resolved, line_number, indexed_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      ).run(
+        missionSlug,
+        'DEVELOPMENT-REVIEW.md',
+        item.severity,
+        item.text,
+        item.resolved ? 1 : 0,
+        item.lineNumber,
+        now
+      );
+      gapsIndexed++;
+    }
+  }
+
+  // Refactor-item indexing
+  const refactorFiles = mdFiles
+    .filter((e) => e.name.match(/^REFACTOR-PLAN-.*\.md$/))
+    .map((e) => ({
+      name: e.name,
+      path: path.join(missionPath, e.name),
+      stat: fs.statSync(path.join(missionPath, e.name)),
+    }));
+
+  if (refactorFiles.length > 0) {
+    const latest = refactorFiles.reduce((prev, curr) =>
+      curr.stat.mtimeMs > prev.stat.mtimeMs ? curr : prev
+    );
+    const refactorContent = fs.readFileSync(latest.path, 'utf-8');
+    const refactorItems = parseRefactorItems(refactorContent);
+    for (const item of refactorItems) {
+      db.prepare(
+        'INSERT INTO refactor_items (mission_slug, doc_path, priority, text, resolved, line_number, indexed_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      ).run(
+        missionSlug,
+        latest.name,
+        item.priority,
+        item.text,
+        item.resolved ? 1 : 0,
+        item.lineNumber,
+        now
+      );
+      refactorItemsIndexed++;
+    }
+  }
+
+  return {
+    missionSlug,
+    documentsIndexed,
+    sectionsIndexed,
+    markersFound,
+    tasksIndexed,
+    gapsIndexed,
+    refactorItemsIndexed,
+  };
 }
 
 export function indexAll(

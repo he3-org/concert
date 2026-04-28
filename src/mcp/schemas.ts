@@ -200,3 +200,212 @@ export const listModifiedSectionsOutputSchema = {
     additionalProperties: false,
   },
 } as const;
+
+// === concert.mark_section_modified ===
+
+export const markSectionModifiedInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    doc: { type: 'string', description: 'Document path relative to mission' },
+    section: { type: 'string', description: 'Section slug' },
+    source: { type: 'string', description: 'Optional source reference' },
+    mission: { type: 'string', description: 'Mission slug (default: active)' },
+  },
+  required: ['doc', 'section'],
+  additionalProperties: false,
+} as const;
+
+export const markSectionModifiedOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' },
+    doc: { type: 'string' },
+    section: { type: 'string' },
+    alreadyMarked: { type: 'boolean' },
+    error: { type: 'string' },
+  },
+  required: ['ok', 'doc', 'section'],
+  additionalProperties: false,
+} as const;
+
+// === concert.clear_section_modified ===
+
+export const clearSectionModifiedInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    doc: { type: 'string', description: 'Document path relative to mission' },
+    section: { type: 'string', description: 'Section slug' },
+    mission: { type: 'string', description: 'Mission slug (default: active)' },
+  },
+  required: ['doc', 'section'],
+  additionalProperties: false,
+} as const;
+
+export const clearSectionModifiedOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' },
+    doc: { type: 'string' },
+    section: { type: 'string' },
+    removed: { type: 'boolean' },
+    error: { type: 'string' },
+  },
+  required: ['ok', 'doc', 'section'],
+  additionalProperties: false,
+} as const;
+
+// === concert.replace_section ===
+
+export const replaceSectionInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    doc: { type: 'string', description: 'Document path relative to mission' },
+    section: { type: 'string', description: 'Section slug' },
+    newBody: { type: 'string', description: 'New section body content' },
+    mission: { type: 'string', description: 'Mission slug (default: active)' },
+  },
+  required: ['doc', 'section', 'newBody'],
+  additionalProperties: false,
+} as const;
+
+export const replaceSectionOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' },
+    doc: { type: 'string' },
+    section: { type: 'string' },
+    bytesWritten: { type: 'number' },
+    error: { type: 'string' },
+  },
+  required: ['ok', 'doc', 'section'],
+  additionalProperties: false,
+} as const;
+
+// === concert.append_telemetry ===
+
+export const appendTelemetryInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    record: {
+      type: 'object',
+      properties: {
+        task_file: { type: 'string' },
+        task_index: { type: 'number' },
+        phase: { type: 'number' },
+        model_assigned: { type: 'string', enum: ['haiku', 'sonnet', 'opus'] },
+        confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
+        review_result: { type: 'string', enum: ['PASS', 'NTH', 'MIN', 'MAJ', 'CRIT', 'none'] },
+        revision_count: { type: 'number' },
+        skills_loaded: { type: 'array', items: { type: 'string' } },
+        files_changed: { type: 'number' },
+        completed_at: { type: 'string' },
+      },
+      required: [
+        'task_file',
+        'task_index',
+        'phase',
+        'model_assigned',
+        'confidence',
+        'review_result',
+        'revision_count',
+        'skills_loaded',
+        'files_changed',
+        'completed_at',
+      ],
+      additionalProperties: false,
+    },
+    mission: { type: 'string', description: 'Mission slug (default: active)' },
+  },
+  required: ['record'],
+  additionalProperties: false,
+} as const;
+
+export const appendTelemetryOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' },
+    count: { type: 'number' },
+    error: { type: 'string' },
+  },
+  required: ['ok'],
+  additionalProperties: false,
+} as const;
+
+// === concert.append_history ===
+
+export const appendHistoryInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    entry: {
+      type: 'object',
+      properties: {
+        action: { type: 'string' },
+        timestamp: { type: 'string' },
+        details: { type: 'string' },
+      },
+      required: ['action', 'timestamp', 'details'],
+      additionalProperties: false,
+    },
+    mission: { type: 'string', description: 'Mission slug (default: active)' },
+  },
+  required: ['entry'],
+  additionalProperties: false,
+} as const;
+
+export const appendHistoryOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' },
+    count: { type: 'number' },
+    error: { type: 'string' },
+  },
+  required: ['ok'],
+  additionalProperties: false,
+} as const;
+
+// === concert.alignment_check ===
+
+export const alignmentCheckInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    mission: { type: 'string', description: 'Mission slug (default: active)' },
+  },
+  additionalProperties: false,
+} as const;
+
+export const alignmentCheckOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' },
+    missingDocs: { type: 'array', items: { type: 'string' } },
+    findings: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          severity: { type: 'string', enum: ['critical', 'major', 'minor', 'info'] },
+          kind: { type: 'string' },
+          message: { type: 'string' },
+          docs: { type: 'array', items: { type: 'string' } },
+        },
+        required: ['severity', 'kind', 'message', 'docs'],
+        additionalProperties: false,
+      },
+    },
+    error: { type: 'string' },
+  },
+  required: ['ok'],
+  additionalProperties: false,
+} as const;

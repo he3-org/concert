@@ -13,5 +13,5 @@ export default defineConfig({
   },
   // Optional peer dep: lazy-loaded by src/mcp/server.ts. Must NOT be bundled
   // so users who skip MCP avoid pulling in the SDK at install time.
-  external: ['@modelcontextprotocol/sdk'],
+  external: ['@modelcontextprotocol/sdk', 'better-sqlite3'],
 });

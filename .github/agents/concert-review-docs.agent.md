@@ -32,6 +32,7 @@ Detect at most one of: `AskUserQuestion` (Claude Code), `ask_user` (Copilot CLI)
 
 ## Boot sequence
 
+0. **Prefer cache-aware tools:** Use `concert get-status --json` and `concert list-modified-sections --json` for status/marker reads where available.
 1. `.concert/state.json` → current mission and mission path.
 2. `<mission_path>/DEVELOPMENT-STATUS.md` if present.
 3. Resolve target document from command args or context.
@@ -40,21 +41,9 @@ Detect at most one of: `AskUserQuestion` (Claude Code), `ask_user` (Copilot CLI)
 
 Markers tell downstream agents which sections changed so re-evaluation is selective.
 
-**Format (preferred, per-section):**
+**Marking changed sections:**
 
-```
-<!-- CONCERT:MODIFIED:<section-slug> — Reviewed but not yet re-evaluated -->
-```
-
-Place the marker on its own line **immediately after the H2 heading** of the modified section. `<section-slug>` = the H2 heading text, lowercased, with non-alphanumerics replaced by `-` (e.g. `## Core Capabilities` → `core-capabilities`). Multiple markers per document are expected.
-
-**Legacy (whole-doc):**
-
-```
-<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->
-```
-
-Placed once after the H1. Equivalent to "all sections modified". Re-evaluation must accept either form.
+Use `concert mark-section-modified <doc> <section>` for each modified section. The tool inserts or refreshes a per-section marker. Legacy whole-doc markers remain supported for backward compatibility.
 
 ## Command: `review [<doc>] [--batch]`
 
@@ -71,7 +60,7 @@ Placed once after the H1. Equivalent to "all sections modified". Re-evaluation m
 1. **Locate document.** Resolve to `<mission_path>/<TYPE>.md`. Read it. If missing, report and stop.
 2. **Initialise tracking.** `modified_sections = []`.
 3. **Run the chosen mode** (Conversational or Batch — see below).
-4. **Stamp markers.** For each slug in `modified_sections`, ensure a `CONCERT:MODIFIED:<slug>` marker is on the line directly after that section's H2 heading (insert if missing; do not duplicate). If the legacy whole-doc marker exists and the document was edited, leave it in place — re-evaluation will normalise.
+4. **Stamp markers.** For each slug in `modified_sections`: `concert mark-section-modified <doc> <slug>`.
 5. **Auto-alignment.** If `modified_sections` is non-empty AND at least one of VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md exists, run `/concert-alignment check` immediately as the final step. (No flag, no opt-out.) Append the alignment summary to the wrap-up output.
 6. **Wrap up.** Use the template below.
 
@@ -185,7 +174,7 @@ If a document has the legacy whole-doc marker, treat it as "every section modifi
 
 ### Steps
 
-1. **Scan.** Read every mission document in `<mission_path>/`. For each, collect the set of slugs from `CONCERT:MODIFIED:<slug>` markers, plus a synthetic `*` if the legacy whole-doc marker is present.
+1. **Scan.** Use `concert list-modified-sections --json` to collect marked documents and their section slugs.
 2. **Compute impacted set.** Walk the table above. The result is the set of downstream documents that must be re-evaluated. (A document marked modified is _itself_ in the impacted set unless it is purely internal — VISION/REQUIREMENTS/ARCHITECTURE/UX-DESIGN are always also re-evaluated for their own changes; ALIGNMENT and PLAN are always re-evaluated when modified.)
 3. **Re-evaluate in pipeline order** (skip docs not in the impacted set):
    - VISION.md → ripple effects, new assumptions, scope implications, new risks, success-criteria impact, constraint conflicts, completeness. Append concerns as `- [ ]` to `## Questions`.
@@ -194,7 +183,7 @@ If a document has the legacy whole-doc marker, treat it as "every section modifi
    - UX-DESIGN.md → requirements coverage, flow consistency, component coherence, accessibility, architecture alignment, scope. Append to `## Open Questions`.
    - ALIGNMENT.md → re-run all alignment checks; mark resolved, add new, update matrix and counts.
    - PLAN.md → requirements coverage, dependency validity, wave ordering, model-tier appropriateness, file coverage, acceptance-criteria validity, scope. Append to `## Open Questions`.
-4. **Clear markers.** After each successful per-doc re-evaluation, remove all `CONCERT:MODIFIED:*` and legacy whole-doc markers from that document.
+4. **Clear markers.** After each successful per-doc re-evaluation: `concert clear-section-modified <doc> <slug>` for each marked slug.
 5. **Report** using the template below.
 
 ### Report template

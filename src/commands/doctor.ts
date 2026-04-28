@@ -234,12 +234,101 @@ export async function runDoctor(cwd: string): Promise<number> {
   if (reports.length === 0) {
     process.stdout.write(`No Concert-managed paths found under ${cwd}.\n`);
     process.stdout.write(`Run "concert init" first, or change to a Concert-enabled repository.\n`);
+    // Still surface cache state — useful when debugging from outside a mission.
+    await printCacheInfo(cwd);
     return 0;
   }
 
   const output = renderReport(reports);
   process.stdout.write(output);
 
+  // Cache section
+  await printCacheInfo(cwd);
+
   const anyOver = reports.some((c) => c.files.some((f) => f.overLines || f.overKb));
   return anyOver ? 1 : 0;
+}
+
+async function printCacheInfo(cwd: string): Promise<void> {
+  const { openCache } = await import('../cache/index.js');
+  const { getCacheStats } = await import('../cache/stats.js');
+  const path = await import('node:path');
+  const fs = await import('node:fs');
+
+  const dbPath = path.default.join(cwd, '.concert', 'index.sqlite');
+  let status: string;
+  let schema: string;
+  let builtAt: string;
+
+  const handle = await openCache(cwd);
+  if (!handle) {
+    if (process.env.CONCERT_CACHE_DISABLED === '1') {
+      status = 'disabled (CONCERT_CACHE_DISABLED=1)';
+    } else {
+      status = 'sdk-not-installed';
+    }
+    schema = '—';
+    builtAt = '—';
+  } else {
+    try {
+      status = fs.default.existsSync(dbPath) ? 'present' : 'missing';
+      const db = handle.db as {
+        prepare(sql: string): {
+          get(...args: unknown[]): unknown;
+        };
+      };
+      const schemaRow = db.prepare('SELECT value FROM meta WHERE key = ?').get('schema_version') as
+        | { value: string }
+        | undefined;
+      const builtRow = db.prepare('SELECT value FROM meta WHERE key = ?').get('built_at') as
+        | { value: string }
+        | undefined;
+      schema = schemaRow ? `v${schemaRow.value}` : '—';
+      builtAt = builtRow?.value || '—';
+    } finally {
+      handle.close();
+    }
+  }
+
+  const stats = getCacheStats();
+  const total = stats.hits + stats.misses;
+  const hitsDisplay = total > 0 ? `${stats.hits}/${stats.misses}` : '—';
+
+  console.log('\nCache:');
+  console.log(`  Path:        ${dbPath}`);
+  console.log(`  Status:      ${status}`);
+  console.log(`  Schema:      ${schema}`);
+  console.log(`  Last build:  ${builtAt}`);
+  console.log(`  Hits/Miss:   ${hitsDisplay} (this process)`);
+
+  // Mutation events section
+  if (handle) {
+    const eventsHandle = await openCache(cwd);
+    if (eventsHandle) {
+      try {
+        const db = eventsHandle.db as {
+          prepare(sql: string): {
+            get(...args: unknown[]): unknown;
+          };
+        };
+        const countRow = db.prepare('SELECT COUNT(*) as count FROM events').get() as
+          | { count: number }
+          | undefined;
+        const lastRow = db.prepare('SELECT ts FROM events ORDER BY id DESC LIMIT 1').get() as
+          | { ts: string }
+          | undefined;
+        const count = countRow?.count ?? 0;
+        const last = lastRow?.ts ?? '—';
+        console.log('\nMutation events:');
+        console.log(`  Total:   ${count}`);
+        console.log(`  Last:    ${last}`);
+      } finally {
+        eventsHandle.close();
+      }
+    }
+  } else {
+    console.log('\nMutation events:');
+    console.log(`  Total:   ${status === 'sdk-not-installed' ? 'sdk-not-installed' : '—'}`);
+    console.log(`  Last:    —`);
+  }
 }

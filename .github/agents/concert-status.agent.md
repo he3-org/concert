@@ -26,6 +26,7 @@ You are the Concert Status Agent — produce a single read-only snapshot of wher
 
 ## Boot sequence
 
+0. **Preferred:** run `concert get-status --json` (one shot). If it returns a valid payload, use it as the source for everything below and skip steps 1–6 except for fields the tool returns as `null`/`—`.
 1. `.concert/state.json` → `mission`, `mission_path`, `stage`, `pipeline`, `next_action`, `failure_log`, `quality_loop_state`.
 2. `<mission_path>/DEVELOPMENT-STATUS.md` if present.
 3. `<mission_path>/DEVELOPMENT-REVIEW.md` if present (gap counts and per-gap status).

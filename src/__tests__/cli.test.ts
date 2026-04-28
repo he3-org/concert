@@ -40,6 +40,8 @@ describe('CLI stub', () => {
     expect(result.stdout).toContain('skills');
     expect(result.stdout).toContain('rules');
     expect(result.stdout).toContain('doctor');
+    expect(result.stdout).toContain('serve');
+    expect(result.stdout).toContain('get-status');
   });
 
   it('-h prints usage and exits 0', () => {
@@ -138,5 +140,25 @@ describe('CLI stub', () => {
     const result = runCLI('rules search');
     expect(result.exitCode).toBe(2);
     expect(result.stderr).toContain('search requires a term');
+  });
+
+  it('serve --inspect prints JSON tool catalogue and exits 0', () => {
+    if (!fs.existsSync(CLI_PATH)) return;
+    const result = runCLI('serve --inspect');
+    expect(result.exitCode).toBe(0);
+    const parsed = JSON.parse(result.stdout);
+    expect(Array.isArray(parsed)).toBe(true);
+    expect(parsed.length).toBeGreaterThan(0);
+    const names = parsed.map((t: { name: string }) => t.name);
+    expect(names).toContain('concert.get_status');
+  });
+
+  it('unknown command lists new commands in error', () => {
+    if (!fs.existsSync(CLI_PATH)) return;
+    const result = runCLI('unknown-cmd');
+    expect(result.exitCode).toBe(2);
+    expect(result.stderr).toContain('serve');
+    expect(result.stderr).toContain('get-status');
+    expect(result.stderr).toContain('list-missions');
   });
 });

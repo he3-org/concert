@@ -58,6 +58,19 @@ npx concert doctor
 
 Walks all Concert-managed files (agents, skills, slash commands, rules, instruction files) and reports lines, KB, and estimated tokens per file and per category. Flags any file that exceeds the size targets in `docs/TOKEN-OPTIMIZATION.md` (e.g. agents > 250 lines or > 12 KB, skills > 150 lines or > 6 KB). Exits non-zero when any file is over a target so you can wire it into CI as a guardrail.
 
+### MCP Server & CLI Inspection Tools
+
+Concert ships a read-only MCP server and mirrored CLI verbs for querying mission state:
+
+```bash
+concert serve                 # Start MCP stdio server
+concert get-status --json     # Mission status snapshot
+concert get-state --json      # State from state.json
+concert list-missions         # All missions
+```
+
+See [`docs/MCP.md`](docs/MCP.md) for client config and tool reference.
+
 ## SDLC Workflow
 
 Concert structures development as a pipeline of specialized agents. Each agent produces a document that feeds the next stage. You drive each stage by invoking the corresponding agent.

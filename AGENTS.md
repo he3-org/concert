@@ -27,18 +27,23 @@ Run only the existing scripts. Do not introduce new linters, formatters, or test
 | `src/commands/skills.ts`              | `concert skills` — fetch skills from `concert-assets`                   |
 | `src/commands/rules.ts`               | `concert rules` — fetch rules from `concert-assets`                     |
 | `src/commands/doctor.ts`              | `concert doctor` — token-cost report on managed files                   |
+| `src/commands/serve.ts`               | `concert serve` — MCP stdio server + `--inspect`                        |
+| `src/mcp/`                            | MCP server, tool registry, schemas, tool implementations                |
 | `src/lib/copy.ts`                     | File copy, version stamping, stale-file cleanup                         |
 | `src/lib/config.ts`                   | JSONC config read / write / merge                                       |
 | `src/lib/state.ts`                    | `state.json` read / write                                               |
 | `src/lib/version.ts`                  | Package version + managed-header stamping                               |
 | `src/lib/merge.ts`                    | Surgical merge for config and state                                     |
 | `src/lib/claude-section.ts`           | Canonical Concert section for `CLAUDE.md`                               |
+| `src/lib/markdown-section.ts`         | Pure functions for parsing markdown sections and MODIFIED markers       |
+| `src/lib/missions.ts`                 | Mission enumeration and active mission resolution                       |
 | `src/__tests__/`                      | Vitest tests                                                            |
 | `templates/`                          | Files copied verbatim into target repos on `init`                       |
 | `.github/agents/*.agent.md`           | Concert agent definitions (managed, version-stamped)                    |
 | `.github/skills/*/SKILL.md`           | Skills authored in this repo                                            |
 | `.claude/commands/`, `.claude/rules/` | Claude Code slash commands and rules                                    |
 | `docs/`                               | Human-facing docs (e.g. `TOKEN-OPTIMIZATION.md`)                        |
+| `docs/MCP.md`                         | MCP server documentation, client config, tool reference                 |
 
 ## Key facts
 

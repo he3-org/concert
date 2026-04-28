@@ -1,0 +1,102 @@
+# Concert MCP Server
+
+## What this is
+
+Concert ships a read-only MCP (Model Context Protocol) server that exposes mission state, status, and metadata as structured tools. This lets AI assistants query Concert's live mission data directly instead of reading multiple files and parsing markdown — cutting token costs and improving reliability.
+
+## Install
+
+```bash
+npm install -g @he3-org/concert @modelcontextprotocol/sdk
+```
+
+The CLI verbs (`get-status`, `get-state`, etc.) work without the SDK; only `concert serve` requires it.
+
+## Tools
+
+| Tool                             | Description                                                          | Input Schema                 | CLI Mirror                            |
+| -------------------------------- | -------------------------------------------------------------------- | ---------------------------- | ------------------------------------- |
+| `concert.get_status`             | Comprehensive status snapshot (stage, modified docs, gaps, refactor) | `{ mission?: string }`       | `concert get-status [--mission]`      |
+| `concert.get_state`              | Mission state from `state.json` (progress, failures, next action)    | `{ mission?: string }`       | `concert get-state [--mission]`       |
+| `concert.list_missions`          | List all missions with metadata                                      | `{}`                         | `concert list-missions`               |
+| `concert.get_section`            | Get markdown section by slug from a mission doc                      | `{ doc, section, mission? }` | `concert get-section <doc> <section>` |
+| `concert.list_modified_sections` | List documents with `CONCERT:MODIFIED` markers                       | `{ mission?: string }`       | `concert list-modified-sections`      |
+
+All tools return JSON. See `concert serve --inspect` for full schemas.
+
+## Client config
+
+### Claude Desktop
+
+Add to `~/.config/claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "concert": {
+      "command": "concert",
+      "args": ["serve"]
+    }
+  }
+}
+```
+
+### GitHub Copilot (VS Code)
+
+Add to `.vscode/settings.json` in your project:
+
+```json
+{
+  "github.copilot.mcp.servers": {
+    "concert": {
+      "command": "concert",
+      "args": ["serve"]
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to Cursor MCP settings:
+
+```json
+{
+  "concert": {
+    "command": "concert",
+    "args": ["serve"]
+  }
+}
+```
+
+### Codex CLI
+
+Add to Codex MCP config:
+
+```json
+{
+  "servers": {
+    "concert": {
+      "command": "concert",
+      "args": ["serve"]
+    }
+  }
+}
+```
+
+## Token measurements
+
+**Before S1 (file-based):** `/concert-status` reads 5–8 files (VISION, REQUIREMENTS, DEVELOPMENT-STATUS, DEVELOPMENT-REVIEW, REFACTOR-PLAN-\*, state.json, git HEAD) totaling ~3,500–6,000 input tokens depending on mission complexity.
+
+**After S1 (MCP):** `concert.get_status` returns a ~600-byte JSON snapshot (~150 tokens) — a **20–40× reduction**. The agent still has access to the same information but trades sequential file reads for a single structured tool call.
+
+Methodology: compare total input tokens for the `concert-status` agent before and after integrating `concert.get_status`. Measured on a medium mission (3 phases, 12 tasks, DEVELOPMENT-REVIEW with 8 gaps, REFACTOR-PLAN with 6 items). The MCP tool compresses all status into one compact payload without losing fidelity.
+
+## Use cases
+
+- **Status checks:** `concert.get_status` replaces reading 5+ files and parsing markdown.
+- **Multi-mission orchestration:** `concert.list_missions` + `concert.get_state` for each.
+- **Targeted section reads:** `concert.get_section` fetches only the section you need.
+- **Modified-doc triage:** `concert.list_modified_sections` identifies what needs review.
+
+All tools are read-only and idempotent — safe to call repeatedly or in parallel.

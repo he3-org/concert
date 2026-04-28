@@ -1,6 +1,6 @@
 {
   "name": "@he3-org/concert",
-  "version": "1.21.0",
+  "version": "1.22.0",
   "description": "Opinionated agentic development lifecycle orchestrator",
   "type": "module",
   "bin": {
@@ -45,6 +45,9 @@
   },
   "dependencies": {
     "jsonc-parser": "^3.3.1"
+  },
+  "optionalDependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -372,7 +372,7 @@ async function printCacheInfo(cwd: string): Promise<void> {
             .all() as { tool: string; calls: number; errors: number; avg_ms: number }[];
 
           if (perToolRows.length > 0) {
-            console.log('\n  Per-tool (last 100 events):');
+            console.log('\n  Per-tool (all events):');
             for (const row of perToolRows) {
               console.log(
                 `    ${row.tool.padEnd(28)} calls=${row.calls}  errors=${row.errors}  avg=${

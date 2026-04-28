@@ -143,86 +143,19 @@ export interface ConcertState {
   next_steps: string[];
 }
 
-// === Config Schema (DR-002) ===
+// === Config Schema ===
+//
+// `concert.jsonc` is intentionally tiny — only fields that are read by
+// Concert itself live here. The historical schema (execution, gates,
+// model_profiles, etc.) was never read by any code path and has been
+// removed. Add a field here only when a CLI command or agent actually
+// reads it.
 
 export type ModelTier = 'haiku' | 'sonnet' | 'opus';
 
 export interface ConcertConfig {
   project_name: string;
   concert_version: string;
-
-  project: {
-    platforms: string[];
-  };
-
-  git: {
-    base_branch: string;
-    production_branch: string;
-    pre_v1: boolean;
-    commit_format: string;
-    pr_target: string;
-  };
-
-  status_display: string;
-  interactive_mode: 'claude_code_only' | 'interactive_cli' | 'any';
-
-  execution: {
-    mode: string;
-    max_tasks_per_file: number;
-    max_files_per_phase: number;
-    max_review_iterations?: number;
-  };
-
-  review_triggers: {
-    on_phase_complete: boolean;
-    on_dependency_boundary: boolean;
-    on_inferred_breakpoint: boolean;
-    after_n_files: number;
-    after_n_commits: number;
-  };
-
-  gates: {
-    task_checker: boolean;
-    regression?: boolean;
-    acceptance_testing: boolean;
-  };
-
-  model_profiles: {
-    quality: string;
-    balanced: string;
-    budget: string;
-  };
-
-  task_models: {
-    opus: string;
-    sonnet: string;
-    haiku: string;
-  };
-
-  skills: {
-    auto_discover: boolean;
-    enabled: string[];
-  };
-
-  actions: {
-    auto_continue: boolean;
-  };
-
-  telemetry: {
-    enabled: boolean;
-    generate_cost_report: boolean;
-  };
-
-  self_improvement: {
-    enabled: boolean;
-  };
-
-  user_guidance: {
-    always_show_next_steps: boolean;
-    include_file_paths: boolean;
-    include_copy_paste_commands: boolean;
-    show_both_cli_and_ui_options: boolean;
-  };
 }
 
 // === Task Frontmatter (DR-006) ===
@@ -230,6 +163,7 @@ export interface ConcertConfig {
 export interface TaskFrontmatter {
   task: string;
   title: string;
+  phase?: string;
   depends_on: string[];
   wave: number;
   model: ModelTier;

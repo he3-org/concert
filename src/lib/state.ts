@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import type { ConcertState, HistoryEntry } from '../types.js';
+import type { ConcertState, HistoryEntry, TelemetryRecord } from '../types.js';
+import { atomicWriteFile } from './atomic-write.js';
 
 const STATE_PATH = '.concert/state.json';
 
@@ -35,9 +36,7 @@ export function writeState(cwd: string, state: ConcertState): void {
     fs.mkdirSync(dir, { recursive: true });
   }
   const content = JSON.stringify(state, null, 2) + '\n';
-  const tmpPath = statePath + '.tmp';
-  fs.writeFileSync(tmpPath, content, 'utf-8');
-  fs.renameSync(tmpPath, statePath);
+  atomicWriteFile(statePath, content);
 }
 
 /**
@@ -50,6 +49,32 @@ export function addHistoryEntry(state: ConcertState, action: string, details: st
     details,
   };
   state.history.push(entry);
+}
+
+/**
+ * Append telemetry record to state. Returns new array length.
+ */
+export function appendTelemetry(cwd: string, record: TelemetryRecord): number {
+  const state = readState(cwd);
+  if (!state) {
+    throw new Error('state.json not found');
+  }
+  state.telemetry.push(record);
+  writeState(cwd, state);
+  return state.telemetry.length;
+}
+
+/**
+ * Append history entry to state. Returns new array length.
+ */
+export function appendHistory(cwd: string, entry: HistoryEntry): number {
+  const state = readState(cwd);
+  if (!state) {
+    throw new Error('state.json not found');
+  }
+  state.history.push(entry);
+  writeState(cwd, state);
+  return state.history.length;
 }
 
 /**

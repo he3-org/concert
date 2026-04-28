@@ -214,7 +214,7 @@ Re-read UX-DESIGN.md after edits (typically by `concert-review-docs`) and surfac
 1. Read `.concert/state.json` → mission path. Read `UX-DESIGN.md`, `REQUIREMENTS.md`, `VISION.md`, `ARCHITECTURE.md` (if present).
 2. Analyse for: requirements coverage, flow consistency, component coherence, accessibility compliance, architecture alignment, UX consistency, scope alignment.
 3. For each new concern, append `- [ ]` to `## Open Questions` referencing the flow, component, or section. Do not re-open `[x]` items unless newly invalid.
-4. Remove `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` if present.
+4. Remove all `CONCERT:MODIFIED` markers (whole-doc legacy and `CONCERT:MODIFIED:<slug>` per-section) if present.
 5. Write the file.
 6. Output the report below.
 

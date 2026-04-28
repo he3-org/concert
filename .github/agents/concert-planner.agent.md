@@ -214,7 +214,7 @@ Re-read PLAN.md and TASK files after edits (typically by `concert-review-docs`) 
 1. Read `.concert/state.json` → mission path. Read `PLAN.md`, all TASK files from `phases/`, `REQUIREMENTS.md`, `ARCHITECTURE.md`, `VISION.md`, `UX-DESIGN.md` (if present).
 2. Analyse for: requirements coverage, dependency validity, wave ordering, model tier appropriateness, file coverage, acceptance criteria validity, scope alignment.
 3. For each new concern, append `- [ ]` to `## Open Questions` in PLAN.md referencing task, phase, or requirement. Do not re-open `[x]` items unless newly invalid.
-4. Remove `<!-- CONCERT:MODIFIED — Reviewed but not yet re-evaluated -->` from PLAN.md if present.
+4. Remove all `CONCERT:MODIFIED` markers from PLAN.md (whole-doc legacy and `CONCERT:MODIFIED:<slug>` per-section) if present.
 5. Write PLAN.md.
 6. Output the report below.
 

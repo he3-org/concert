@@ -1,3 +1,6 @@
 node_modules/
 dist/
 *.tsbuildinfo
+.concert/index.sqlite
+.concert/index.sqlite-shm
+.concert/index.sqlite-wal

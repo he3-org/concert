@@ -5,61 +5,10 @@ import { readConfigRaw, writeConfig, readConfig, modifyConfigField } from '../li
 import { readState, writeState } from '../lib/state.js';
 import { getPackageVersion } from '../lib/version.js';
 import { mergeState, mergeConfig } from '../lib/merge.js';
-import { CLAUDE_SECTION_START, CLAUDE_SECTION_END } from '../types.js';
+import { buildConcertSection } from '../lib/claude-section.js';
 import * as jsonc from 'jsonc-parser';
 
 const CONCERT_DIR = '.concert';
-
-/**
- * Build the Concert CLAUDE.md section content.
- */
-function buildConcertSection(): string {
-  return `${CLAUDE_SECTION_START}
-
-## Concert
-
-This project uses [Concert](https://github.com/he3-org/concert) for agentic development orchestration.
-
-### Commands
-
-- \`/concert-vision\` — Create a comprehensive VISION.md from a feature description
-
-### Skills
-
-Browse and install optional Copilot skills (kept in [\`he3-org/concert-assets\`](https://github.com/he3-org/concert-assets)) into \`.github/skills/\`:
-
-- \`npx @he3-org/concert skills list\` — list available skills
-- \`npx @he3-org/concert skills search <term>\` — find a skill by name or description
-- \`npx @he3-org/concert skills add <name>...\` — install one or more skills
-
-Installed skill files live under \`.github/skills/<name>/\` and are tracked by your repo (not managed by \`concert update\`).
-
-### Rules
-
-Browse and install optional Claude Code rules from the same assets repo into \`.claude/rules/\`:
-
-- \`npx @he3-org/concert rules list\` — list available rules
-- \`npx @he3-org/concert rules search <term>\` — find a rule by name or description
-- \`npx @he3-org/concert rules add <name>...\` — install one or more rules
-
-Installed rule files live under \`.claude/rules/<name>.md\` and are tracked by your repo (not managed by \`concert update\`).
-
-### State
-
-- Configuration: \`concert.jsonc\`
-- State: \`.concert/state.json\`
-
-### Do Not Modify
-
-The following paths are managed by Concert and must not be modified by other agents, refactoring tools, or automated processes. They will be overwritten on \`concert update\`:
-
-- \`.github/agents/concert-*.agent.md\`
-- \`.claude/commands/concert-*.md\`
-- \`.claude/rules/concert-*.md\`
-- \`concert.jsonc\` (modify manually only — Concert preserves your changes on update)
-
-${CLAUDE_SECTION_END}`;
-}
 
 /**
  * Update CLAUDE.md Concert section or append it if missing.

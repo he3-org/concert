@@ -108,7 +108,7 @@ describe('concert push e2e', () => {
       expect(code).toBe(0);
       const output = stdoutOutput.join('');
       expect(output).toContain('Next steps');
-      expect(output).toContain('concert-continue');
+      expect(output).toContain('concert-develop');
     } finally {
       process.stdout.write = origStdout;
       process.stderr.write = origStderr;

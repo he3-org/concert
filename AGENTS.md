@@ -6,8 +6,6 @@ Guidance for AI coding agents working on the Concert repository. Optimised for l
 
 `@he3-org/concert` is a CLI npm package (TypeScript, built with `tsup`, tested with `vitest`) that installs AI agent definitions and slash commands into target repos. Three commands: `init`, `update`, `push`. Skills and rules are fetched on demand from `he3-org/concert-assets`.
 
-See `.github/copilot-instructions.md` for the full architecture summary. Do not duplicate it here.
-
 ## Build, test, typecheck
 
 ```bash
@@ -20,16 +18,39 @@ Run only the existing scripts. Do not introduce new linters, formatters, or test
 
 ## Where things live
 
-| Path                                  | Purpose                                              |
-| ------------------------------------- | ---------------------------------------------------- |
-| `src/`                                | TypeScript source                                    |
-| `src/commands/`, `src/lib/`           | CLI commands and shared library code                 |
-| `src/__tests__/`                      | Vitest tests                                         |
-| `templates/`                          | Files copied verbatim into target repos on `init`    |
-| `.github/agents/*.agent.md`           | Concert agent definitions (managed, version-stamped) |
-| `.github/skills/*/SKILL.md`           | Skills authored in this repo                         |
-| `.claude/commands/`, `.claude/rules/` | Claude Code slash commands and rules                 |
-| `docs/`                               | Human-facing docs (e.g. `TOKEN-OPTIMIZATION.md`)     |
+| Path                                  | Purpose                                                                 |
+| ------------------------------------- | ----------------------------------------------------------------------- |
+| `src/cli.ts`                          | CLI entry point — dispatches to `src/commands/`                         |
+| `src/commands/init.ts`                | `concert init` — copy templates + live files                            |
+| `src/commands/update.ts`              | `concert update` — overwrite managed files, merge config/state, cleanup |
+| `src/commands/push.ts`                | `concert push` — git stage / commit / push handoff                      |
+| `src/commands/skills.ts`              | `concert skills` — fetch skills from `concert-assets`                   |
+| `src/commands/rules.ts`               | `concert rules` — fetch rules from `concert-assets`                     |
+| `src/commands/doctor.ts`              | `concert doctor` — token-cost report on managed files                   |
+| `src/commands/serve.ts`               | `concert serve` — MCP stdio server + `--inspect`                        |
+| `src/mcp/`                            | MCP server, tool registry, schemas, tool implementations                |
+| `src/lib/copy.ts`                     | File copy, version stamping, stale-file cleanup                         |
+| `src/lib/config.ts`                   | JSONC config read / write / merge                                       |
+| `src/lib/state.ts`                    | `state.json` read / write                                               |
+| `src/lib/version.ts`                  | Package version + managed-header stamping                               |
+| `src/lib/merge.ts`                    | Surgical merge for config and state                                     |
+| `src/lib/claude-section.ts`           | Canonical Concert section for `CLAUDE.md`                               |
+| `src/lib/markdown-section.ts`         | Pure functions for parsing markdown sections and MODIFIED markers       |
+| `src/lib/missions.ts`                 | Mission enumeration and active mission resolution                       |
+| `src/__tests__/`                      | Vitest tests                                                            |
+| `templates/`                          | Files copied verbatim into target repos on `init`                       |
+| `.github/agents/*.agent.md`           | Concert agent definitions (managed, version-stamped)                    |
+| `.github/skills/*/SKILL.md`           | Skills authored in this repo                                            |
+| `.claude/commands/`, `.claude/rules/` | Claude Code slash commands and rules                                    |
+| `docs/`                               | Human-facing docs (e.g. `TOKEN-OPTIMIZATION.md`)                        |
+| `docs/MCP.md`                         | MCP server documentation, client config, tool reference                 |
+
+## Key facts
+
+- `concert.jsonc` is JSONC (comments + trailing commas). Parsed with `jsonc-parser`.
+- The shipped config has only `project_name` and `concert_version`. Add a field only when a CLI command or agent reads it. The `ConcertConfig` type in `src/types.ts` mirrors that exactly.
+- `package.json` `files` controls the npm tarball. Add new deployable paths there.
+- All managed files contain `AUTO-GENERATED BY CONCERT vX.Y.Z` in the first 15 lines. `cleanupStaleFiles()` (in `src/lib/copy.ts`) deletes files with a stale version. Do not remove the header.
 
 ## Token-optimisation rules (apply to every change)
 
@@ -47,10 +68,6 @@ When authoring or editing:
 
 - New agent → follow `.github/skills/agent-authoring/SKILL.md`.
 - New skill → follow `.github/skills/skill-authoring/SKILL.md`.
-
-## Managed-file rules
-
-Concert agent files in `.github/agents/` and template files under `templates/` are version-stamped. Each must contain `AUTO-GENERATED BY CONCERT vX.Y.Z` in the first 15 lines. `cleanupStaleFiles()` (in `src/lib/copy.ts`) deletes files with a stale version. Do not remove the header.
 
 ## Change discipline
 

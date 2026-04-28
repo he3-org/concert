@@ -42,15 +42,44 @@ npx concert push
 
 Stages and commits any pending state changes, then pushes the current branch to origin. Useful for handing off work between Claude Code and GitHub Copilot sessions.
 
+### Check Mission Status (read-only)
+
+```
+/concert-status
+```
+
+A read-only composite snapshot of the current mission: stage, pipeline status, branch, modified-but-not-re-evaluated documents (with the changed section slugs), open development-review gaps by severity, refactor-plan items by priority, recent failures, and the single recommended next action. Never edits anything; safe to run at any time.
+
+### Audit Token Cost (read-only)
+
+```bash
+npx concert doctor
+```
+
+Walks all Concert-managed files (agents, skills, slash commands, rules, instruction files) and reports lines, KB, and estimated tokens per file and per category. Flags any file that exceeds the size targets in `docs/TOKEN-OPTIMIZATION.md` (e.g. agents > 250 lines or > 12 KB, skills > 150 lines or > 6 KB). Exits non-zero when any file is over a target so you can wire it into CI as a guardrail.
+
+### MCP Server & CLI Inspection Tools
+
+Concert ships a read-only MCP server and mirrored CLI verbs for querying mission state:
+
+```bash
+concert serve                 # Start MCP stdio server
+concert get-status --json     # Mission status snapshot
+concert get-state --json      # State from state.json
+concert list-missions         # All missions
+```
+
+See [`docs/MCP.md`](docs/MCP.md) for client config and tool reference.
+
 ## SDLC Workflow
 
 Concert structures development as a pipeline of specialized agents. Each agent produces a document that feeds the next stage. You drive each stage by invoking the corresponding agent.
 
 ```
 Vision → Review → Requirements → Review → Architecture → Review → UX Design → Review → Planning → Development → Development Review → Fix Gaps → Re-review → Finish → Refactor
-                        ↕                      ↕                      ↕
-                    Alignment              Alignment              Alignment
 ```
+
+`/concert-review-docs review` automatically runs `/concert-alignment check` whenever it makes a change, so you no longer need to alternate between review and alignment by hand. To skip the review-then-re-evaluate ping-pong entirely, use `/concert-review-docs review-and-reconcile <doc>` — one command, both steps.
 
 ### Where to Run Each Stage
 
@@ -71,6 +100,23 @@ Create a mission with a product vision document.
 
 The vision agent researches your codebase and the feature domain, then writes `.concert/missions/<slug>/VISION.md`. In interactive environments, it interviews you to fill gaps.
 
+**Optional: start the mission from a GitHub issue.** When you'd rather start the SDLC from an existing issue body than retype the description:
+
+```
+/concert-vision from-issue 123
+```
+
+The agent fetches issue #123 (via `gh issue view` or the GitHub MCP `issue_read` tool — `read:issues` scope required), uses the title + body as the feature description, prefixes the mission slug with `issue-123-` for traceability, links the issue from the mission's `DEVELOPMENT-STATUS.md`, and posts a one-line comment back on the issue if it has `issues:write` permission.
+
+**Optional: also create a mission branch.** Add `--branch` to either `create` or `from-issue` to check out a `mission/<slug>` branch in one step:
+
+```
+/concert-vision create --branch Add OAuth2 login with Google and GitHub providers
+/concert-vision from-issue 123 --branch
+```
+
+The agent skips branch creation silently (with a warning) if the working tree is dirty, the branch already exists, or `git` is unavailable. The branch is recorded in `state.json` so downstream agents and `/concert-status` know about it.
+
 ### Review the Vision
 
 **Run review-docs immediately after creating the vision.** The review-docs agent conducts a structured conversation with you to refine the document — resolving open questions, improving clarity, and catching gaps before they propagate downstream.
@@ -79,25 +125,40 @@ The vision agent researches your codebase and the feature domain, then writes `.
 /concert-review-docs review vision
 ```
 
-The agent asks you one question at a time, updates the document based on your answers, and marks it for re-evaluation when done. This is the single most valuable step in the pipeline — every issue caught here saves significant rework in later stages.
+The agent asks you one question at a time, updates the document based on your answers, and marks the changed sections for re-evaluation when done. When `review` makes any change, it **automatically runs `/concert-alignment check`** as the final step — you no longer need to remember to run alignment yourself.
 
-> **💡 Tip:** Run `review-docs` after creating _every_ spec document (Vision, Requirements, Architecture, UX Design). Each review session catches ambiguities and gaps that would otherwise compound as they flow through the pipeline. The cost of a 5-minute review conversation is far less than reworking an implementation that was built on a vague requirement.
+**Modes:**
 
-### Re-evaluate After Review
-
-If review-docs modified the vision, re-evaluate to check for new implications:
+- **Conversational** (default when an interview tool like `AskUserQuestion`, `ask_user`, or `vscode_askQuestions` is detected): one question at a time, you steer.
+- **Batch** (automatic when no interview tool is present, or explicit with `--batch`): the agent does the full evaluation, applies high-confidence edits directly, and stages everything else as `- [ ]` items in the doc's questions section. This is the right mode for GitHub Copilot cloud-agent runs and for users who prefer "give me the whole list, then I'll answer".
 
 ```
-/concert-vision re-evaluate
+/concert-review-docs review vision --batch
 ```
 
-Or re-evaluate all modified documents at once:
+This is the single most valuable step in the pipeline — every issue caught here saves significant rework in later stages.
+
+> **💡 Tip:** Run `review-docs` after creating _every_ spec document (Vision, Requirements, Architecture, UX Design). The auto-alignment step means you get cross-document consistency checks for free.
+
+### Re-evaluate After Review (selective)
+
+If review-docs modified the vision, re-evaluate downstream docs whose impacted sections changed:
 
 ```
 /concert-review-docs re-evaluate-all
 ```
 
-The `re-evaluate-all` command scans all mission documents for the `CONCERT:MODIFIED` flag and re-evaluates each in pipeline order (Vision → Requirements → Architecture → UX Design → Alignment → Plan). This is faster than running individual re-evaluate commands.
+`re-evaluate-all` is **selective**: it reads the per-section `CONCERT:MODIFIED:<section-slug>` markers that `review` left behind, walks an upstream→downstream dependency map, and only re-evaluates documents whose impacted sections actually changed. This is dramatically cheaper than re-running every downstream agent. The legacy whole-doc marker is still respected for backwards compatibility.
+
+### One-shot: review and re-evaluate together
+
+If you want to skip the agent-switching ping-pong (review, then switch agents, then re-evaluate, then switch back), use the convenience command:
+
+```
+/concert-review-docs review-and-reconcile vision
+```
+
+This runs `review` followed immediately by `re-evaluate-all` in the same session — one invocation, one wrap-up.
 
 ---
 
@@ -113,15 +174,13 @@ Reads the current mission's `VISION.md` and produces `REQUIREMENTS.md` with SHAL
 
 ### Alignment Check After Requirements
 
-**Run alignment immediately after creating the requirements.** The alignment agent cross-checks all existing mission documents for contradictions, gaps, and traceability breaks.
+Alignment is now run automatically by `/concert-review-docs review` whenever it makes a change, so the typical Vision → Requirements flow no longer needs a manual alignment step. Run it explicitly only when you want to cross-check documents you edited by hand or to re-verify a mission you have just resumed:
 
 ```
 /concert-alignment check
 ```
 
-This is especially valuable after requirements because it verifies that every vision goal is covered by at least one requirement and that no requirement was invented without a vision basis.
-
-> **💡 Tip:** Run alignment after creating or modifying _any_ spec document. It catches cross-document inconsistencies that individual agents can't see — a renamed concept in architecture that doesn't match the requirements, a success criterion in the vision with no corresponding acceptance test, etc.
+Alignment cross-checks all existing mission documents for contradictions, gaps, and traceability breaks — for example, that every vision goal is covered by at least one requirement and that no requirement was invented without a vision basis.
 
 ### Review the Requirements
 
@@ -129,10 +188,16 @@ This is especially valuable after requirements because it verifies that every vi
 /concert-review-docs review requirements
 ```
 
-Then re-evaluate all modified documents:
+(Auto-runs alignment if changes were made.) Then re-evaluate downstream docs:
 
 ```
 /concert-review-docs re-evaluate-all
+```
+
+Or, in one shot:
+
+```
+/concert-review-docs review-and-reconcile requirements
 ```
 
 ---

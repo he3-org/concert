@@ -57,57 +57,9 @@ describe('types', () => {
     const config: ConcertConfig = {
       project_name: 'my-project',
       concert_version: '0.1.0',
-      project: { platforms: ['node'] },
-      git: {
-        base_branch: 'main',
-        production_branch: 'main',
-        pre_v1: true,
-        commit_format: 'conventional',
-        pr_target: 'main',
-      },
-      status_display: 'wip_pr',
-      interactive_mode: 'interactive_cli',
-      execution: {
-        mode: 'wave',
-        max_tasks_per_file: 4,
-        max_files_per_phase: 5,
-        max_review_iterations: 3,
-      },
-      review_triggers: {
-        on_phase_complete: true,
-        on_dependency_boundary: true,
-        on_inferred_breakpoint: true,
-        after_n_files: 0,
-        after_n_commits: 0,
-      },
-      gates: {
-        task_checker: true,
-        acceptance_testing: true,
-      },
-      model_profiles: {
-        quality: 'claude-opus-4-6',
-        balanced: 'claude-sonnet-4-6',
-        budget: 'claude-haiku-4-5',
-      },
-      task_models: {
-        opus: 'claude-opus-4-6',
-        sonnet: 'claude-sonnet-4-6',
-        haiku: 'claude-haiku-4-5',
-      },
-      skills: { auto_discover: true, enabled: [] },
-      actions: { auto_continue: true },
-      telemetry: { enabled: true, generate_cost_report: true },
-      self_improvement: { enabled: true },
-      user_guidance: {
-        always_show_next_steps: true,
-        include_file_paths: true,
-        include_copy_paste_commands: true,
-        show_both_cli_and_ui_options: true,
-      },
     };
     expect(config.project_name).toBe('my-project');
-    expect(config.interactive_mode).toBe('interactive_cli');
-    expect(config.execution.max_review_iterations).toBe(3);
+    expect(config.concert_version).toBe('0.1.0');
   });
 
   it('TaskFrontmatter interface can be instantiated', () => {

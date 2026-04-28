@@ -125,7 +125,7 @@ Work only on items at/above severity: `critical` → only Critical; `major` → 
 5. If resuming (`implement` no args), pick up from last position.
 6. If no DEVELOPMENT-STATUS.md, start from first task file in first phase.
 
-**Task file ordering:** Scan `<mission_path>/phases/` alphabetically (01-xxx before 02-xxx). Within each phase, order by wave (frontmatter), then alphabetically.
+**Task file ordering:** Use `concert list-tasks --status pending --json | jq -r '.tasks[0].filePath'` when available; fall back to scanning `<mission_path>/phases/` alphabetically (01-xxx before 02-xxx), ordering by wave (frontmatter), then alphabetically within each phase.
 
 ### Step 2: Model-tier check
 

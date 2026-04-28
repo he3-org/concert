@@ -99,12 +99,14 @@ export async function runPush(cwd: string): Promise<number> {
 
   output += `\n  Next steps:\n`;
   output += `    1. Continue in GitHub Agents UI:\n`;
-  output += `       Agent:  concert-continue\n`;
+  output += `       Agent:  concert-develop\n`;
+  output += `       Input:  implement\n`;
   output += `       Model:  sonnet (matches current task tier)\n`;
+  output += `       The agent reads DEVELOPMENT-STATUS.md and resumes where work left off.\n`;
 
   if (state.quality_loop_state) {
     const qls = state.quality_loop_state;
-    output += `       The agent will resume from ${qls.phase} iteration ${qls.iteration} of ${qls.task_file}\n`;
+    output += `       Resumes from ${qls.phase} iteration ${qls.iteration} of ${qls.task_file}\n`;
   }
 
   process.stdout.write(output);

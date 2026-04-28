@@ -19,28 +19,30 @@ Opinionated agentic development lifecycle orchestrator. Concert installs a curat
 - A git repository (with at least one commit)
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI **or** [GitHub Copilot](https://github.com/features/copilot) with agent mode
 
-### 1. Install the CLI
+### 1. Add Concert to your project
 
-Install Concert globally so the `concert` binary is on your `PATH`:
-
-```bash
-npm install -g @he3-org/concert
-```
-
-To use the read-only MCP server (recommended — see step 3), also install the MCP SDK:
+Concert is designed to be **pinned per repository** — different projects often track different Concert versions, so we recommend installing it as a project-local dev dependency rather than globally.
 
 ```bash
-npm install -g @he3-org/concert @modelcontextprotocol/sdk
+npm install --save-dev @he3-org/concert
 ```
 
-> Prefer not to install globally? Add `@he3-org/concert` as a dev dependency in your project (`npm install --save-dev @he3-org/concert`) and run the binary via `npx concert <command>`.
+To use the read-only MCP server (recommended — see step 3), also add the MCP SDK as a dev dependency:
+
+```bash
+npm install --save-dev @he3-org/concert @modelcontextprotocol/sdk
+```
+
+All Concert commands are then run via `npx concert <command>`, which resolves to your project's pinned version automatically.
+
+> **Prefer a global install?** `npm install -g @he3-org/concert` works too and lets you drop the `npx` prefix. Just be aware that a global binary is shared across every repo on your machine, so you lose per-project version pinning.
 
 ### 2. Initialize Concert in your repository
 
 From the root of your project:
 
 ```bash
-concert init
+npx concert init
 ```
 
 This creates the following files. Edit `concert.jsonc` to fit your project; the rest are managed by Concert and refreshed on `concert update`.
@@ -56,21 +58,22 @@ This creates the following files. Edit `concert.jsonc` to fit your project; the 
 To pull a newer version of Concert later — overwriting managed files, merging new config/state fields into the ones you already have, and removing files from older versions:
 
 ```bash
-concert update
+npm install --save-dev @he3-org/concert@latest
+npx concert update
 ```
 
 ### 3. Install the Concert MCP server in your client
 
 Concert ships a read-only MCP (Model Context Protocol) server that exposes mission state as structured tool calls. Wiring this up is **strongly recommended**: it lets the agents query mission status, state, and individual document sections directly instead of reading and re-parsing markdown — typically a 20–40× reduction in tokens for status-style operations. See [`docs/MCP.md`](docs/MCP.md) for the full tool catalog.
 
-Pick the entry that matches your client and add it to its config file:
+The snippets below all launch Concert via `npx`, so each client picks up the version pinned in the project's `package.json` automatically — no global install required. The `-y` flag suppresses npx's first-time install prompt.
 
 **Claude Desktop** — `~/.config/claude/claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
-    "concert": { "command": "concert", "args": ["serve"] }
+    "concert": { "command": "npx", "args": ["-y", "@he3-org/concert", "serve"] }
   }
 }
 ```
@@ -80,7 +83,7 @@ Pick the entry that matches your client and add it to its config file:
 ```json
 {
   "github.copilot.mcp.servers": {
-    "concert": { "command": "concert", "args": ["serve"] }
+    "concert": { "command": "npx", "args": ["-y", "@he3-org/concert", "serve"] }
   }
 }
 ```
@@ -89,7 +92,7 @@ Pick the entry that matches your client and add it to its config file:
 
 ```json
 {
-  "concert": { "command": "concert", "args": ["serve"] }
+  "concert": { "command": "npx", "args": ["-y", "@he3-org/concert", "serve"] }
 }
 ```
 
@@ -98,18 +101,20 @@ Pick the entry that matches your client and add it to its config file:
 ```json
 {
   "servers": {
-    "concert": { "command": "concert", "args": ["serve"] }
+    "concert": { "command": "npx", "args": ["-y", "@he3-org/concert", "serve"] }
   }
 }
 ```
 
+> If you opted for a global install in step 1, you can replace `"command": "npx", "args": ["-y", "@he3-org/concert", "serve"]` with `"command": "concert", "args": ["serve"]` in any of the snippets above.
+
 You can verify the server starts and inspect the tool schemas with:
 
 ```bash
-concert serve --inspect
+npx concert serve --inspect
 ```
 
-The same data is also reachable from the CLI without an MCP client (`concert get-status`, `concert get-state`, `concert list-missions`, `concert get-section <doc> <section>`).
+The same data is also reachable from the CLI without an MCP client (`npx concert get-status`, `npx concert get-state`, `npx concert list-missions`, `npx concert get-section <doc> <section>`).
 
 ## Usage Example
 
@@ -256,8 +261,8 @@ The developer agent works through items in priority order, locks in current beha
 
 ```
 /concert-status      # current stage, modified docs, gaps, refactor items, next action
-concert doctor       # audit lines/KB/tokens for every Concert-managed file
-concert push         # stage + commit pending state changes and push the branch
+npx concert doctor   # audit lines/KB/tokens for every Concert-managed file
+npx concert push     # stage + commit pending state changes and push the branch
 ```
 
 `/concert-status` is the single biggest beneficiary of the MCP integration: it used to read 5–8 files (~3,500–6,000 input tokens); via `concert.get_status` it now consumes ~150 tokens.
@@ -301,9 +306,9 @@ Concert ships only a small core of agents and commands so `concert init` and `co
 The Concert CLI lets you browse that catalog and pull just the skills you want into your repo's `.github/skills/` folder, without any of the others cluttering your tree.
 
 ```bash
-concert skills list                                  # list all available skills
-concert skills search <term>                         # filter by name/description
-concert skills add <skill-name> [<skill-name>...]    # download into .github/skills/
+npx concert skills list                                # list all available skills
+npx concert skills search <term>                       # filter by name/description
+npx concert skills add <skill-name> [<skill-name>...]  # download into .github/skills/
 ```
 
 Installed skill files are normal files in your repository — commit them like any other code. They are **not** tracked or removed by `concert update`; you choose which skills your project uses and when to refresh them.
@@ -316,7 +321,7 @@ Both the source repo and the git ref can be overridden with environment variable
 
 ```bash
 CONCERT_ASSETS_REPO=my-org/my-fork CONCERT_ASSETS_REF=v1.2.3 \
-  concert skills list
+  npx concert skills list
 ```
 
 Defaults are `he3-org/concert-assets` and `HEAD`.
@@ -328,9 +333,9 @@ Optional Claude Code **rules** — focused project conventions Claude should fol
 The CLI mirrors the Skills feature:
 
 ```bash
-concert rules list                                   # list all available rules
-concert rules search <term>                          # filter by name/description
-concert rules add <rule-name> [<rule-name>...]       # download into .claude/rules/
+npx concert rules list                               # list all available rules
+npx concert rules search <term>                      # filter by name/description
+npx concert rules add <rule-name> [<rule-name>...]   # download into .claude/rules/
 ```
 
 Installed rule files are normal files in your repository — commit them like any other code. They are **not** tracked or removed by `concert update`.

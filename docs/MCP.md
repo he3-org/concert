@@ -6,11 +6,13 @@ Concert ships a read-only MCP (Model Context Protocol) server that exposes missi
 
 ## Install
 
+Concert is intended to be pinned per repository, so install it as a project-local dev dependency rather than globally:
+
 ```bash
-npm install -g @he3-org/concert @modelcontextprotocol/sdk
+npm install --save-dev @he3-org/concert @modelcontextprotocol/sdk
 ```
 
-The CLI verbs (`get-status`, `get-state`, etc.) work without the SDK; only `concert serve` requires it.
+The CLI verbs (`get-status`, `get-state`, etc.) work without the MCP SDK; only `concert serve` requires it. Run any command via `npx concert <command>`.
 
 ## Tools
 
@@ -26,6 +28,8 @@ All tools return JSON. See `concert serve --inspect` for full schemas.
 
 ## Client config
 
+The snippets below launch the MCP server via `npx`, so each client uses the Concert version pinned in your project's `package.json` — no global install required. The `-y` flag suppresses npx's first-time install prompt. If you have installed Concert globally instead, replace `"command": "npx", "args": ["-y", "@he3-org/concert", "serve"]` with `"command": "concert", "args": ["serve"]`.
+
 ### Claude Desktop
 
 Add to `~/.config/claude/claude_desktop_config.json`:
@@ -34,8 +38,8 @@ Add to `~/.config/claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "concert": {
-      "command": "concert",
-      "args": ["serve"]
+      "command": "npx",
+      "args": ["-y", "@he3-org/concert", "serve"]
     }
   }
 }
@@ -49,8 +53,8 @@ Add to `.vscode/settings.json` in your project:
 {
   "github.copilot.mcp.servers": {
     "concert": {
-      "command": "concert",
-      "args": ["serve"]
+      "command": "npx",
+      "args": ["-y", "@he3-org/concert", "serve"]
     }
   }
 }
@@ -63,8 +67,8 @@ Add to Cursor MCP settings:
 ```json
 {
   "concert": {
-    "command": "concert",
-    "args": ["serve"]
+    "command": "npx",
+    "args": ["-y", "@he3-org/concert", "serve"]
   }
 }
 ```
@@ -77,8 +81,8 @@ Add to Codex MCP config:
 {
   "servers": {
     "concert": {
-      "command": "concert",
-      "args": ["serve"]
+      "command": "npx",
+      "args": ["-y", "@he3-org/concert", "serve"]
     }
   }
 }

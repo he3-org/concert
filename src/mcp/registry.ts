@@ -9,6 +9,10 @@ import * as replaceSection from './tools/replaceSection.js';
 import * as appendTelemetry from './tools/appendTelemetry.js';
 import * as appendHistory from './tools/appendHistory.js';
 import * as alignmentCheck from './tools/alignmentCheck.js';
+import * as listTasks from './tools/listTasks.js';
+import * as getTask from './tools/getTask.js';
+import * as setTaskAcceptance from './tools/setTaskAcceptance.js';
+import * as renderPlan from './tools/renderPlan.js';
 
 export interface ToolContext {
   cwd: string;
@@ -34,6 +38,10 @@ export const TOOLS: ToolDefinition<unknown, unknown>[] = [
   appendTelemetry,
   appendHistory,
   alignmentCheck,
+  listTasks,
+  getTask,
+  setTaskAcceptance,
+  renderPlan,
 ];
 
 export function findTool(name: string): ToolDefinition<unknown, unknown> | undefined {

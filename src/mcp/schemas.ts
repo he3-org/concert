@@ -409,3 +409,170 @@ export const alignmentCheckOutputSchema = {
   required: ['ok'],
   additionalProperties: false,
 } as const;
+
+// === concert.list_tasks ===
+
+export const listTasksInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    mission: { type: 'string' },
+    phase: { type: 'string' },
+    wave: { type: 'integer', minimum: 0 },
+    model: { type: 'string', enum: ['haiku', 'sonnet', 'opus'] },
+    status: { type: 'string', enum: ['pending', 'in-progress', 'done'] },
+  },
+  additionalProperties: false,
+} as const;
+
+export const listTasksOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    tasks: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          task: { type: 'string' },
+          title: { type: 'string' },
+          phase: { type: ['string', 'null'] },
+          wave: { type: 'integer' },
+          model: { type: ['string', 'null'] },
+          dependsOn: { type: 'array', items: { type: 'string' } },
+          filePath: { type: 'string' },
+          totalAcceptance: { type: 'integer' },
+          completedAcceptance: { type: 'integer' },
+          status: { type: 'string', enum: ['pending', 'in-progress', 'done'] },
+        },
+        required: [
+          'task',
+          'title',
+          'phase',
+          'wave',
+          'model',
+          'dependsOn',
+          'filePath',
+          'totalAcceptance',
+          'completedAcceptance',
+          'status',
+        ],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ['tasks'],
+  additionalProperties: false,
+} as const;
+
+// === concert.get_task ===
+
+export const getTaskInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    task: { type: 'string' },
+    mission: { type: 'string' },
+  },
+  required: ['task'],
+  additionalProperties: false,
+} as const;
+
+export const getTaskOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    found: { type: 'boolean' },
+    task: { type: 'string' },
+    title: { type: 'string' },
+    phase: { type: 'string' },
+    wave: { type: 'integer' },
+    model: { type: 'string', enum: ['haiku', 'sonnet', 'opus'] },
+    dependsOn: { type: 'array', items: { type: 'string' } },
+    filePath: { type: 'string' },
+    acceptance: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          index: { type: 'integer' },
+          text: { type: 'string' },
+          done: { type: 'boolean' },
+        },
+        required: ['index', 'text', 'done'],
+        additionalProperties: false,
+      },
+    },
+    body: {
+      type: 'object',
+      properties: {
+        description: { type: 'string' },
+        filesToModify: { type: 'string' },
+        testsToWrite: { type: 'string' },
+        skills: { type: 'string' },
+        notes: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+  },
+  required: ['found'],
+  additionalProperties: false,
+} as const;
+
+// === concert.set_task_acceptance ===
+
+export const setTaskAcceptanceInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    task: { type: 'string' },
+    index: { type: 'integer', minimum: 0 },
+    text: { type: 'string' },
+    checked: { type: 'boolean' },
+    mission: { type: 'string' },
+  },
+  required: ['task', 'checked'],
+  additionalProperties: false,
+} as const;
+
+export const setTaskAcceptanceOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' },
+    task: { type: 'string' },
+    filePath: { type: 'string' },
+    previous: { type: 'boolean' },
+    current: { type: 'boolean' },
+    totalAcceptance: { type: 'integer' },
+    completedAcceptance: { type: 'integer' },
+    error: { type: 'string' },
+  },
+  required: ['ok', 'task'],
+  additionalProperties: false,
+} as const;
+
+// === concert.render_plan ===
+
+export const renderPlanInputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    mission: { type: 'string' },
+  },
+  additionalProperties: false,
+} as const;
+
+export const renderPlanOutputSchema = {
+  ...schemaBase,
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' },
+    missionPlanPath: { type: 'string' },
+    tasksRendered: { type: 'integer' },
+    phasesRendered: { type: 'integer' },
+    error: { type: 'string' },
+  },
+  required: ['ok'],
+  additionalProperties: false,
+} as const;

@@ -44,6 +44,28 @@ export function ensureFresh(
       }
     }
 
+    // Also track task-file mtimes — task rows live in their own table but are
+    // derived from `<mission>/phases/*/TASK-*.md`. Without this loop, flipping
+    // an acceptance criterion never bumps the cached `tasks.completed_acceptance`,
+    // so downstream reads (list_tasks, render_plan) silently use stale rows.
+    const taskRows = db
+      .prepare('SELECT file_path, mtime_ms FROM tasks WHERE mission_slug = ?')
+      .all(mission.slug) as { file_path: string; mtime_ms: number }[];
+    const dbTaskPaths = new Set(taskRows.map((r) => r.file_path));
+    const fsTaskPaths = new Set<string>();
+    const phasesDir = path.join(mission.path, 'phases');
+    if (fs.existsSync(phasesDir) && fs.statSync(phasesDir).isDirectory()) {
+      for (const phase of fs.readdirSync(phasesDir, { withFileTypes: true })) {
+        if (!phase.isDirectory()) continue;
+        const phasePath = path.join(phasesDir, phase.name);
+        for (const file of fs.readdirSync(phasePath, { withFileTypes: true })) {
+          if (file.isFile() && /^TASK-.*\.md$/.test(file.name)) {
+            fsTaskPaths.add(path.join('phases', phase.name, file.name));
+          }
+        }
+      }
+    }
+
     let needsReindex = false;
 
     for (const row of rows) {
@@ -65,6 +87,31 @@ export function ensureFresh(
         needsReindex = true;
         recordMiss();
         break;
+      }
+    }
+
+    if (!needsReindex) {
+      for (const row of taskRows) {
+        if (!fsTaskPaths.has(row.file_path)) {
+          needsReindex = true;
+          recordMiss();
+          break;
+        }
+        const stat = fs.statSync(path.join(mission.path, row.file_path));
+        if (stat.mtimeMs !== row.mtime_ms) {
+          needsReindex = true;
+          recordMiss();
+          break;
+        }
+      }
+    }
+    if (!needsReindex) {
+      for (const fsPath of fsTaskPaths) {
+        if (!dbTaskPaths.has(fsPath)) {
+          needsReindex = true;
+          recordMiss();
+          break;
+        }
       }
     }
 

@@ -46,6 +46,7 @@ Options:
             exec(sql: string): void;
             prepare(sql: string): {
               run(...args: unknown[]): unknown;
+              all(...args: unknown[]): unknown[];
             };
           },
           cwd
@@ -53,7 +54,7 @@ Options:
         console.log(`Rebuilt cache: ${results.length} missions indexed`);
         for (const r of results) {
           console.log(
-            `  ${r.missionSlug}: ${r.documentsIndexed} docs, ${r.sectionsIndexed} sections, ${r.markersFound} markers`
+            `  ${r.missionSlug}: ${r.documentsIndexed} docs, ${r.sectionsIndexed} sections, ${r.markersFound} markers, ${r.tasksIndexed} tasks`
           );
         }
       } finally {

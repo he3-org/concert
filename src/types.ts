@@ -163,6 +163,7 @@ export interface ConcertConfig {
 export interface TaskFrontmatter {
   task: string;
   title: string;
+  phase?: string;
   depends_on: string[];
   wave: number;
   model: ModelTier;

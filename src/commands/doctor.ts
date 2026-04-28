@@ -294,12 +294,33 @@ async function printCacheInfo(cwd: string): Promise<void> {
   const total = stats.hits + stats.misses;
   const hitsDisplay = total > 0 ? `${stats.hits}/${stats.misses}` : '—';
 
+  let tasksCount = '—';
+  if (handle) {
+    const tasksHandle = await openCache(cwd);
+    if (tasksHandle) {
+      try {
+        const db = tasksHandle.db as {
+          prepare(sql: string): {
+            get(...args: unknown[]): unknown;
+          };
+        };
+        const countRow = db.prepare('SELECT COUNT(*) as count FROM tasks').get() as
+          | { count: number }
+          | undefined;
+        tasksCount = countRow ? countRow.count.toString() : '—';
+      } finally {
+        tasksHandle.close();
+      }
+    }
+  }
+
   console.log('\nCache:');
   console.log(`  Path:        ${dbPath}`);
   console.log(`  Status:      ${status}`);
   console.log(`  Schema:      ${schema}`);
   console.log(`  Last build:  ${builtAt}`);
   console.log(`  Hits/Miss:   ${hitsDisplay} (this process)`);
+  console.log(`  Tasks:       ${tasksCount}`);
 
   // Mutation events section
   if (handle) {

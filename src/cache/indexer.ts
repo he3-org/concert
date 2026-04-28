@@ -2,6 +2,8 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
 import { parseSections, findModifiedMarkers } from '../lib/markdown-section.js';
+import { parseAcceptance } from '../lib/section-edit.js';
+import { parseTaskFrontmatter } from '../lib/task-frontmatter.js';
 import { listMissions } from '../lib/missions.js';
 
 export interface IndexResult {
@@ -9,6 +11,7 @@ export interface IndexResult {
   documentsIndexed: number;
   sectionsIndexed: number;
   markersFound: number;
+  tasksIndexed: number;
 }
 
 export function indexMission(
@@ -16,6 +19,7 @@ export function indexMission(
     exec(sql: string): void;
     prepare(sql: string): {
       run(...args: unknown[]): unknown;
+      all(...args: unknown[]): unknown[];
     };
   },
   cwd: string,
@@ -26,6 +30,7 @@ export function indexMission(
   let documentsIndexed = 0;
   let sectionsIndexed = 0;
   let markersFound = 0;
+  let tasksIndexed = 0;
 
   const stageFile = path.join(missionPath, 'stage.txt');
   const stage = fs.existsSync(stageFile) ? fs.readFileSync(stageFile, 'utf-8').trim() : null;
@@ -42,6 +47,7 @@ export function indexMission(
   db.prepare('DELETE FROM documents WHERE mission_slug = ?').run(missionSlug);
   db.prepare('DELETE FROM sections WHERE mission_slug = ?').run(missionSlug);
   db.prepare('DELETE FROM modified_markers WHERE mission_slug = ?').run(missionSlug);
+  db.prepare('DELETE FROM tasks WHERE mission_slug = ?').run(missionSlug);
 
   for (const file of mdFiles) {
     const filePath = path.join(missionPath, file.name);
@@ -89,7 +95,86 @@ export function indexMission(
     }
   }
 
-  return { missionSlug, documentsIndexed, sectionsIndexed, markersFound };
+  const phasesDir = path.join(missionPath, 'phases');
+  if (fs.existsSync(phasesDir) && fs.statSync(phasesDir).isDirectory()) {
+    const phaseEntries = fs.readdirSync(phasesDir, { withFileTypes: true });
+    for (const phaseEntry of phaseEntries) {
+      if (!phaseEntry.isDirectory()) continue;
+      const phasePath = path.join(phasesDir, phaseEntry.name);
+      const taskFiles = fs
+        .readdirSync(phasePath, { withFileTypes: true })
+        .filter((e) => e.isFile() && /^TASK-.*\.md$/.test(e.name));
+
+      for (const taskFile of taskFiles) {
+        const taskFilePath = path.join(phasePath, taskFile.name);
+        let content: string;
+        let stat: fs.Stats;
+        try {
+          content = fs.readFileSync(taskFilePath, 'utf-8');
+          stat = fs.statSync(taskFilePath);
+        } catch (err) {
+          console.error(`Warning: failed to read task file ${taskFilePath}: ${err}`);
+          continue;
+        }
+
+        const parsed = parseTaskFrontmatter(content);
+        if (!parsed.frontmatter) {
+          console.error(`Warning: skipping ${taskFilePath} (no valid frontmatter)`);
+          continue;
+        }
+
+        const fm = parsed.frontmatter;
+        const taskSlug = fm.task;
+        const phase = fm.phase ?? phaseEntry.name;
+        const title = fm.title;
+        const wave = fm.wave;
+        const model = fm.model ?? null;
+        const dependsOn = JSON.stringify(fm.depends_on);
+
+        const acceptance = parseAcceptance(content);
+        const totalAcceptance = acceptance.length;
+        const completedAcceptance = acceptance.filter((a) => a.done).length;
+
+        const sha256 = crypto.createHash('sha256').update(content).digest('hex');
+        const relativeFilePath = path.relative(missionPath, taskFilePath);
+
+        db.prepare(
+          'INSERT OR REPLACE INTO tasks (mission_slug, task_slug, phase, title, wave, model, depends_on, file_path, total_acceptance, completed_acceptance, mtime_ms, sha256, indexed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ).run(
+          missionSlug,
+          taskSlug,
+          phase,
+          title,
+          wave,
+          model,
+          dependsOn,
+          relativeFilePath,
+          totalAcceptance,
+          completedAcceptance,
+          stat.mtimeMs,
+          sha256,
+          now
+        );
+        tasksIndexed++;
+      }
+    }
+
+    const existingTasks = db
+      .prepare('SELECT file_path FROM tasks WHERE mission_slug = ?')
+      .all(missionSlug) as { file_path: string }[];
+
+    for (const row of existingTasks) {
+      const absPath = path.join(missionPath, row.file_path);
+      if (!fs.existsSync(absPath)) {
+        db.prepare('DELETE FROM tasks WHERE mission_slug = ? AND file_path = ?').run(
+          missionSlug,
+          row.file_path
+        );
+      }
+    }
+  }
+
+  return { missionSlug, documentsIndexed, sectionsIndexed, markersFound, tasksIndexed };
 }
 
 export function indexAll(
@@ -97,6 +182,7 @@ export function indexAll(
     exec(sql: string): void;
     prepare(sql: string): {
       run(...args: unknown[]): unknown;
+      all(...args: unknown[]): unknown[];
     };
   },
   cwd: string

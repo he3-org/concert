@@ -87,7 +87,33 @@ CREATE INDEX idx_events_tool ON events(tool, ts);
 INSERT OR REPLACE INTO meta (key, value) VALUES ('schema_version', '2');
 `;
 
+const M0003_TASKS = `
+CREATE TABLE tasks (
+  mission_slug TEXT NOT NULL,
+  task_slug TEXT NOT NULL,
+  phase TEXT,
+  title TEXT NOT NULL,
+  wave INTEGER NOT NULL DEFAULT 0,
+  model TEXT,
+  depends_on TEXT NOT NULL DEFAULT '[]',
+  file_path TEXT NOT NULL,
+  total_acceptance INTEGER NOT NULL DEFAULT 0,
+  completed_acceptance INTEGER NOT NULL DEFAULT 0,
+  mtime_ms INTEGER NOT NULL,
+  sha256 TEXT NOT NULL,
+  indexed_at TEXT NOT NULL,
+  PRIMARY KEY (mission_slug, task_slug)
+);
+
+CREATE INDEX idx_tasks_mission ON tasks(mission_slug);
+CREATE INDEX idx_tasks_phase ON tasks(mission_slug, phase);
+CREATE INDEX idx_tasks_wave ON tasks(mission_slug, wave);
+
+INSERT OR REPLACE INTO meta (key, value) VALUES ('schema_version', '3');
+`;
+
 export const MIGRATIONS: Migration[] = [
   { version: 1, sql: M0001_INIT },
   { version: 2, sql: M0002_EVENTS },
+  { version: 3, sql: M0003_TASKS },
 ];

@@ -95,10 +95,26 @@ async function main(): Promise<void> {
       const { runAlignmentCheck } = await import('./commands/alignmentCheck.js');
       process.exit(await runAlignmentCheck(cwd, args.slice(1)));
     }
+    case 'list-tasks': {
+      const { runListTasks } = await import('./commands/listTasks.js');
+      process.exit(await runListTasks(cwd, args.slice(1)));
+    }
+    case 'get-task': {
+      const { runGetTask } = await import('./commands/getTask.js');
+      process.exit(await runGetTask(cwd, args.slice(1)));
+    }
+    case 'set-task-acceptance': {
+      const { runSetTaskAcceptance } = await import('./commands/setTaskAcceptance.js');
+      process.exit(await runSetTaskAcceptance(cwd, args.slice(1)));
+    }
+    case 'render-plan': {
+      const { runRenderPlan } = await import('./commands/renderPlan.js');
+      process.exit(await runRenderPlan(cwd, args.slice(1)));
+    }
     default:
       console.error(`Error: unknown command "${command}"
 
-  Available commands: init, update, push, skills, rules, doctor, serve, sync, get-status, get-state, list-missions, get-section, list-modified-sections, mark-section-modified, clear-section-modified, replace-section, append-telemetry, append-history, alignment-check
+  Available commands: init, update, push, skills, rules, doctor, serve, sync, get-status, get-state, list-missions, get-section, list-modified-sections, mark-section-modified, clear-section-modified, replace-section, append-telemetry, append-history, alignment-check, list-tasks, get-task, set-task-acceptance, render-plan
 
   Run "concert --help" for usage information.`);
       process.exit(2);
@@ -124,6 +140,8 @@ Read-only inspection:
   list-missions            List all missions
   get-section              Get a markdown section from a mission document
   list-modified-sections   List documents with CONCERT:MODIFIED markers
+  list-tasks               List task files with optional filters
+  get-task                 Get full details of a specific task file
 
 Mutation:
   mark-section-modified    Insert or refresh a CONCERT:MODIFIED marker
@@ -132,6 +150,8 @@ Mutation:
   append-telemetry         Append a telemetry record to state.json
   append-history           Append a history entry to state.json
   alignment-check          Perform mechanical alignment checks
+  set-task-acceptance      Toggle an acceptance criterion in a task file
+  render-plan              Render per-phase task tables into PLAN.md
 
 Options:
   --help, -h       Show this help message

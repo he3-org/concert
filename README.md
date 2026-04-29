@@ -267,6 +267,36 @@ npx concert push     # stage + commit pending state changes and push the branch
 
 `/concert-status` is the single biggest beneficiary of the MCP integration: it used to read 5–8 files (~3,500–6,000 input tokens); via `concert.get_status` it now consumes ~150 tokens.
 
+### Small ad-hoc tasks (no mission)
+
+Not every change deserves a full mission. When the requirements fit in a few paragraphs — a tiny feature, a chore, a one-off bug — Concert ships two agents that take a free-text description (or a GitHub issue) and run the same TDD + self-review + commit discipline as the mission flow, without any mission docs.
+
+#### Small feature or chore (`concert-develop`, `task`)
+
+> Select `concert-develop`, then type one of:
+
+```
+task Add a --json flag to the doctor command that prints token costs as JSON
+task --from-issue 142
+task ./notes/small-feature.md
+```
+
+**Purpose:** The agent derives a slug from the description, writes failing tests for the requirement, commits the red tests, implements the minimum code to pass, runs the full test suite, commits the implementation, self-reviews (up to 3 cycles, fixing CRIT/MAJ findings), and commits a final completion entry. When invoked with `--from-issue <num>` it cross-links the commit to the issue and posts a short comment when it finishes.
+
+#### Bug fix (`concert-fix`, `fix`)
+
+> Select `concert-fix`, then type one of:
+
+```
+fix Login button throws "Cannot read property 'id' of undefined" when the session cookie is missing
+fix --from-issue 142
+fix ./bug-reports/login-crash.md
+```
+
+**Purpose:** The agent reproduces the bug with a failing test first (commits the red test), applies the smallest change that turns the test green (commits the fix, with `Refs #<num>` when sourced from an issue), runs the full test suite, self-reviews (up to 3 cycles), and records the fix. When invoked with `--from-issue <num>` it cross-links the commit to the issue and posts a short comment when it finishes.
+
+> **💡 Tip:** Both `task` and `fix` write to `<mission_path>/DEVELOPMENT-STATUS.md` only when a mission is active. Outside a mission they leave no Concert-managed files behind beyond the commits themselves.
+
 ## Agents & Commands Reference
 
 Concert ships 14 agents. Each has a corresponding Claude Code slash command (`/concert-<name>`) and a Copilot cloud-agent definition selectable as `concert-<name>`. The slash command and the cloud agent share the same underlying agent definition, so behavior and sub-commands are identical across surfaces.
@@ -284,14 +314,14 @@ Concert ships 14 agents. Each has a corresponding Claude Code slash command (`/c
 
 ### Implementation agents (GitHub Copilot cloud agent recommended)
 
-| Agent                        | Purpose                                                                                                                                               | Common sub-commands                                                                                          | Example                                               |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| **`concert-planner`**        | Decomposes the spec set into a phased `PLAN.md` and per-task `TASK-*.md` files, each tagged with a model tier.                                        | `create`                                                                                                     | `concert-planner` → `create`                          |
-| **`concert-develop`**        | TDD developer. Implements task files, fixes review gaps, applies refactors, and runs token-optimization plans.                                        | `implement [task]`, `fix-gaps [IDs] [--severity]`, `refactor [IDs] [--severity]`, `token-optimize`, `status` | `concert-develop` → `implement --phase 01-foundation` |
-| **`concert-fix`**            | TDD bug-fix agent. Reproduces a bug with a failing test, applies the smallest fix, self-reviews, and verifies. Accepts inline text or a GitHub issue. | `fix <description>`, `fix --from-issue <num>`                                                                | `concert-fix` → `fix --from-issue 142`                |
-| **`concert-develop-review`** | Read-only validator. Compares implementation to specs and produces `DEVELOPMENT-REVIEW.md` with traceability + categorized gaps.                      | `review [--scope requirements\|architecture\|ux\|phase <slug>]`, `status`                                    | `concert-develop-review` → `review`                   |
-| **`concert-develop-finish`** | Archives working spec docs to `DELETE-ME/` and synthesizes durable application reference docs in the mission folder.                                  | `finish [--dry-run]`, `docs-only`, `status`                                                                  | `concert-develop-finish` → `finish`                   |
-| **`concert-refactor`**       | Surveys the repo and writes a ranked refactor plan to `.concert/REFACTOR-PLAN-YYYY-MM-DD.md`. Utility agent — runnable any time.                      | `create [--scope <path>\|mission\|tests]`, `update`, `status`                                                | `concert-refactor` → `create --scope mission`         |
+| Agent                        | Purpose                                                                                                                                                      | Common sub-commands                                                                                                                                       | Example                                               |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **`concert-planner`**        | Decomposes the spec set into a phased `PLAN.md` and per-task `TASK-*.md` files, each tagged with a model tier.                                               | `create`                                                                                                                                                  | `concert-planner` → `create`                          |
+| **`concert-develop`**        | TDD developer. Implements task files, fixes review gaps, applies refactors, runs token-optimization plans, and handles small ad-hoc tasks without a mission. | `implement [task]`, `task [--from-issue <num>] [<description>]`, `fix-gaps [IDs] [--severity]`, `refactor [IDs] [--severity]`, `token-optimize`, `status` | `concert-develop` → `implement --phase 01-foundation` |
+| **`concert-fix`**            | TDD bug-fix agent. Reproduces a bug with a failing test, applies the smallest fix, self-reviews, and verifies. Accepts inline text or a GitHub issue.        | `fix <description>`, `fix --from-issue <num>`                                                                                                             | `concert-fix` → `fix --from-issue 142`                |
+| **`concert-develop-review`** | Read-only validator. Compares implementation to specs and produces `DEVELOPMENT-REVIEW.md` with traceability + categorized gaps.                             | `review [--scope requirements\|architecture\|ux\|phase <slug>]`, `status`                                                                                 | `concert-develop-review` → `review`                   |
+| **`concert-develop-finish`** | Archives working spec docs to `DELETE-ME/` and synthesizes durable application reference docs in the mission folder.                                         | `finish [--dry-run]`, `docs-only`, `status`                                                                                                               | `concert-develop-finish` → `finish`                   |
+| **`concert-refactor`**       | Surveys the repo and writes a ranked refactor plan to `.concert/REFACTOR-PLAN-YYYY-MM-DD.md`. Utility agent — runnable any time.                             | `create [--scope <path>\|mission\|tests]`, `update`, `status`                                                                                             | `concert-refactor` → `create --scope mission`         |
 
 ### Utility agents
 

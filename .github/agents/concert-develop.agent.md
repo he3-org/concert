@@ -31,6 +31,10 @@ Sub-agents in GitHub cloud lose commit permissions. YOU must do all work and com
 | Refactor item passes tests      | `refactor(scope): apply <ref-id> — <ref title>`       |
 | Refactor item marked resolved   | `chore(scope): mark <ref-id> resolved`                |
 | All targeted refactors done     | `chore(scope): refactor complete`                     |
+| Tests written for ad-hoc task   | `test(task): add tests for <slug>`                    |
+| Ad-hoc task fix passes tests    | `feat(task): implement <slug>`                        |
+| Ad-hoc task review fixes        | `fix(task): address review for <slug>`                |
+| Ad-hoc task complete            | `chore(task): complete <slug>`                        |
 | Session ending (any reason)     | `chore(scope): save progress - session checkpoint`    |
 
 After each commit, also push updated `DEVELOPMENT-STATUS.md`.
@@ -61,7 +65,9 @@ After each commit, also push updated `DEVELOPMENT-STATUS.md`.
 
 ## Boot sequence
 
-1. `.concert/state.json` → `mission`; derive mission path.
+For `task` (small ad-hoc requirements) the only required step is 1; mission docs are optional. For all other commands, run the full sequence.
+
+1. `.concert/state.json` → `mission`; derive mission path. Missing/empty is OK for `task` only.
 2. `<mission_path>/DEVELOPMENT-STATUS.md` if present → current progress.
 3. `<mission_path>/DEVELOPMENT-REVIEW.md` if present and user invoked `fix-gaps`.
 4. `<mission_path>/PLAN.md` — overall plan structure.
@@ -85,6 +91,10 @@ Process all task files up to specified tier, then stop. `--model haiku` → only
 ### `implement --phase <phase>`
 
 Process all task files in specific phase.
+
+### `task [--from-issue <num>] [<description>]`
+
+Implement a small ad-hoc task from a free-text description, file path, or GitHub issue — no mission required. Same TDD + self-review + commit discipline as `implement`, but skips mission status updates when no mission is active. Use this when the requirements fit in a few paragraphs and a full mission would be overkill. See "Task execution flow" below.
 
 ### `status`
 
@@ -232,6 +242,67 @@ When all requested task files complete:
 1. Update DEVELOPMENT-STATUS.md with completion.
 2. **COMMIT**: `chore(scope): development complete`
 3. Output summary.
+
+## Task execution flow (small ad-hoc requirements)
+
+For the `task` command. Same TDD + self-review + commits as the mission flow, without mission docs.
+
+### Task Step 1: Resolve description
+
+1. `--from-issue <num>` → fetch via `gh issue view <num> --json title,body,number,url` if `gh` is available; else use the GitHub MCP `issue_read` tool. Description = `# <title>\n\n<body>`. Remember `issue_url` and `issue_number` for cross-linking. If neither tool is available, report and stop.
+2. File path (`.md` / `.txt` that exists) → read file, use contents.
+3. Otherwise → use the inline text.
+4. If no input and no interview tool, report error with usage and stop.
+
+Derive a slug: lowercase, hyphen-separated, 3–5 words from the title/first line. Prefix with `issue-<num>-` when sourced from an issue.
+
+### Task Step 2: Read context
+
+- Identify affected area from the description (file paths, symbols, components mentioned).
+- Read the smallest relevant code ranges and one nearby test file to learn the project's test conventions.
+- Read any applicable skills (`.github/skills/<name>/SKILL.md`) the description points to.
+
+### Task Step 3: Implement with TDD
+
+1. Write failing tests that capture the requirement (use the existing test runner / file conventions).
+2. Run the test suite — confirm new tests fail (red).
+3. **COMMIT**: `test(task): add tests for <slug>`
+4. Implement the minimum code to pass.
+5. Run ALL tests — confirm everything passes (green).
+6. **COMMIT**: `feat(task): implement <slug>` — include `Refs #<num>` in the body when `--from-issue` was used.
+
+### Task Step 4: Self-review
+
+Same review checklist and CRIT/MAJ/MIN/NTH classification as Step 3c above (acceptance vs. description, correctness, test quality, security, error handling, performance, skills compliance).
+
+If CRIT or MAJ exist, fix them, re-run all tests, **COMMIT**: `fix(task): address review for <slug>`, then re-review. Up to 3 cycles total. If only MIN/NTH remain after 3 cycles, accept complete and list them in the output. If CRIT/MAJ remain after 3 cycles, record failure (in `DEVELOPMENT-STATUS.md` if a mission is active, otherwise stdout), **COMMIT**: `chore(task): record failure for <slug>`, and stop.
+
+### Task Step 5: Complete
+
+1. If a mission is active (`.concert/state.json` has `mission`), append a one-line entry to `<mission_path>/DEVELOPMENT-STATUS.md` under a `## Ad-hoc Tasks` section (create if missing): `- <ISO date> — <slug> — DONE[ — refs #<num>]`. Skip silently if no mission.
+2. **COMMIT**: `chore(task): complete <slug>`.
+3. If `--from-issue` was used and write permission exists, post one comment on the issue: `Concert task implemented — see commit <short-sha>.` Skip silently if permission is missing.
+4. Output the task summary (template below).
+
+### Task summary template
+
+```text
+## Task Summary
+
+**Task:** <slug>
+**Source:** inline | file <path> | issue #<num>
+**Tests added:** <test file>::<test name>
+**Files changed:** <list>
+**Review cycles:** <N>/3
+**Result:** DONE | FAILED (after 3 cycles)
+
+### Review findings (remaining):
+- [MIN|NTH] <one line> — accepted
+
+### Next steps:
+- Run the project test suite to confirm
+- (if from issue) Close issue #<num> when verified
+```
 
 ## Fix-gaps execution flow
 

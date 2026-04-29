@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.0](https://github.com/he3-org/concert/compare/v1.23.0...v1.24.0) (2026-04-29)
+
+
+### Features
+
+* add `task` command to concert-develop and document small ad-hoc tasks in README ([#91](https://github.com/he3-org/concert/issues/91)) ([e804fdd](https://github.com/he3-org/concert/commit/e804fdd31f435247ac22352404b95ba95e666301))
+
 ## [1.23.0](https://github.com/he3-org/concert/compare/v1.22.0...v1.23.0) (2026-04-29)
 
 

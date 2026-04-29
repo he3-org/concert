@@ -25,6 +25,7 @@ Run review-docs after every spec document and alignment after every change.
 - \`/concert-alignment\` — cross-check spec docs for contradictions and gaps
 - \`/concert-planner\` — break the architecture into phased \`TASK-*.md\` files
 - \`/concert-develop\` — TDD implementation, \`fix-gaps\`, and \`refactor\` execution
+- \`/concert-fix\` — TDD bug-fix from a description or GitHub issue
 - \`/concert-develop-review\` — produce \`DEVELOPMENT-REVIEW.md\` against the specs
 - \`/concert-develop-finish\` — archive working docs and emit reference documentation
 - \`/concert-status\` — read-only snapshot: stage, modified docs, gaps, refactor items, next action

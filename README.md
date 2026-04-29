@@ -269,7 +269,7 @@ npx concert push     # stage + commit pending state changes and push the branch
 
 ## Agents & Commands Reference
 
-Concert ships 13 agents. Each has a corresponding Claude Code slash command (`/concert-<name>`) and a Copilot cloud-agent definition selectable as `concert-<name>`. The slash command and the cloud agent share the same underlying agent definition, so behavior and sub-commands are identical across surfaces.
+Concert ships 14 agents. Each has a corresponding Claude Code slash command (`/concert-<name>`) and a Copilot cloud-agent definition selectable as `concert-<name>`. The slash command and the cloud agent share the same underlying agent definition, so behavior and sub-commands are identical across surfaces.
 
 ### Specification agents (Claude Code / Copilot CLI)
 
@@ -284,13 +284,14 @@ Concert ships 13 agents. Each has a corresponding Claude Code slash command (`/c
 
 ### Implementation agents (GitHub Copilot cloud agent recommended)
 
-| Agent                        | Purpose                                                                                                                          | Common sub-commands                                                                                          | Example                                               |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| **`concert-planner`**        | Decomposes the spec set into a phased `PLAN.md` and per-task `TASK-*.md` files, each tagged with a model tier.                   | `create`                                                                                                     | `concert-planner` → `create`                          |
-| **`concert-develop`**        | TDD developer. Implements task files, fixes review gaps, applies refactors, and runs token-optimization plans.                   | `implement [task]`, `fix-gaps [IDs] [--severity]`, `refactor [IDs] [--severity]`, `token-optimize`, `status` | `concert-develop` → `implement --phase 01-foundation` |
-| **`concert-develop-review`** | Read-only validator. Compares implementation to specs and produces `DEVELOPMENT-REVIEW.md` with traceability + categorized gaps. | `review [--scope requirements\|architecture\|ux\|phase <slug>]`, `status`                                    | `concert-develop-review` → `review`                   |
-| **`concert-develop-finish`** | Archives working spec docs to `DELETE-ME/` and synthesizes durable application reference docs in the mission folder.             | `finish [--dry-run]`, `docs-only`, `status`                                                                  | `concert-develop-finish` → `finish`                   |
-| **`concert-refactor`**       | Surveys the repo and writes a ranked refactor plan to `.concert/REFACTOR-PLAN-YYYY-MM-DD.md`. Utility agent — runnable any time. | `create [--scope <path>\|mission\|tests]`, `update`, `status`                                                | `concert-refactor` → `create --scope mission`         |
+| Agent                        | Purpose                                                                                                                                               | Common sub-commands                                                                                          | Example                                               |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| **`concert-planner`**        | Decomposes the spec set into a phased `PLAN.md` and per-task `TASK-*.md` files, each tagged with a model tier.                                        | `create`                                                                                                     | `concert-planner` → `create`                          |
+| **`concert-develop`**        | TDD developer. Implements task files, fixes review gaps, applies refactors, and runs token-optimization plans.                                        | `implement [task]`, `fix-gaps [IDs] [--severity]`, `refactor [IDs] [--severity]`, `token-optimize`, `status` | `concert-develop` → `implement --phase 01-foundation` |
+| **`concert-fix`**            | TDD bug-fix agent. Reproduces a bug with a failing test, applies the smallest fix, self-reviews, and verifies. Accepts inline text or a GitHub issue. | `fix <description>`, `fix --from-issue <num>`                                                                | `concert-fix` → `fix --from-issue 142`                |
+| **`concert-develop-review`** | Read-only validator. Compares implementation to specs and produces `DEVELOPMENT-REVIEW.md` with traceability + categorized gaps.                      | `review [--scope requirements\|architecture\|ux\|phase <slug>]`, `status`                                    | `concert-develop-review` → `review`                   |
+| **`concert-develop-finish`** | Archives working spec docs to `DELETE-ME/` and synthesizes durable application reference docs in the mission folder.                                  | `finish [--dry-run]`, `docs-only`, `status`                                                                  | `concert-develop-finish` → `finish`                   |
+| **`concert-refactor`**       | Surveys the repo and writes a ranked refactor plan to `.concert/REFACTOR-PLAN-YYYY-MM-DD.md`. Utility agent — runnable any time.                      | `create [--scope <path>\|mission\|tests]`, `update`, `status`                                                | `concert-refactor` → `create --scope mission`         |
 
 ### Utility agents
 

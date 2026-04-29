@@ -1,6 +1,6 @@
 {
   "name": "@he3-org/concert",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "description": "Opinionated agentic development lifecycle orchestrator",
   "type": "module",
   "bin": {

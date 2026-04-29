@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.0](https://github.com/he3-org/concert/compare/v1.22.0...v1.23.0) (2026-04-29)
+
+
+### Features
+
+* add concert-fix agent ([#89](https://github.com/he3-org/concert/issues/89)) ([45e9225](https://github.com/he3-org/concert/commit/45e92254ee820f4b4b0ac831bc21d1eb3b5764cf))
+
 ## [1.22.0](https://github.com/he3-org/concert/compare/v1.21.0...v1.22.0) (2026-04-28)
 
 

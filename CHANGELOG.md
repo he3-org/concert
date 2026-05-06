@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.25.0](https://github.com/he3-org/concert/compare/v1.24.0...v1.25.0) (2026-05-06)
+
+
+### Features
+
+* **README:** copy-pasteable snippet for existing copilot-setup-steps.yml ([#94](https://github.com/he3-org/concert/issues/94)) ([4e14f30](https://github.com/he3-org/concert/commit/4e14f30d68f252ce1040a7c689c1701cd96a4df8))
+
 ## [1.24.0](https://github.com/he3-org/concert/compare/v1.23.0...v1.24.0) (2026-04-29)
 
 

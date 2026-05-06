@@ -16,15 +16,17 @@ The CLI verbs (`get-status`, `get-state`, etc.) work without the MCP SDK; only `
 
 ## Tools
 
-| Tool                             | Description                                                          | Input Schema                 | CLI Mirror                            |
-| -------------------------------- | -------------------------------------------------------------------- | ---------------------------- | ------------------------------------- |
-| `concert.get_status`             | Comprehensive status snapshot (stage, modified docs, gaps, refactor) | `{ mission?: string }`       | `concert get-status [--mission]`      |
-| `concert.get_state`              | Mission state from `state.json` (progress, failures, next action)    | `{ mission?: string }`       | `concert get-state [--mission]`       |
-| `concert.list_missions`          | List all missions with metadata                                      | `{}`                         | `concert list-missions`               |
-| `concert.get_section`            | Get markdown section by slug from a mission doc                      | `{ doc, section, mission? }` | `concert get-section <doc> <section>` |
-| `concert.list_modified_sections` | List documents with `CONCERT:MODIFIED` markers                       | `{ mission?: string }`       | `concert list-modified-sections`      |
+| Tool                             | Description                                                          | Input Schema                                                | CLI Mirror                                                |
+| -------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------- |
+| `concert.get_status`             | Comprehensive status snapshot (stage, modified docs, gaps, refactor) | `{ mission?: string }`                                      | `concert get-status [--mission]`                          |
+| `concert.get_state`              | Mission state from `state.json` (progress, failures, next action)    | `{ mission?: string }`                                      | `concert get-state [--mission]`                           |
+| `concert.list_missions`          | List all missions with metadata                                      | `{}`                                                        | `concert list-missions`                                   |
+| `concert.get_section`            | Get markdown section by slug from a mission doc                      | `{ doc, section, mission? }`                                | `concert get-section <doc> <section>`                     |
+| `concert.list_modified_sections` | List documents with `CONCERT:MODIFIED` markers                       | `{ mission?: string }`                                      | `concert list-modified-sections`                          |
+| `concert.mark_section_modified`  | Insert/refresh one or more `CONCERT:MODIFIED` markers                | `{ doc, section?, sections?: string[], source?, mission? }` | `concert mark-section-modified <doc> <slug> [<slug>...]`  |
+| `concert.clear_section_modified` | Remove one or more `CONCERT:MODIFIED` markers                        | `{ doc, section?, sections?: string[], mission? }`          | `concert clear-section-modified <doc> <slug> [<slug>...]` |
 
-All tools return JSON. See `concert serve --inspect` for full schemas.
+All tools return JSON. See `concert serve --inspect` for full schemas. The mutation tools above accept either a single `section` or a `sections[]` batch — prefer `sections[]` (or multiple positional CLI slugs) when touching several sections of the same document, so the server takes one mission lock, performs one read/write, and emits one telemetry event instead of N.
 
 ## Client config
 

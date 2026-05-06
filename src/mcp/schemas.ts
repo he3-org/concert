@@ -227,11 +227,16 @@ export const markSectionModifiedInputSchema = {
   type: 'object',
   properties: {
     doc: { type: 'string', description: 'Document path relative to mission' },
-    section: { type: 'string', description: 'Section slug' },
+    section: { type: 'string', description: 'Single section slug (use `sections` for batch)' },
+    sections: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'Batch of section slugs to mark in one call (preferred over multiple calls)',
+    },
     source: { type: 'string', description: 'Optional source reference' },
     mission: { type: 'string', description: 'Mission slug (default: active)' },
   },
-  required: ['doc', 'section'],
+  required: ['doc'],
   additionalProperties: false,
 } as const;
 
@@ -243,9 +248,23 @@ export const markSectionModifiedOutputSchema = {
     doc: { type: 'string' },
     section: { type: 'string' },
     alreadyMarked: { type: 'boolean' },
+    results: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          section: { type: 'string' },
+          alreadyMarked: { type: 'boolean' },
+          ok: { type: 'boolean' },
+          error: { type: 'string' },
+        },
+        required: ['section', 'alreadyMarked', 'ok'],
+        additionalProperties: false,
+      },
+    },
     error: { type: 'string' },
   },
-  required: ['ok', 'doc', 'section'],
+  required: ['ok', 'doc'],
   additionalProperties: false,
 } as const;
 
@@ -256,10 +275,15 @@ export const clearSectionModifiedInputSchema = {
   type: 'object',
   properties: {
     doc: { type: 'string', description: 'Document path relative to mission' },
-    section: { type: 'string', description: 'Section slug' },
+    section: { type: 'string', description: 'Single section slug (use `sections` for batch)' },
+    sections: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'Batch of section slugs to clear in one call (preferred over multiple calls)',
+    },
     mission: { type: 'string', description: 'Mission slug (default: active)' },
   },
-  required: ['doc', 'section'],
+  required: ['doc'],
   additionalProperties: false,
 } as const;
 
@@ -271,9 +295,21 @@ export const clearSectionModifiedOutputSchema = {
     doc: { type: 'string' },
     section: { type: 'string' },
     removed: { type: 'boolean' },
+    results: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          section: { type: 'string' },
+          removed: { type: 'boolean' },
+        },
+        required: ['section', 'removed'],
+        additionalProperties: false,
+      },
+    },
     error: { type: 'string' },
   },
-  required: ['ok', 'doc', 'section'],
+  required: ['ok', 'doc'],
   additionalProperties: false,
 } as const;
 

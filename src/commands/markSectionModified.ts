@@ -7,35 +7,40 @@ export async function runMarkSectionModified(cwd: string, args: string[]): Promi
   const sourceIdx = args.indexOf('--source');
   const source = sourceIdx !== -1 ? args[sourceIdx + 1] : undefined;
 
-  const positional = args.filter(
-    (a, i) =>
-      !a.startsWith('--') &&
-      a !== mission &&
-      (i === 0 || args[i - 1] !== '--mission') &&
-      a !== source &&
-      (i === 0 || args[i - 1] !== '--source')
-  );
+  const positional: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i]!;
+    if (a === '--mission' || a === '--source') {
+      i++; // skip its value
+      continue;
+    }
+    if (a.startsWith('--')) continue;
+    positional.push(a);
+  }
   const doc = positional[0];
-  const section = positional[1];
+  const sections = positional.slice(1);
 
-  if (args.includes('--help') || args.includes('-h') || !doc || !section) {
-    console.log(`Usage: concert mark-section-modified <doc> <section> [options]
+  if (args.includes('--help') || args.includes('-h') || !doc || sections.length === 0) {
+    console.log(`Usage: concert mark-section-modified <doc> <section> [<section>...] [options]
 
-Mark a section as modified by inserting or refreshing a CONCERT:MODIFIED marker.
+Insert or refresh CONCERT:MODIFIED markers on one or more sections of a
+document. Pass multiple section slugs to mark them in a single locked
+read/write/event.
 
 Arguments:
   <doc>      Document path (relative to mission)
-  <section>  Section slug
+  <section>  One or more section slugs
 
 Options:
   --mission <slug>  Target mission (default: active)
-  --source <ref>    Optional source reference
+  --source <ref>    Optional source reference applied to every marker
   --json            Output as JSON
   --help, -h        Show this help`);
-    return doc && section ? 0 : 2;
+    return doc && sections.length > 0 ? 0 : 2;
   }
 
-  const input: MarkSectionModifiedInput = { doc, section };
+  const input: MarkSectionModifiedInput =
+    sections.length === 1 ? { doc, section: sections[0]! } : { doc, sections };
   if (mission) input.mission = mission;
   if (source) input.source = source;
 
@@ -43,6 +48,17 @@ Options:
 
   if (isJson) {
     console.log(JSON.stringify(output, null, 2));
+    return output.ok ? 0 : 1;
+  }
+
+  if (output.results) {
+    for (const r of output.results) {
+      if (r.ok) {
+        console.log(`Marked ${output.doc}#${r.section}${r.alreadyMarked ? ' (refreshed)' : ''}`);
+      } else {
+        console.error(`Error: ${output.doc}#${r.section}: ${r.error}`);
+      }
+    }
     return output.ok ? 0 : 1;
   }
 

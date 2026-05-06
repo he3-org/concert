@@ -43,7 +43,7 @@ Markers tell downstream agents which sections changed so re-evaluation is select
 
 **Marking changed sections:**
 
-Use `concert mark-section-modified <doc> <section>` for each modified section. The tool inserts or refreshes a per-section marker. Legacy whole-doc markers remain supported for backward compatibility.
+Use `concert mark-section-modified <doc> <slug1> [<slug2>...]` once per modified document, listing every changed slug in the same call. The tool inserts or refreshes per-section markers under a single lock and emits one telemetry event. Legacy whole-doc markers remain supported for backward compatibility.
 
 ## Command: `review [<doc>] [--batch]`
 
@@ -60,7 +60,7 @@ Use `concert mark-section-modified <doc> <section>` for each modified section. T
 1. **Locate document.** Resolve to `<mission_path>/<TYPE>.md`. Read it. If missing, report and stop.
 2. **Initialise tracking.** `modified_sections = []`.
 3. **Run the chosen mode** (Conversational or Batch — see below).
-4. **Stamp markers.** For each slug in `modified_sections`: `concert mark-section-modified <doc> <slug>`.
+4. **Stamp markers.** Group `modified_sections` by document and run one `concert mark-section-modified <doc> <slug1> [<slug2>...]` call per document with every changed slug.
 5. **Auto-alignment.** If `modified_sections` is non-empty AND at least one of VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md exists, run `/concert-alignment check` immediately as the final step. (No flag, no opt-out.) Append the alignment summary to the wrap-up output.
 6. **Wrap up.** Use the template below.
 
@@ -183,7 +183,7 @@ If a document has the legacy whole-doc marker, treat it as "every section modifi
    - UX-DESIGN.md → requirements coverage, flow consistency, component coherence, accessibility, architecture alignment, scope. Append to `## Open Questions`.
    - ALIGNMENT.md → re-run all alignment checks; mark resolved, add new, update matrix and counts.
    - PLAN.md → requirements coverage, dependency validity, wave ordering, model-tier appropriateness, file coverage, acceptance-criteria validity, scope. Append to `## Open Questions`.
-4. **Clear markers.** After each successful per-doc re-evaluation: `concert clear-section-modified <doc> <slug>` for each marked slug.
+4. **Clear markers.** After each successful per-doc re-evaluation: `concert clear-section-modified <doc> <slug1> [<slug2>...]` — pass every marked slug in a single call per document.
 5. **Report** using the template below.
 
 ### Report template

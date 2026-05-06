@@ -165,7 +165,12 @@ Cloud-agent runs need a few extras beyond the MCP JSON above. Without them, the 
 - The file must be present on the **default branch** — Copilot only reads `copilot-setup-steps.yml` from there.
 - Trigger it once manually from the repository's **Actions** tab to confirm it runs green. See GitHub's [Copilot setup steps docs](https://docs.github.com/copilot/customizing-copilot/customizing-the-development-environment-for-copilot-coding-agent) for the full reference.
 
-If you already had a `copilot-setup-steps.yml` of your own, `concert init` will not overwrite it — add the `npm install -g @he3-org/concert@latest @modelcontextprotocol/sdk` step to your existing job.
+If you already had a `copilot-setup-steps.yml` of your own, `concert init` will not overwrite it. Add the following step to your existing `copilot-setup-steps` job (and ensure the job sets up Node.js 20+ first, e.g. with `actions/setup-node@v4`):
+
+```yaml
+      - name: Install Concert and MCP SDK globally
+        run: npm install -g @he3-org/concert@latest @modelcontextprotocol/sdk
+```
 
 **2. Allow Concert through the firewall.** Cloud agents run behind GitHub's integrated firewall, which by default blocks the npm registry. Under **Settings → Copilot → Coding agent → Custom allowlist**, add:
 

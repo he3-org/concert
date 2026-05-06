@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.0](https://github.com/he3-org/concert/compare/v1.26.0...v1.27.0) (2026-05-06)
+
+
+### Features
+
+* batch section-marker tools (mark/clear) accept multi-slug input ([#98](https://github.com/he3-org/concert/issues/98)) ([a1f9a4c](https://github.com/he3-org/concert/commit/a1f9a4c5e9eddabaa390ecb2ea14559746cf9f94))
+
 ## [1.26.0](https://github.com/he3-org/concert/compare/v1.25.0...v1.26.0) (2026-05-06)
 
 

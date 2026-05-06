@@ -52,6 +52,7 @@ This creates the following files. Edit `concert.jsonc` to fit your project; the 
 | `concert.jsonc`                     | Project configuration (edit to customize) |
 | `.concert/`                         | State, missions, and workflow definitions |
 | `.github/agents/concert-*.agent.md` | GitHub Copilot agent definitions          |
+| `.github/workflows/copilot-setup-steps.yml` | Preinstalls Concert + MCP SDK in Copilot cloud-agent runs (skipped if you already have one) |
 | `.claude/commands/concert-*.md`     | Claude Code slash commands                |
 | `CLAUDE.md`                         | Concert section appended (or created)     |
 
@@ -101,7 +102,7 @@ The snippets below all launch Concert via `npx`, so each client picks up the ver
 Repository administrators can enable the MCP server for GitHub.com cloud agents:
 
 1. Open the repository on GitHub.com.
-2. Go to **Settings → Copilot → Cloud agent**.
+2. Go to **Settings → Copilot → Coding agent**.
 3. Paste this JSON into **MCP configuration** and save:
 
 ```json
@@ -109,8 +110,8 @@ Repository administrators can enable the MCP server for GitHub.com cloud agents:
   "mcpServers": {
     "concert": {
       "type": "local",
-      "command": "npx",
-      "args": ["-y", "@he3-org/concert", "serve"],
+      "command": "concert",
+      "args": ["serve"],
       "tools": [
         "concert.get_status",
         "concert.get_state",
@@ -124,6 +125,8 @@ Repository administrators can enable the MCP server for GitHub.com cloud agents:
 ```
 
 The cloud agent can then call Concert's read-only tools autonomously during tasks. No secrets are required for Concert's local MCP server.
+
+> **Important:** the snippet above invokes the `concert` binary directly, which assumes Concert is preinstalled in the runner. **Do the steps in [Cloud agent setup (GitHub.com)](#cloud-agent-setup-githubcom) below before your first cloud-agent run** — otherwise the MCP server will fail to start before the handshake timeout and Copilot will silently skip it.
 
 **Cursor** — Cursor MCP settings
 
@@ -152,6 +155,31 @@ npx concert serve --inspect
 ```
 
 The same data is also reachable from the CLI without an MCP client (`npx concert get-status`, `npx concert get-state`, `npx concert list-missions`, `npx concert get-section <doc> <section>`).
+
+### Cloud agent setup (GitHub.com)
+
+Cloud-agent runs need a few extras beyond the MCP JSON above. Without them, the most common failure mode is the MCP server silently failing to start: a fresh runner has to download `@he3-org/concert` and `@modelcontextprotocol/sdk` over the network the first time `npx` runs, and Copilot enforces a startup timeout on MCP servers — if the install is still in flight when that timer fires, the server is marked failed and skipped without a visible error in the session log.
+
+**1. Preinstall Concert in the runner.** `concert init` writes `.github/workflows/copilot-setup-steps.yml` for you. The workflow installs `@he3-org/concert@latest` and `@modelcontextprotocol/sdk` globally before the agent starts. Two requirements for it to take effect:
+
+- The file must be present on the **default branch** — Copilot only reads `copilot-setup-steps.yml` from there.
+- Trigger it once manually from the repository's **Actions** tab to confirm it runs green. See GitHub's [Copilot setup steps docs](https://docs.github.com/copilot/customizing-copilot/customizing-the-development-environment-for-copilot-coding-agent) for the full reference.
+
+If you already had a `copilot-setup-steps.yml` of your own, `concert init` will not overwrite it — add the `npm install -g @he3-org/concert@latest @modelcontextprotocol/sdk` step to your existing job.
+
+**2. Allow Concert through the firewall.** Cloud agents run behind GitHub's integrated firewall, which by default blocks the npm registry. Under **Settings → Copilot → Coding agent → Custom allowlist**, add:
+
+- `registry.npmjs.org`, `npmjs.org`, `npmjs.com` — required by `npm install` and any `npx` fallback.
+- `objects.githubusercontent.com`, `raw.githubusercontent.com` — required by `concert skills add` and `concert rules add` to fetch from [`he3-org/concert-assets`](https://github.com/he3-org/concert-assets).
+
+See GitHub's [Customizing or disabling the firewall](https://docs.github.com/copilot/customizing-copilot/customizing-or-disabling-the-firewall-for-copilot-coding-agent) docs for the full procedure.
+
+**3. Put cloud-agent secrets in the `copilot` environment.** Any tokens or secrets the Concert agents need (e.g. for private fetches) belong in the repository's `copilot` GitHub Actions environment, **not** the default environment — cloud-agent runs only see env values configured there. Common gotcha; see the same docs link above for the step-by-step.
+
+**4. Verify.** After your first cloud-agent task starts, check two things:
+
+- The `Copilot Setup Steps` workflow ran green for the commit the agent picked up.
+- The session log shows `MCP server "concert" started` (or equivalent). If it does not, the setup steps did not run on the default branch, or the firewall blocked an outbound host above.
 
 ## Usage Example
 

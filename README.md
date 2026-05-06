@@ -55,11 +55,19 @@ This creates the following files. Edit `concert.jsonc` to fit your project; the 
 | `.claude/commands/concert-*.md`     | Claude Code slash commands                |
 | `CLAUDE.md`                         | Concert section appended (or created)     |
 
-To pull a newer version of Concert later — overwriting managed files, merging new config/state fields into the ones you already have, and removing files from older versions:
+To update Concert later:
 
 ```bash
 npm install --save-dev @he3-org/concert@latest
 npx concert update
+```
+
+This updates the pinned npm package first, then refreshes Concert-managed files from that version. `concert update` overwrites managed agent/command files, merges any new `concert.jsonc` or state fields into your existing files, and removes stale managed files from older Concert releases. Review and commit both the package file changes and the refreshed managed files.
+
+If you use the MCP server and installed the SDK explicitly, keep it current too:
+
+```bash
+npm install --save-dev @modelcontextprotocol/sdk@latest
 ```
 
 ### 3. Install the Concert MCP server in your client
@@ -87,6 +95,35 @@ The snippets below all launch Concert via `npx`, so each client picks up the ver
   }
 }
 ```
+
+**GitHub Copilot cloud agents (GitHub.com)** — repository settings
+
+Repository administrators can enable the MCP server for GitHub.com cloud agents:
+
+1. Open the repository on GitHub.com.
+2. Go to **Settings → Copilot → Cloud agent**.
+3. Paste this JSON into **MCP configuration** and save:
+
+```json
+{
+  "mcpServers": {
+    "concert": {
+      "type": "local",
+      "command": "npx",
+      "args": ["-y", "@he3-org/concert", "serve"],
+      "tools": [
+        "concert.get_status",
+        "concert.get_state",
+        "concert.list_missions",
+        "concert.get_section",
+        "concert.list_modified_sections"
+      ]
+    }
+  }
+}
+```
+
+The cloud agent can then call Concert's read-only tools autonomously during tasks. No secrets are required for Concert's local MCP server.
 
 **Cursor** — Cursor MCP settings
 

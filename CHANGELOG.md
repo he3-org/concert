@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.0](https://github.com/he3-org/concert/compare/v1.25.0...v1.26.0) (2026-05-06)
+
+
+### Features
+
+* ensure .gitignore excludes .concert/index.sqlite on init/update ([#96](https://github.com/he3-org/concert/issues/96)) ([7d45193](https://github.com/he3-org/concert/commit/7d45193b5b4d1deb81c63a90f1889bbb902285f0))
+
 ## [1.25.0](https://github.com/he3-org/concert/compare/v1.24.0...v1.25.0) (2026-05-06)
 
 

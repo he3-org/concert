@@ -16,3 +16,7 @@ of truth — do not duplicate).
   `concert-review-docs` agent definition.
 - Copilot cloud agents commit and push directly; the develop agent does
   all work itself (no sub-agents — they lose commit permissions in cloud).
+- Cloud-agent MCP setup (preinstall via `copilot-setup-steps.yml`, firewall
+  allowlist, `copilot` environment secrets) is documented in the README's
+  "Cloud agent setup (GitHub.com)" section. Point users there rather than
+  duplicating the steps.

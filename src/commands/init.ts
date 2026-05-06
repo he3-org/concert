@@ -11,6 +11,7 @@ import {
 import { readConfigRaw, writeConfig, modifyConfigField, detectProjectName } from '../lib/config.js';
 import { getPackageVersion } from '../lib/version.js';
 import { buildConcertSection } from '../lib/claude-section.js';
+import { ensureGitignoreEntries } from '../lib/gitignore.js';
 
 const CONCERT_DIR = '.concert';
 
@@ -106,6 +107,9 @@ export async function runInit(cwd: string): Promise<number> {
   // Handle CLAUDE.md
   handleClaudeMd(cwd);
 
+  // Ensure .gitignore excludes the local SQLite cache
+  const gitignoreResult = ensureGitignoreEntries(cwd);
+
   // Count live files for output
   const liveCounts = countLiveFiles(packageRoot);
   const agentCount = liveCounts['agents'] ?? 0;
@@ -122,7 +126,11 @@ export async function runInit(cwd: string): Promise<number> {
     .github/workflows/copilot-setup-steps.yml  (cloud-agent MCP preinstall)
     .claude/commands/             (${commandCount} command files)
     .claude/rules/                (${ruleCount} rule files)
-    CLAUDE.md                     (Concert section appended)
+    CLAUDE.md                     (Concert section appended)${
+      gitignoreResult.added.length > 0
+        ? `\n    .gitignore                    (${gitignoreResult.added.length} Concert entries added)`
+        : ''
+    }
 
   Files: ${result.created.length} created
 

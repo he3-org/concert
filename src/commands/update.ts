@@ -6,6 +6,7 @@ import { readState, writeState } from '../lib/state.js';
 import { getPackageVersion } from '../lib/version.js';
 import { mergeState, mergeConfig } from '../lib/merge.js';
 import { buildConcertSection } from '../lib/claude-section.js';
+import { ensureGitignoreEntries } from '../lib/gitignore.js';
 import * as jsonc from 'jsonc-parser';
 
 const CONCERT_DIR = '.concert';
@@ -140,13 +141,17 @@ export async function runUpdate(cwd: string): Promise<number> {
   // Clean up stale Concert-managed files from previous versions
   const cleanupResult = cleanupStaleFiles(cwd, version);
 
+  // Ensure .gitignore excludes the local SQLite cache
+  const gitignoreResult = ensureGitignoreEntries(cwd);
+
   const allCurrent =
     updatedFiles.length === 0 &&
     configReport.added.length === 0 &&
     configReport.removed.length === 0 &&
     stateReport.added.length === 0 &&
     stateReport.removed.length === 0 &&
-    cleanupResult.deleted.length === 0;
+    cleanupResult.deleted.length === 0 &&
+    gitignoreResult.added.length === 0;
 
   if (allCurrent) {
     process.stdout.write(`Concert is up to date (v${version})
@@ -200,6 +205,14 @@ export async function runUpdate(cwd: string): Promise<number> {
 
   if (claudeResult.action === 'updated') {
     output += `  CLAUDE.md:  Concert section updated\n\n`;
+  }
+
+  if (gitignoreResult.added.length > 0) {
+    output += `  .gitignore: added ${gitignoreResult.added.length} Concert entries:\n`;
+    for (const entry of gitignoreResult.added) {
+      output += `    ${entry}\n`;
+    }
+    output += '\n';
   }
 
   output += `  Next steps:\n`;

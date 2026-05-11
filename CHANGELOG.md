@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.1](https://github.com/he3-org/concert/compare/v1.27.0...v1.27.1) (2026-05-11)
+
+
+### Bug Fixes
+
+* use proper MCP SDK request schemas in server.ts ([#100](https://github.com/he3-org/concert/issues/100)) ([de849c3](https://github.com/he3-org/concert/commit/de849c33d4e7a7f0fefbc2358b6ef4b369c07261))
+
 ## [1.27.0](https://github.com/he3-org/concert/compare/v1.26.0...v1.27.0) (2026-05-06)
 
 

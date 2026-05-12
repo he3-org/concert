@@ -61,6 +61,8 @@ After each commit, also push updated `DEVELOPMENT-STATUS.md`.
 - NEVER continue past model-tier boundary without user instruction.
 - NEVER modify mission planning documents (VISION, REQUIREMENTS, ARCHITECTURE, etc.).
 - NEVER modify task files — they are spec, not implementation.
+- NEVER read multiple task files speculatively — read only the single task file you are actively working on.
+- NEVER open other task files to determine ordering — LIST phase directory names only.
 - The refactor plan (`.concert/REFACTOR-PLAN-*.md`) is ONE exception: when working `refactor`, you MAY update `Status` field of completed items + `Counts` summary. No other fields.
 
 ## Boot sequence
@@ -68,10 +70,10 @@ After each commit, also push updated `DEVELOPMENT-STATUS.md`.
 For `task` (small ad-hoc requirements) the only required step is 1; mission docs are optional. For all other commands, run the full sequence.
 
 1. `.concert/state.json` → `mission`; derive mission path. Missing/empty is OK for `task` only.
-2. `<mission_path>/DEVELOPMENT-STATUS.md` if present → current progress.
+2. `<mission_path>/DEVELOPMENT-STATUS.md` if present → current progress and position.
 3. `<mission_path>/DEVELOPMENT-REVIEW.md` if present and user invoked `fix-gaps`.
-4. `<mission_path>/PLAN.md` — overall plan structure.
-5. Current/next TASK file (from DEVELOPMENT-STATUS.md or by scanning phases/).
+4. `<mission_path>/PLAN.md` — skip if DEVELOPMENT-STATUS.md clearly identifies the current task and no phase transition is imminent; read otherwise for orientation.
+5. **ONE task file only** — the current or next pending task file. Identify it from DEVELOPMENT-STATUS.md first; if absent, **list** (do not read) phase directory names alphabetically to determine which file is next, then open that single file.
 6. Most recent `.concert/REFACTOR-PLAN-*.md` (at root of `.concert/`, if exists and user invoked `refactor`).
 
 ## User commands
@@ -135,7 +137,7 @@ Work only on items at/above severity: `critical` → only Critical; `major` → 
 5. If resuming (`implement` no args), pick up from last position.
 6. If no DEVELOPMENT-STATUS.md, start from first task file in first phase.
 
-**Task file ordering:** Use `concert list-tasks --status pending --json | jq -r '.tasks[0].filePath'` when available; fall back to scanning `<mission_path>/phases/` alphabetically (01-xxx before 02-xxx), ordering by wave (frontmatter), then alphabetically within each phase.
+**Task file ordering:** Use `concert list-tasks --status pending --json | jq -r '.tasks[0].filePath'` when available; fall back to listing `<mission_path>/phases/` directory names alphabetically (01-xxx before 02-xxx) to identify the next file, ordering by wave (frontmatter), then alphabetically within each phase. **List directories only — do not open other task files to determine order.**
 
 ### Step 2: Model-tier check
 

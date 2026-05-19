@@ -358,9 +358,10 @@ For each gap (same TDD discipline as task):
 
 **4d. Complete gap:**
 
-1. Update DEVELOPMENT-STATUS.md — record fixed.
-2. **COMMIT**: `chore(scope): mark <gap-id> resolved`
-3. Move to next gap.
+1. Update DEVELOPMENT-REVIEW.md — mark gap resolved: append `**Resolved:** <ISO date>` on a new line inside the gap's section (after **Files:** line).
+2. Update DEVELOPMENT-STATUS.md — record fixed.
+3. **COMMIT**: `chore(scope): mark <gap-id> resolved`
+4. Move to next gap.
 
 ### Fix-gaps Step 5: All gaps done
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.28.0](https://github.com/he3-org/concert/compare/v1.27.1...v1.28.0) (2026-06-19)
+
+
+### Features
+
+* improve concert-develop agent to avoid reading all task files ([#102](https://github.com/he3-org/concert/issues/102)) ([0798be8](https://github.com/he3-org/concert/commit/0798be8e1c3298d7eb04f16a78221b817e593bb4))
+* update fix-gaps and review agents to sync tracking documents ([#104](https://github.com/he3-org/concert/issues/104)) ([224dba3](https://github.com/he3-org/concert/commit/224dba360e8d178c51c75eacdbd5b4909a8734bc))
+
+
+### Bug Fixes
+
+* remove copilot-setup-steps.yml from install/update ([#105](https://github.com/he3-org/concert/issues/105)) ([87945b5](https://github.com/he3-org/concert/commit/87945b512d44524ec386f0f84734cb1502ff64f1))
+
 ## [1.27.1](https://github.com/he3-org/concert/compare/v1.27.0...v1.27.1) (2026-05-11)
 
 

@@ -123,7 +123,6 @@ export async function runInit(cwd: string): Promise<number> {
     concert.jsonc                 (default configuration)
     .concert/                     (state and missions)
     .github/agents/               (${agentCount} GitHub agent definitions)
-    .github/workflows/copilot-setup-steps.yml  (cloud-agent MCP preinstall)
     .claude/commands/             (${commandCount} command files)
     .claude/rules/                (${ruleCount} rule files)
     CLAUDE.md                     (Concert section appended)${

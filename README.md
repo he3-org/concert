@@ -52,7 +52,6 @@ This creates the following files. Edit `concert.jsonc` to fit your project; the 
 | `concert.jsonc`                     | Project configuration (edit to customize) |
 | `.concert/`                         | State, missions, and workflow definitions |
 | `.github/agents/concert-*.agent.md` | GitHub Copilot agent definitions          |
-| `.github/workflows/copilot-setup-steps.yml` | Preinstalls Concert + MCP SDK in Copilot cloud-agent runs (skipped if you already have one) |
 | `.claude/commands/concert-*.md`     | Claude Code slash commands                |
 | `CLAUDE.md`                         | Concert section appended (or created)     |
 
@@ -160,16 +159,54 @@ The same data is also reachable from the CLI without an MCP client (`npx concert
 
 Cloud-agent runs need a few extras beyond the MCP JSON above. Without them, the most common failure mode is the MCP server silently failing to start: a fresh runner has to download `@he3-org/concert` and `@modelcontextprotocol/sdk` over the network the first time `npx` runs, and Copilot enforces a startup timeout on MCP servers — if the install is still in flight when that timer fires, the server is marked failed and skipped without a visible error in the session log.
 
-**1. Preinstall Concert in the runner.** `concert init` writes `.github/workflows/copilot-setup-steps.yml` for you. The workflow installs `@he3-org/concert@latest` and `@modelcontextprotocol/sdk` globally before the agent starts. Two requirements for it to take effect:
+**1. Preinstall Concert in the runner.** Create `.github/workflows/copilot-setup-steps.yml` in your repository to install `@he3-org/concert@latest` and `@modelcontextprotocol/sdk` globally before the agent starts. Two requirements for it to take effect:
 
 - The file must be present on the **default branch** — Copilot only reads `copilot-setup-steps.yml` from there.
 - Trigger it once manually from the repository's **Actions** tab to confirm it runs green. See GitHub's [Copilot setup steps docs](https://docs.github.com/copilot/customizing-copilot/customizing-the-development-environment-for-copilot-coding-agent) for the full reference.
 
-If you already had a `copilot-setup-steps.yml` of your own, `concert init` will not overwrite it. Add the following step to your existing `copilot-setup-steps` job (and ensure the job sets up Node.js 20+ first, e.g. with `actions/setup-node@v4`):
+If you don't already have a `copilot-setup-steps.yml`, create `.github/workflows/copilot-setup-steps.yml` with the following complete contents:
 
 ```yaml
+name: 'Copilot Setup Steps'
+
+# Preinstalls Concert and the MCP SDK so the Concert MCP server starts
+# instantly when a Copilot cloud-agent task begins, instead of relying on
+# `npx` to download and unpack the package within the MCP handshake window.
+#
+# Copilot picks this file up automatically when it lives at
+# `.github/workflows/copilot-setup-steps.yml` on the default branch.
+# See: https://docs.github.com/copilot/customizing-copilot/customizing-the-development-environment-for-copilot-coding-agent
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be named `copilot-setup-steps` or Copilot will not run it.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install Concert and MCP SDK globally
         run: npm install -g @he3-org/concert@latest @modelcontextprotocol/sdk
+```
+
+If you already have a `copilot-setup-steps.yml` of your own, add the following to your existing `copilot-setup-steps` job (and ensure the job sets up Node.js 20+ first, e.g. with `actions/setup-node@v4`):
+
+```yaml
+- name: Install Concert and MCP SDK globally
+  run: npm install -g @he3-org/concert@latest @modelcontextprotocol/sdk
 ```
 
 **2. Allow Concert through the firewall.** Cloud agents run behind GitHub's integrated firewall, which by default blocks the npm registry. Under **Settings → Copilot → Coding agent → Custom allowlist**, add:

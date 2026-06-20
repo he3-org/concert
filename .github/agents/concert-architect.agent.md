@@ -46,10 +46,7 @@ If `<requirements-path>` is provided, use it. Otherwise use `<mission_path>/REQU
 
 ### Steps
 
-1. **Validate REQUIREMENTS.md.** If `## Open Questions` contains unchecked `- [ ]` items:
-   - Interview tool available → ask whether to proceed anyway or resolve first.
-   - No interview tool → report unresolved questions, recommend `concert-review-docs review requirements`, stop.
-   - User chooses "resolve first" → stop with same recommendation.
+1. **Check REQUIREMENTS.md.** If `## Open Questions` contains unchecked `- [ ]` items, do NOT stop — proceed and create ARCHITECTURE.md anyway. For each decision that depends on an unresolved requirements question, make a reasonable assumption, mark it inline with `(Assumption)`, and add a matching `- [ ]` item to this document's `## Open Questions` so the assumption is resolved when document review runs. Warn in the final output (see "Proceeding with assumptions" output) that REQUIREMENTS.md had unresolved questions and assumptions were made.
 2. **Research and analyze:**
    - Read REQUIREMENTS.md thoroughly (every FR, NFR, constraint, dependency, assumption).
    - Scan codebase for current architecture, patterns, tech stack, conventions.
@@ -174,7 +171,11 @@ Examples of architectural skills:
 - Trace every component/decision to requirements.
 - Document rationale — not just what, but why.
 - Evaluate alternatives for every tech choice.
-- Mark decisions based on assumptions `(assumed)`.
+- Mark decisions based on assumptions `(Assumption)` and add a matching `- [ ]` to `## Open Questions`.
+
+### Proceeding with assumptions output
+
+If REQUIREMENTS.md had unresolved `## Open Questions` when you created ARCHITECTURE.md, prepend to your output: `⚠️ REQUIREMENTS.md had unresolved questions; ARCHITECTURE.md created anyway with affected items marked (Assumption) in ## Open Questions. Run /concert-review-docs review-and-reconcile all to resolve.`
 
 ## Command: `re-evaluate`
 

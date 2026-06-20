@@ -137,7 +137,7 @@ Return findings as `(section, issue, suggested resolution|question)`.
 Run `/concert-review-docs re-evaluate-all` to update only the documents impacted by the changed sections.
 ```
 
-## Command: `review-and-reconcile [<doc>] [--batch]`
+## Command: `review-and-reconcile [<doc>|all] [--batch]`
 
 Convenience: run `review` for `<doc>` (or `vision`), then immediately run `re-evaluate-all`. Does not return to the user between the two phases. Use this to avoid the agent-switching ping-pong between review and re-evaluation.
 
@@ -146,6 +146,15 @@ Convenience: run `review` for `<doc>` (or `vision`), then immediately run `re-ev
 1. Execute `review` per the rules above.
 2. If any section was modified, execute `re-evaluate-all` (below) without prompting.
 3. Output the combined wrap-up of both commands.
+
+### `all` mode
+
+When invoked as `review-and-reconcile all`, work through every mission document in pipeline order in a single session — reusing the already-built context instead of rebuilding it across multiple sessions. For each document that exists (`vision`, `requirements`, `architecture`, `ux-design`, `alignment`, `plan`), in that order:
+
+1. Run `review <doc>` and resolve every open question in that document, including any items marked `(Assumption)` by an upstream `create` step.
+2. After each document, run `re-evaluate-all` so changes ripple downstream before you reach the next document.
+
+Continue until all documents are reviewed and no unresolved `- [ ]` open questions remain. Emit one combined wrap-up at the end listing, per document, the questions resolved and assumptions confirmed or revised.
 
 ## Command: `re-evaluate-all`
 

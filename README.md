@@ -270,6 +270,16 @@ To skip the review-then-re-evaluate ping-pong on subsequent stages, prefer the o
 
 This runs `review` immediately followed by `re-evaluate-all`, which uses the per-section `CONCERT:MODIFIED` markers to **selectively** re-evaluate only the downstream documents whose impacted sections actually changed — dramatically cheaper than re-running every downstream agent.
 
+If a `create` step proceeded past unresolved upstream questions (see note below), it marks affected items `(Assumption)` and adds them to the document's _Open Questions_. To resolve every document's open questions and assumptions in one session — reusing the already-built context instead of paying to rebuild it across multiple runs — use:
+
+```
+/concert-review-docs review-and-reconcile all
+```
+
+This walks every existing mission document in pipeline order (vision → requirements → architecture → ux-design → alignment → plan), resolving all open questions and re-evaluating downstream impact after each.
+
+> **💡 Tip:** The `concert-requirements`, `concert-architect`, and `concert-ux-design` `create` commands no longer stop when an upstream document still has unresolved questions. They create the document anyway, mark each affected item `(Assumption)`, and add it to _Open Questions_ so it is resolved during review. Their output warns when this happens.
+
 > **💡 Tip:** Run `review-docs` after creating _every_ spec document (Vision, Requirements, Architecture, UX Design). Auto-alignment + selective re-evaluation make the cost of catching issues early very low.
 
 ### Step 3 — Decompose into requirements (`/concert-requirements`)
@@ -410,14 +420,14 @@ Concert ships 14 agents. Each has a corresponding Claude Code slash command (`/c
 
 ### Specification agents (Claude Code / Copilot CLI)
 
-| Agent                      | Purpose                                                                                                                                                        | Common sub-commands                                                       | Example                                            |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------- |
-| **`concert-vision`**       | Creates `VISION.md` from a feature description. Researches the codebase and the feature domain; can start a mission from a GitHub issue.                       | `create <description>`, `from-issue <n>`, `--branch`                      | `/concert-vision create Add OAuth2 login`          |
-| **`concert-requirements`** | Decomposes `VISION.md` into SHALL/SHOULD/MAY requirements with dependencies, assumptions, and open questions in `REQUIREMENTS.md`.                             | `create`                                                                  | `/concert-requirements create`                     |
-| **`concert-architect`**    | Produces `ARCHITECTURE.md` with components, data models, interfaces, and ADRs from the upstream specs.                                                         | `create`                                                                  | `/concert-architect create`                        |
-| **`concert-ux-design`**    | (Optional) Produces `UX-DESIGN.md` with information architecture, navigation flows, component specs, and accessibility notes.                                  | `create`                                                                  | `/concert-ux-design create`                        |
-| **`concert-review-docs`**  | Interactive document reviewer. Refines a spec doc through a structured Q&A, marks changed sections, auto-runs alignment.                                       | `review <doc> [--batch]`, `re-evaluate-all`, `review-and-reconcile <doc>` | `/concert-review-docs review-and-reconcile vision` |
-| **`concert-alignment`**    | Cross-checks all existing mission documents for contradictions, gaps, and traceability breaks. Run automatically by review-docs; can also be invoked manually. | `check`                                                                   | `/concert-alignment check`                         |
+| Agent                      | Purpose                                                                                                                                                        | Common sub-commands                                                            | Example                                         |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------- |
+| **`concert-vision`**       | Creates `VISION.md` from a feature description. Researches the codebase and the feature domain; can start a mission from a GitHub issue.                       | `create <description>`, `from-issue <n>`, `--branch`                           | `/concert-vision create Add OAuth2 login`       |
+| **`concert-requirements`** | Decomposes `VISION.md` into SHALL/SHOULD/MAY requirements with dependencies, assumptions, and open questions in `REQUIREMENTS.md`.                             | `create`                                                                       | `/concert-requirements create`                  |
+| **`concert-architect`**    | Produces `ARCHITECTURE.md` with components, data models, interfaces, and ADRs from the upstream specs.                                                         | `create`                                                                       | `/concert-architect create`                     |
+| **`concert-ux-design`**    | (Optional) Produces `UX-DESIGN.md` with information architecture, navigation flows, component specs, and accessibility notes.                                  | `create`                                                                       | `/concert-ux-design create`                     |
+| **`concert-review-docs`**  | Interactive document reviewer. Refines a spec doc through a structured Q&A, marks changed sections, auto-runs alignment.                                       | `review <doc> [--batch]`, `re-evaluate-all`, `review-and-reconcile <doc>\|all` | `/concert-review-docs review-and-reconcile all` |
+| **`concert-alignment`**    | Cross-checks all existing mission documents for contradictions, gaps, and traceability breaks. Run automatically by review-docs; can also be invoked manually. | `check`                                                                        | `/concert-alignment check`                      |
 
 ### Implementation agents (GitHub Copilot cloud agent recommended)
 

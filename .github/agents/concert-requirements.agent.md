@@ -45,10 +45,7 @@ If `<vision-path>` is provided, use it. Otherwise use `<mission_path>/VISION.md`
 
 ### Steps
 
-1. **Validate VISION.md.** If `## Questions` contains unchecked `- [ ]` items:
-   - Interview tool available → ask whether to proceed anyway or resolve first.
-   - No interview tool → report unresolved questions, recommend `concert-review-docs review vision`, stop.
-   - User chooses "resolve first" → stop with same recommendation.
+1. **Check VISION.md.** If `## Questions` contains unchecked `- [ ]` items, do NOT stop — proceed and create REQUIREMENTS.md anyway. For each requirement that depends on an unresolved vision question, make a reasonable assumption, mark it inline with `(Assumption)`, and add a matching `- [ ]` item to this document's `## Open Questions` so the assumption is resolved when document review runs. Warn in the final output (see "Proceeding with assumptions" output) that VISION.md had unresolved questions and assumptions were made.
 2. **Decompose** the VISION.md:
    - Each "Core Capability" → one or more functional requirements.
    - "User Experience Goals" / "Constraints" / "Success Criteria" → non-functional requirements.
@@ -120,7 +117,12 @@ Brief summary of the vision and a path reference to the VISION.md.
 - One requirement per numbered item — never combine.
 - Every requirement has acceptance criteria.
 - Mark inferred requirements `(inferred)`.
+- Mark requirements resting on an unresolved upstream question `(Assumption)` and add a matching `- [ ]` to `## Open Questions`.
 - No architecture, UX, or implementation detail.
+
+### Proceeding with assumptions output
+
+If VISION.md had unresolved `## Questions` when you created REQUIREMENTS.md, prepend to your output: `⚠️ VISION.md had unresolved questions; REQUIREMENTS.md created anyway with affected items marked (Assumption) in ## Open Questions. Run /concert-review-docs review-and-reconcile all to resolve.`
 
 ## Command: `re-evaluate`
 

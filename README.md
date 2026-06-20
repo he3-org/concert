@@ -332,7 +332,7 @@ This walks every existing mission document in pipeline order (vision → require
 
 **Purpose:** Works through task files in order using TDD: write tests → implement → commit → self-review → fix → commit → next task. The agent reads `DEVELOPMENT-STATUS.md` (via MCP `get_state`) to find where it left off, so sessions can be interrupted at any time and resumed without re-reading the world. Variants:
 
-- `implement --model sonnet` — process only haiku/sonnet tasks, stop before opus.
+- `implement --model sonnet` — process only sonnet tasks, stop at the first task of any other tier.
 - `implement --phase 01-foundation` — process tasks in a specific phase.
 - `implement <path-to-task-file>` — run a specific task.
 - `status` — show progress without doing work.

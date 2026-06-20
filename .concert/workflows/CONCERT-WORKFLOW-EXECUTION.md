@@ -65,20 +65,23 @@ Task files are processed in this order:
 
 ## Model-Tier Boundaries
 
-When the next task file requires a different model group than the previous one,
-execution stops so the user can switch models:
+When the next task file requires a different model than the previous one,
+execution stops so the user can switch models. Each model (haiku, sonnet,
+opus) is a distinct tier — there is no grouping:
 
-| Previous Model  | Next Model      | Action                                 |
-| --------------- | --------------- | -------------------------------------- |
-| haiku           | sonnet          | Continue (same Standard tier)          |
-| sonnet          | haiku           | Continue (same Standard tier)          |
-| haiku or sonnet | opus            | **STOP** (Standard → Premium boundary) |
-| opus            | haiku or sonnet | **STOP** (Premium → Standard boundary) |
-| opus            | opus            | Continue (same Premium tier)           |
+| Previous Model | Next Model     | Action                           |
+| -------------- | -------------- | -------------------------------- |
+| haiku          | sonnet or opus | **STOP** (tier boundary)         |
+| sonnet         | haiku or opus  | **STOP** (tier boundary)         |
+| opus           | haiku or sonnet | **STOP** (tier boundary)         |
+| any            | same tier      | Continue (same tier)             |
 
-The user can also explicitly filter by model tier:
+The user can also explicitly filter by model tier. `--model <tier>` processes
+ONLY tasks of that exact tier, in order, and stops at the first task whose tier
+differs (whether higher OR lower) — it never skips ahead to a later matching task:
 
-- `implement --model sonnet` → process haiku and sonnet files, stop before opus
+- `implement --model haiku` → process only haiku files
+- `implement --model sonnet` → process only sonnet files
 - `implement --model opus` → process only opus files
 
 ## Self-Review Protocol
@@ -148,7 +151,7 @@ On any failure, the agent:
 
 ```
 Session 1: User → "implement --model sonnet"
-  → Completes Phase 1 haiku tasks, starts Phase 2 sonnet tasks
+  → Processes only sonnet tasks, in order
   → Session times out after 45 min
   → DEVELOPMENT-STATUS.md shows: Phase 2, task 3 of TASK-api-routes-sonnet.md
 

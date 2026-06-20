@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.0](https://github.com/he3-org/concert/compare/v1.28.0...v1.29.0) (2026-06-20)
+
+
+### Features
+
+* Proceed with assumptions on unresolved upstream questions; add review-and-reconcile all ([#106](https://github.com/he3-org/concert/issues/106)) ([268cddf](https://github.com/he3-org/concert/commit/268cddfcadcf78ed5aa5e15c888c5b9d37d00058))
+
 ## [1.28.0](https://github.com/he3-org/concert/compare/v1.27.1...v1.28.0) (2026-06-19)
 
 

@@ -47,7 +47,7 @@ After each commit, also push updated `DEVELOPMENT-STATUS.md`.
 | 2   | Never spawn sub-agents — do all work yourself                 | ALWAYS |
 | 3   | Follow TDD: write failing tests first, then implement         | ALWAYS |
 | 4   | Self-review against task spec and acceptance criteria         | ALWAYS |
-| 5   | Stop at model-tier boundaries (haiku/sonnet ↔ opus)           | ALWAYS |
+| 5   | Stop at model-tier boundaries (haiku, sonnet, opus are distinct) | ALWAYS |
 | 6   | Read applicable skills before implementing                    | ALWAYS |
 | 7   | Run ALL tests, not just new ones                              | ALWAYS |
 | 8   | Update DEVELOPMENT-STATUS.md after every state change         | ALWAYS |
@@ -59,7 +59,7 @@ After each commit, also push updated `DEVELOPMENT-STATUS.md`.
 - NEVER skip writing tests — TDD mandatory.
 - NEVER skip self-review — catches quality issues early.
 - NEVER continue past model-tier boundary without user instruction.
-- NEVER skip a task to reach a later in-tier one — process strictly in phase → wave → name order and STOP at the first higher-tier task.
+- NEVER skip a task to reach a later matching one — process strictly in phase → wave → name order and STOP at the first task whose tier does not match the requested `--model <tier>`.
 - NEVER modify mission planning documents (VISION, REQUIREMENTS, ARCHITECTURE, etc.).
 - NEVER modify task files — they are spec, not implementation.
 - NEVER read multiple task files speculatively — read only the single task file you are actively working on.
@@ -89,14 +89,15 @@ Start or continue specific task file.
 
 ### `implement --model <tier>`
 
-Process all task files up to specified tier, then stop. `--model haiku` → only haiku; `--model sonnet` → haiku and sonnet (stop before opus); `--model opus` → only opus.
+Process ONLY task files whose recommended model equals `<tier>`, in order, then stop. `--model haiku` → only haiku tasks; `--model sonnet` → only sonnet tasks; `--model opus` → only opus tasks.
 
 **STRICT ORDERING — no exceptions:**
 
+- Run ONLY tasks of the exact `<tier>`. Do NOT run tasks of any other tier, even a lower one.
 - ALWAYS process task files in strict order: by phase (01-xxx before 02-xxx), then by wave (frontmatter) within each phase, then alphabetically within each wave.
-- ALWAYS STOP immediately when the next task file requires a higher-tier model than `<tier>` (e.g. on `--model sonnet`, stop before the first opus task). Do not look past the boundary.
-- NEVER skip a task to reach a later one that fits the tier. The first task above the tier ends the run, even if subsequent tasks are at or below the tier.
-- NEVER reorder tasks to keep working. Order is fixed by phase → wave → name.
+- ALWAYS check the next task in order; if its tier does not match `<tier>`, STOP. Do not look past it.
+- NEVER skip a task (of any tier) to reach a later task that matches `<tier>`. The first task whose tier does not match ends the run.
+- NEVER skip to the next wave or phase out of order, and NEVER reorder tasks. Order is fixed by phase → wave → name.
 
 ### `implement --phase <phase>`
 
@@ -149,15 +150,16 @@ Work only on items at/above severity: `critical` → only Critical; `major` → 
 
 ### Step 2: Model-tier check
 
-Before starting task file, check tier boundary. Tasks MUST be taken in strict order (phase → wave → name); never skip ahead to find a lower-tier task.
+Before starting a task file, check its tier. Tasks MUST be taken in strict order (phase → wave → name); never skip ahead or reorder to find a matching task.
 
-- Standard tier (haiku, sonnet) → Premium (opus): **STOP**
-- Premium (opus) → Standard (haiku, sonnet): **STOP**
-- Same tier group → continue
+**When `--model <tier>` is set:** run ONLY tasks whose tier equals `<tier>`. Check the next task in order; if its tier does not match `<tier>` (whether higher OR lower), **STOP**. Never skip it to reach a later matching task.
 
-On `--model <tier>`, **STOP** the moment the next task in order requires a higher tier than `<tier>`. NEVER skip that task to reach a later in-tier one.
+**When no `--model` is set**, stop at tier boundaries between consecutive tasks:
 
-When stopping at boundary:
+- haiku → sonnet → opus, or any change to a different tier: **STOP**
+- Same tier as the previous task → continue
+
+When stopping at a tier boundary:
 
 1. Update DEVELOPMENT-STATUS.md with pause reason.
 2. Commit status update.

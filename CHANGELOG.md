@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.30.0](https://github.com/he3-org/concert/compare/v1.29.0...v1.30.0) (2026-06-20)
+
+
+### Features
+
+* align --model tier logic with distinct-tier behavior ([#109](https://github.com/he3-org/concert/issues/109)) ([d8b0d7e](https://github.com/he3-org/concert/commit/d8b0d7eaf019739d73e7d71badc162c36b690be9))
+
 ## [1.29.0](https://github.com/he3-org/concert/compare/v1.28.0...v1.29.0) (2026-06-20)
 
 

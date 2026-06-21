@@ -27,18 +27,66 @@ export type Fetcher = (
   url: string
 ) => Promise<{ ok: boolean; status: number; text(): Promise<string> }>;
 
-export const defaultFetcher: Fetcher = async (url) => {
-  // Use the global fetch (Node ≥ 18). We pass a UA to avoid GitHub's 403 for missing UA.
-  const res = await fetch(url, {
-    headers: {
-      'user-agent': 'concert-cli',
-      accept: 'application/vnd.github+json',
-    },
+async function requestText(
+  url: string,
+  headers: Record<string, string>,
+  redirectsRemaining = 5
+): Promise<{ status: number; body: string }> {
+  const parsed = new URL(url);
+  const transport = parsed.protocol === 'http:' ? http : https;
+  return new Promise((resolve, reject) => {
+    const req = transport.request(
+      parsed,
+      {
+        method: 'GET',
+        headers,
+      },
+      (res) => {
+        const status = res.statusCode ?? 0;
+        const location = res.headers.location;
+        if (location && redirectsRemaining > 0 && [301, 302, 303, 307, 308].includes(status)) {
+          const nextUrl = new URL(location, parsed).toString();
+          res.resume();
+          void requestText(nextUrl, headers, redirectsRemaining - 1)
+            .then(resolve)
+            .catch(reject);
+          return;
+        }
+        const chunks: Buffer[] = [];
+        res.on('data', (chunk: Buffer | string) => {
+          chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+        });
+        res.on('end', () => {
+          resolve({ status, body: Buffer.concat(chunks).toString('utf-8') });
+        });
+      }
+    );
+    req.on('error', reject);
+    req.end();
   });
+}
+
+export const defaultFetcher: Fetcher = async (url) => {
+  const headers = {
+    'user-agent': 'concert-cli',
+    accept: 'application/vnd.github+json',
+  };
+  if (typeof globalThis.fetch === 'function') {
+    // Prefer the native global fetch when available.
+    const res = await globalThis.fetch(url, { headers });
+    return {
+      ok: res.ok,
+      status: res.status,
+      text: () => res.text(),
+    };
+  }
+
+  // Fallback for environments where global fetch is unavailable.
+  const res = await requestText(url, headers);
   return {
-    ok: res.ok,
+    ok: res.status >= 200 && res.status < 300,
     status: res.status,
-    text: () => res.text(),
+    text: async () => res.body,
   };
 };
 
@@ -84,3 +132,5 @@ export async function fetchText(url: string, fetcher: Fetcher): Promise<string> 
   }
   return res.text();
 }
+import * as http from 'node:http';
+import * as https from 'node:https';

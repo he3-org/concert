@@ -18,7 +18,7 @@ interface ListTasksInput {
   mission?: string;
   phase?: string;
   wave?: number;
-  model?: 'haiku' | 'sonnet' | 'opus';
+  model?: 'simple' | 'average' | 'complex';
   status?: 'pending' | 'in-progress' | 'done';
 }
 

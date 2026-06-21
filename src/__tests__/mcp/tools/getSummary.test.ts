@@ -53,7 +53,7 @@ task: one
 title: Task One
 phase: 01-phase
 wave: 0
-model: haiku
+model: simple
 depends_on: []
 ---
 
@@ -70,7 +70,7 @@ task: two
 title: Task Two
 phase: 01-phase
 wave: 0
-model: haiku
+model: simple
 depends_on: []
 ---
 

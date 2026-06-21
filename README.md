@@ -244,6 +244,8 @@ For each stage the recommended environment is:
 
 **Purpose:** Produce `.concert/missions/<slug>/VISION.md` capturing the goals, audience, success criteria, and constraints of the feature. The agent researches your codebase and the feature domain, and asks you targeted questions to fill any gaps.
 
+**Suggested model:** complex (e.g. Opus, GPT-5.4, Gemini Pro) — early documentation agents need comprehensive, open-ended thinking.
+
 Variants:
 
 - `/concert-vision from-issue 123` — start the mission from GitHub issue #123 (title + body become the description; mission slug prefixed with `issue-123-`).
@@ -256,6 +258,8 @@ Variants:
 ```
 
 **Purpose:** This is the single highest-leverage step in the pipeline — every issue caught here saves significant rework downstream. The reviewer interviews you to refine the document, marks the changed sections with `CONCERT:MODIFIED:<slug>` markers, and **automatically runs `/concert-alignment check`** when it makes any edit so cross-document consistency is verified for free.
+
+**Suggested model:** complex (e.g. Opus, GPT-5.4, Gemini Pro) — this is the highest-leverage reasoning step; spend the deepest model here.
 
 Modes:
 
@@ -290,6 +294,8 @@ This walks every existing mission document in pipeline order (vision → require
 
 **Purpose:** Reads the mission's `VISION.md` (via the MCP `get_section` tool — only the sections it needs) and produces `REQUIREMENTS.md` with SHALL/SHOULD/MAY requirements, dependencies, assumptions, and open questions. Then review and reconcile:
 
+**Suggested model:** complex (e.g. Opus, GPT-5.4, Gemini Pro) — comprehensive requirement coverage needs deep reasoning.
+
 ```
 /concert-review-docs review-and-reconcile requirements
 ```
@@ -301,6 +307,8 @@ This walks every existing mission document in pipeline order (vision → require
 ```
 
 **Purpose:** Designs a system that satisfies the requirements. Produces `ARCHITECTURE.md` with components, data models, interfaces, and Architectural Decision Records. Then:
+
+**Suggested model:** complex (e.g. Opus, GPT-5.4, Gemini Pro) — system design and trade-off analysis demand the deepest reasoning.
 
 ```
 /concert-review-docs review-and-reconcile architecture
@@ -314,6 +322,8 @@ This walks every existing mission document in pipeline order (vision → require
 
 **Purpose:** For features with a UI, designs information architecture, navigation flows, component specifications, and accessibility considerations into `UX-DESIGN.md`. Then:
 
+**Suggested model:** complex (e.g. Opus, GPT-5.4, Gemini Pro) — holistic UX design benefits from comprehensive thinking.
+
 ```
 /concert-review-docs review-and-reconcile ux-design
 ```
@@ -324,7 +334,9 @@ This walks every existing mission document in pipeline order (vision → require
 
 > Select `concert-planner`, then type: `create`
 
-**Purpose:** Decomposes the architecture into a `PLAN.md` of phases plus individual `TASK-*.md` files. Each task specifies the exact files to create/modify, the tests to write, acceptance criteria, and a **model tier** (haiku / sonnet / opus) sized to its complexity — the planner does the cost shaping so the developer agent can route accordingly.
+**Purpose:** Decomposes the architecture into a `PLAN.md` of phases plus individual `TASK-*.md` files. Each task specifies the exact files to create/modify, the tests to write, acceptance criteria, and a **model tier** (simple / average / complex) sized to its complexity — the planner does the cost shaping so the developer agent can route accordingly. The planner agent documents what each tier means and which models fit (e.g. simple → Haiku/GPT-5.4-mini, average → Sonnet/GPT-5.4, complex → Opus/GPT-5.5).
+
+**Suggested model:** complex (e.g. Opus, GPT-5.4, Gemini Pro) — decomposition and cost shaping need comprehensive, whole-system reasoning.
 
 ### Step 7 — Implement (`concert-develop`, `implement`)
 
@@ -332,16 +344,20 @@ This walks every existing mission document in pipeline order (vision → require
 
 **Purpose:** Works through task files in order using TDD: write tests → implement → commit → self-review → fix → commit → next task. The agent reads `DEVELOPMENT-STATUS.md` (via MCP `get_state`) to find where it left off, so sessions can be interrupted at any time and resumed without re-reading the world. Variants:
 
-- `implement --model sonnet` — process only sonnet tasks, stop at the first task of any other tier.
+- `implement --model average` — process only average-tier tasks (e.g. Sonnet, GPT-5.4), stop at the first task of any other tier.
 - `implement --phase 01-foundation` — process tasks in a specific phase.
 - `implement <path-to-task-file>` — run a specific task.
 - `status` — show progress without doing work.
+
+**Suggested model:** match each task's assigned tier — run `--model simple` (e.g. Haiku, GPT-5.4-mini), `--model average` (e.g. Sonnet, GPT-5.4), or `--model complex` (e.g. Opus, GPT-5.5) so cost tracks complexity.
 
 ### Step 8 — Review the implementation (`concert-develop-review`, `review`)
 
 > Select `concert-develop-review`, then type: `review`
 
-**Purpose:** Validates the implementation against the specification documents, producing `DEVELOPMENT-REVIEW.md` with a requirements traceability matrix, architecture compliance check, and a categorized list of gaps. Each gap carries a **Recommended Model** tier so the developer agent knows whether the fix needs Sonnet or Opus. Read-only — does not modify code or specs. Variants: `review --scope requirements | architecture | ux | phase <slug>`, `status`.
+**Purpose:** Validates the implementation against the specification documents, producing `DEVELOPMENT-REVIEW.md` with a requirements traceability matrix, architecture compliance check, and a categorized list of gaps. Each gap carries a **Recommended Model** tier so the developer agent knows whether the fix needs the average or complex tier. Read-only — does not modify code or specs. Variants: `review --scope requirements | architecture | ux | phase <slug>`, `status`.
+
+**Suggested model:** complex (e.g. Opus, GPT-5.4, Gemini Pro) — thorough validation against every spec benefits from comprehensive reasoning.
 
 ### Step 9 — Fix the gaps (`concert-develop`, `fix-gaps`)
 
@@ -354,6 +370,8 @@ This walks every existing mission document in pipeline order (vision → require
 
 After fixing, re-run `concert-develop-review` → `review` to confirm.
 
+**Suggested model:** match each gap's **Recommended Model** tier — average (e.g. Sonnet, GPT-5.4) for well-defined fixes, complex (e.g. Opus, GPT-5.5) for architectural or security-critical gaps.
+
 ### Step 10 — Finish & document (`concert-develop-finish`, `finish`)
 
 > Select `concert-develop-finish`, then type: `finish`
@@ -362,11 +380,15 @@ After fixing, re-run `concert-develop-review` → `review` to confirm.
 
 When you are happy with the generated docs, move them into your project's `docs/` folder and delete `DELETE-ME/`.
 
+**Suggested model:** complex (e.g. Opus, GPT-5.4, Gemini Pro) — synthesizing durable reference docs needs comprehensive thinking across the whole mission.
+
 ### Step 11 — Refactor (`concert-refactor`, `create`)
 
 > Select `concert-refactor`, then type: `create`
 
 **Purpose:** Surveys the repository and writes a ranked plan to `.concert/REFACTOR-PLAN-YYYY-MM-DD.md` covering duplication, cohesion, coupling, naming, dead code, complexity, error handling, test quality, type safety, and so on. Items are ranked Critical / Major / Minor / Nice-to-have. Then hand the plan to the developer agent:
+
+**Suggested model:** complex (e.g. Opus, GPT-5.4, Gemini Pro) — surveying the whole repo and ranking refactors needs broad, cross-cutting reasoning.
 
 > Select `concert-develop`, then type: `refactor`
 
@@ -519,10 +541,10 @@ your-repo/
 │   │       │   └── ...                    # All working documents moved here
 │   │       └── phases/
 │   │           ├── 01-foundation/
-│   │           │   ├── TASK-setup-config-haiku.md
-│   │           │   └── TASK-core-types-sonnet.md
+│   │           │   ├── TASK-setup-config-simple.md
+│   │           │   └── TASK-core-types-average.md
 │   │           └── 02-features/
-│   │               └── TASK-api-routes-sonnet.md
+│   │               └── TASK-api-routes-average.md
 │   └── workflows/                         # Execution workflow definitions
 ├── .github/agents/concert-*.agent.md      # GitHub Copilot agents
 └── .claude/commands/concert-*.md          # Claude Code slash commands

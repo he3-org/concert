@@ -161,7 +161,7 @@ Issues representing missing core functionality or incorrect behavior that must b
 #### DEV-G001: <Gap Title>
 
 **Severity:** Critical
-**Recommended Model:** <Opus | Sonnet>
+**Recommended Model:** <complex | average>
 **Specification:** <Document> → <Requirement ID/Section> — <What was required>
 **Current State:** <What exists now — or "Not implemented">
 **Acceptance Criteria Not Met:**
@@ -178,7 +178,7 @@ Significant missing functionality that should be addressed.
 #### DEV-G002: <Gap Title>
 
 **Severity:** Major
-**Recommended Model:** <Opus | Sonnet>
+**Recommended Model:** <complex | average>
 ...
 
 ### Minor Gaps
@@ -188,7 +188,7 @@ Small omissions or minor incorrect behavior.
 #### DEV-G003: <Gap Title>
 
 **Severity:** Minor
-**Recommended Model:** <Opus | Sonnet>
+**Recommended Model:** <complex | average>
 ...
 
 ## Requirements Traceability
@@ -225,7 +225,7 @@ Small omissions or minor incorrect behavior.
 
 ### Model tier guidance
 
-Each gap needs **Recommended Model**: **Opus** — complex architectural changes/multi-file refactors, security-critical fixes, novel algorithms, broad cross-cutting impact. **Sonnet** — straightforward implementation of well-defined requirements, adding tests, wiring patterns, config/single-file fixes, changes following established patterns. When in doubt, prefer **Opus**.
+Each gap needs **Recommended Model**: **complex** (e.g. Opus, GPT-5.4, Gemini Pro) — complex architectural changes/multi-file refactors, security-critical fixes, novel algorithms, broad cross-cutting impact. **average** (e.g. Sonnet, GPT-5.4) — straightforward implementation of well-defined requirements, adding tests, wiring patterns, config/single-file fixes, changes following established patterns. When in doubt, prefer **complex**.
 
 ### Step 7: Update DEVELOPMENT-STATUS.md
 

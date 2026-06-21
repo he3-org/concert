@@ -34,7 +34,7 @@ More content here.`
 task: a
 title: Task A
 wave: 0
-model: haiku
+model: simple
 depends_on: []
 ---
 
@@ -74,7 +74,7 @@ depends_on: ['a']
     expect(content).toContain('More content here.');
     expect(content).toContain('### Phase 01-phase');
     expect(content).toContain('### Phase 02-phase');
-    expect(content).toContain('| a | haiku | 0 | - | done |');
+    expect(content).toContain('| a | simple | 0 | - | done |');
     expect(content).toContain('| b | - | 1 | a | pending |');
   });
 

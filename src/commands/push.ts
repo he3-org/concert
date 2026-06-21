@@ -101,7 +101,7 @@ export async function runPush(cwd: string): Promise<number> {
   output += `    1. Continue in GitHub Agents UI:\n`;
   output += `       Agent:  concert-develop\n`;
   output += `       Input:  implement\n`;
-  output += `       Model:  sonnet (matches current task tier)\n`;
+  output += `       Model:  average tier (e.g. Sonnet, GPT-5.4) — matches current task tier\n`;
   output += `       The agent reads DEVELOPMENT-STATUS.md and resumes where work left off.\n`;
 
   if (state.quality_loop_state) {

@@ -36,7 +36,7 @@ task: setup
 title: Setup infrastructure
 phase: 01-foundation
 wave: 0
-model: haiku
+model: simple
 depends_on: []
 ---
 
@@ -67,7 +67,7 @@ task: feature-a
 title: Feature A
 phase: 02-features
 wave: 0
-model: sonnet
+model: average
 depends_on: ['config']
 ---
 
@@ -120,7 +120,7 @@ depends_on: ['config']
         task_slug: 'setup',
         phase: '01-foundation',
         wave: 0,
-        model: 'haiku',
+        model: 'simple',
         total_acceptance: 2,
         completed_acceptance: 1,
       });
@@ -140,7 +140,7 @@ depends_on: ['config']
         task_slug: 'feature-a',
         phase: '02-features',
         wave: 0,
-        model: 'sonnet',
+        model: 'average',
         total_acceptance: 2,
         completed_acceptance: 2,
       });

@@ -28,7 +28,7 @@ Split overloaded agents into focused ones. A focused agent is shorter, gets load
 
 ### 2. Default to the smallest viable model
 
-Write agent and skill content so it works on Sonnet- and Haiku-class models. If a section reads like it requires Opus-class reasoning to follow, it is too vague — rewrite it as concrete steps, tables, or examples.
+Write agent and skill content so it works on average- and simple-tier models. If a section reads like it requires complex-tier reasoning to follow, it is too vague — rewrite it as concrete steps, tables, or examples.
 
 ### 3. Bullets and tables beat paragraphs
 

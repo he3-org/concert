@@ -10,7 +10,7 @@ Options:
   --mission <slug>  Mission slug (default: active mission)
   --phase <phase>   Filter by phase
   --wave <n>        Filter by wave number
-  --model <tier>    Filter by model (haiku, sonnet, opus)
+  --model <tier>    Filter by model (simple, average, complex)
   --status <status> Filter by status (pending, in-progress, done)
   --json            Output as JSON
   --help            Show this help`);
@@ -24,7 +24,7 @@ Options:
     ? parseInt(args[args.indexOf('--wave') + 1]!, 10)
     : undefined;
   const model = args.includes('--model')
-    ? (args[args.indexOf('--model') + 1] as 'haiku' | 'sonnet' | 'opus' | undefined)
+    ? (args[args.indexOf('--model') + 1] as 'simple' | 'average' | 'complex' | undefined)
     : undefined;
   const status = args.includes('--status')
     ? (args[args.indexOf('--status') + 1] as 'pending' | 'in-progress' | 'done' | undefined)

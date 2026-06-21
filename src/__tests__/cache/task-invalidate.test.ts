@@ -41,7 +41,7 @@ d('ensureFresh - task mtime invalidation', () => {
         "title: 'Bar'",
         "phase: '01-foo'",
         'wave: 1',
-        'model: haiku',
+        'model: simple',
         'depends_on: []',
         '---',
         '',

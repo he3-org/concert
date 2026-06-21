@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.31.0](https://github.com/he3-org/concert/compare/v1.30.0...v1.31.0) (2026-06-21)
+
+
+### Features
+
+* replace hardcoded Anthropic model names with simple/average/complex tiers ([#111](https://github.com/he3-org/concert/issues/111)) ([5835d7a](https://github.com/he3-org/concert/commit/5835d7ad74c7338c092f127b4f3757775bf9e5d5))
+
 ## [1.30.0](https://github.com/he3-org/concert/compare/v1.29.0...v1.30.0) (2026-06-20)
 
 

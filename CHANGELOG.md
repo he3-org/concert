@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.31.1](https://github.com/he3-org/concert/compare/v1.31.0...v1.31.1) (2026-06-21)
+
+
+### Bug Fixes
+
+* add fetch fallback for assets requests ([#113](https://github.com/he3-org/concert/issues/113)) ([3f77502](https://github.com/he3-org/concert/commit/3f77502d5243b51bf0af834ddd4cc7dc7f7db1de))
+
 ## [1.31.0](https://github.com/he3-org/concert/compare/v1.30.0...v1.31.0) (2026-06-21)
 
 

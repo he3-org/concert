@@ -68,10 +68,10 @@ describe('types', () => {
       title: 'My Task Title',
       depends_on: ['prior-task'],
       wave: 2,
-      model: 'haiku',
+      model: 'simple',
     };
     expect(fm.task).toBe('my-task');
-    expect(fm.model).toBe('haiku');
+    expect(fm.model).toBe('simple');
   });
 
   it('TelemetryRecord interface can be instantiated', () => {
@@ -79,7 +79,7 @@ describe('types', () => {
       task_file: 'TASK-foo.md',
       task_index: 1,
       phase: 1,
-      model_assigned: 'sonnet',
+      model_assigned: 'average',
       confidence: 'high',
       review_result: 'PASS',
       revision_count: 1,

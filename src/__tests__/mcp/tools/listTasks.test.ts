@@ -21,7 +21,7 @@ describe('listTasks tool', () => {
 task: foo
 title: Foo
 wave: 0
-model: haiku
+model: simple
 depends_on: []
 ---
 
@@ -65,7 +65,7 @@ depends_on: ['foo']
 
   it('filters by model', async () => {
     process.env.CONCERT_CACHE_DISABLED = '1';
-    const result = await handler({ mission: 'test-mission', model: 'haiku' }, { cwd: tmpDir });
+    const result = await handler({ mission: 'test-mission', model: 'simple' }, { cwd: tmpDir });
     expect(result.tasks).toHaveLength(1);
     expect(result.tasks[0]!.task).toBe('foo');
   });

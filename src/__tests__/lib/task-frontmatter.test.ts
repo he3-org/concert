@@ -27,7 +27,7 @@ title: 'Bar Task'
 phase: '01-foundation'
 depends_on: ['foo', 'baz']
 wave: 2
-model: sonnet
+model: average
 ---
 Body`;
     const result = parseTaskFrontmatter(md);
@@ -37,7 +37,7 @@ Body`;
       phase: '01-foundation',
       depends_on: ['foo', 'baz'],
       wave: 2,
-      model: 'sonnet',
+      model: 'average',
     });
     expect(result.errors).toEqual([]);
   });

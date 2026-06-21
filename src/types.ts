@@ -151,7 +151,7 @@ export interface ConcertState {
 // removed. Add a field here only when a CLI command or agent actually
 // reads it.
 
-export type ModelTier = 'haiku' | 'sonnet' | 'opus';
+export type ModelTier = 'simple' | 'average' | 'complex';
 
 export interface ConcertConfig {
   project_name: string;

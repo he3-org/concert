@@ -4,7 +4,7 @@ export interface ParsedTaskFrontmatter {
   phase?: string;
   depends_on: string[];
   wave: number;
-  model?: 'haiku' | 'sonnet' | 'opus';
+  model?: 'simple' | 'average' | 'complex';
   extras?: Record<string, string>;
 }
 
@@ -79,7 +79,7 @@ export function parseTaskFrontmatter(md: string): ParseResult {
         parsed[key] = 0;
       }
     } else if (key === 'model') {
-      if (value === 'haiku' || value === 'sonnet' || value === 'opus') {
+      if (value === 'simple' || value === 'average' || value === 'complex') {
         parsed[key] = value;
       } else {
         extras[key] = value;
@@ -109,7 +109,7 @@ export function parseTaskFrontmatter(md: string): ParseResult {
   };
 
   if (parsed.phase) frontmatter.phase = parsed.phase as string;
-  if (parsed.model) frontmatter.model = parsed.model as 'haiku' | 'sonnet' | 'opus';
+  if (parsed.model) frontmatter.model = parsed.model as 'simple' | 'average' | 'complex';
   if (Object.keys(extras).length > 0) frontmatter.extras = extras;
 
   return {

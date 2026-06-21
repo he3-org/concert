@@ -25,7 +25,7 @@ interface GetTaskOutput {
   title?: string;
   phase?: string;
   wave?: number;
-  model?: 'haiku' | 'sonnet' | 'opus';
+  model?: 'simple' | 'average' | 'complex';
   dependsOn?: string[];
   filePath?: string;
   acceptance?: { index: number; text: string; done: boolean }[];
@@ -102,7 +102,7 @@ export const handler: ToolDefinition<GetTaskInput, GetTaskOutput>['handler'] = a
         title: row.title,
         phase: row.phase ?? undefined,
         wave: row.wave,
-        model: row.model ? (row.model as 'haiku' | 'sonnet' | 'opus') : undefined,
+        model: row.model ? (row.model as 'simple' | 'average' | 'complex') : undefined,
         dependsOn: JSON.parse(row.depends_on) as string[],
         filePath: row.file_path,
         acceptance: acceptance.map((a) => ({ index: a.index, text: a.text, done: a.done })),

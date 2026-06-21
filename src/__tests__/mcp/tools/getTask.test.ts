@@ -20,7 +20,7 @@ describe('getTask tool', () => {
 task: demo
 title: Demo Task
 wave: 0
-model: sonnet
+model: average
 depends_on: ['prereq']
 ---
 
@@ -49,7 +49,7 @@ Use the API.`
     expect(result.found).toBe(true);
     expect(result.task).toBe('demo');
     expect(result.title).toBe('Demo Task');
-    expect(result.model).toBe('sonnet');
+    expect(result.model).toBe('average');
     expect(result.dependsOn).toEqual(['prereq']);
     expect(result.acceptance).toHaveLength(2);
     expect(result.acceptance?.[0]).toMatchObject({ index: 0, text: 'Create file', done: false });

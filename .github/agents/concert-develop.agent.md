@@ -41,16 +41,16 @@ After each commit, also push updated `DEVELOPMENT-STATUS.md`.
 
 ## Operating principles
 
-| #   | Rule                                                          | When   |
-| --- | ------------------------------------------------------------- | ------ |
-| 1   | Commit after every meaningful step — tests, impl, review, fix | ALWAYS |
-| 2   | Never spawn sub-agents — do all work yourself                 | ALWAYS |
-| 3   | Follow TDD: write failing tests first, then implement         | ALWAYS |
-| 4   | Self-review against task spec and acceptance criteria         | ALWAYS |
-| 5   | Stop at model-tier boundaries (haiku, sonnet, opus are distinct) | ALWAYS |
-| 6   | Read applicable skills before implementing                    | ALWAYS |
-| 7   | Run ALL tests, not just new ones                              | ALWAYS |
-| 8   | Update DEVELOPMENT-STATUS.md after every state change         | ALWAYS |
+| #   | Rule                                                                  | When   |
+| --- | --------------------------------------------------------------------- | ------ |
+| 1   | Commit after every meaningful step — tests, impl, review, fix         | ALWAYS |
+| 2   | Never spawn sub-agents — do all work yourself                         | ALWAYS |
+| 3   | Follow TDD: write failing tests first, then implement                 | ALWAYS |
+| 4   | Self-review against task spec and acceptance criteria                 | ALWAYS |
+| 5   | Stop at model-tier boundaries (simple, average, complex are distinct) | ALWAYS |
+| 6   | Read applicable skills before implementing                            | ALWAYS |
+| 7   | Run ALL tests, not just new ones                                      | ALWAYS |
+| 8   | Update DEVELOPMENT-STATUS.md after every state change                 | ALWAYS |
 
 ## Boundaries
 
@@ -89,7 +89,7 @@ Start or continue specific task file.
 
 ### `implement --model <tier>`
 
-Process ONLY task files whose recommended model equals `<tier>`, in order, then stop. `--model haiku` → only haiku tasks; `--model sonnet` → only sonnet tasks; `--model opus` → only opus tasks.
+Process ONLY task files whose recommended model equals `<tier>`, in order, then stop. `--model simple` → only simple tasks; `--model average` → only average tasks; `--model complex` → only complex tasks.
 
 **STRICT ORDERING — no exceptions:**
 
@@ -156,7 +156,7 @@ Before starting a task file, check its tier. Tasks MUST be taken in strict order
 
 **When no `--model` is set**, stop at tier boundaries between consecutive tasks:
 
-- haiku → sonnet → opus, or any change to a different tier: **STOP**
+- simple → average → complex, or any change to a different tier: **STOP**
 - Same tier as the previous task → continue
 
 When stopping at a tier boundary:
@@ -172,8 +172,8 @@ Completed: <last-task> (model: <model>)
 Next: <next-task> (model: <model>)
 
 To continue:
-1. Switch model if needed
-2. Run: implement (or implement --model opus)
+1. Switch model to match the next task's tier
+2. Run: implement (or implement --model <tier>, e.g. --model complex for Opus, GPT-5.4, Gemini Pro)
 ```
 
 ### Step 3: Execute task file
@@ -337,16 +337,16 @@ If CRIT or MAJ exist, fix them, re-run all tests, **COMMIT**: `fix(task): addres
 
 Before fixing gap, check **Recommended Model**:
 
-- If gap recommends **Opus** and running standard-tier, **WARN**:
+- If gap recommends the **complex** tier and running a lower tier, **WARN**:
 
 ```
-⚠️ Gap <gap-id> recommends Opus.
-Running on standard-tier model.
+⚠️ Gap <gap-id> recommends the complex tier (e.g. Opus, GPT-5.4, Gemini Pro).
+Running on a lower-tier model.
 
 Options:
 1. Continue anyway (may produce incomplete fix)
 2. Skip this gap
-3. Stop and switch to Opus
+3. Stop and switch to a complex-tier model (e.g. Opus, GPT-5.4, Gemini Pro)
 
 Type 1, 2, or 3:
 ```
@@ -394,7 +394,7 @@ For each gap (same TDD discipline as task):
 - DEV-G001: <title> — FIXED
 
 ### Skipped:
-- DEV-G002: <title> — Skipped (recommends Opus)
+- DEV-G002: <title> — Skipped (recommends complex tier)
 
 ### Next steps:
 - Run `concert-develop-review review` to verify
@@ -422,16 +422,16 @@ For each gap (same TDD discipline as task):
 
 Before working item, check **Recommended Model**:
 
-- If recommends **Opus** and running standard-tier, **WARN**:
+- If recommends the **complex** tier and running a lower tier, **WARN**:
 
 ```
-⚠️ Item <ref-id> recommends Opus.
-Running on standard-tier model.
+⚠️ Item <ref-id> recommends the complex tier (e.g. Opus, GPT-5.4, Gemini Pro).
+Running on a lower-tier model.
 
 Options:
 1. Continue anyway (may produce incomplete/unsafe refactor)
 2. Skip this item
-3. Stop and switch to Opus
+3. Stop and switch to a complex-tier model (e.g. Opus, GPT-5.4, Gemini Pro)
 
 Type 1, 2, or 3:
 ```
@@ -492,7 +492,7 @@ Refactors preserve behavior. Before changing:
 - REF-001: <title> — RESOLVED
 
 ### Skipped:
-- REF-002: <title> — Skipped (recommends Opus)
+- REF-002: <title> — Skipped (recommends complex tier)
 
 ### Next steps:
 - Run `concert-refactor update` to refresh plan
@@ -534,10 +534,10 @@ Lives at `<mission_path>/DEVELOPMENT-STATUS.md`. Single source of truth for prog
 
 ## Completed Task Files
 
-- [x] `TASK-project-scaffold-haiku.md` — 4/4 tasks — PASS
-- [x] `TASK-setup-config-haiku.md` — 4/4 tasks — PASS (1 MIN remaining)
-- [x] `TASK-core-types-sonnet.md` — 4/4 tasks — PASS
-- [ ] `TASK-api-routes-sonnet.md` — 2/4 tasks — IN PROGRESS
+- [x] `TASK-project-scaffold-simple.md` — 4/4 tasks — PASS
+- [x] `TASK-setup-config-simple.md` — 4/4 tasks — PASS (1 MIN remaining)
+- [x] `TASK-core-types-average.md` — 4/4 tasks — PASS
+- [ ] `TASK-api-routes-average.md` — 2/4 tasks — IN PROGRESS
 
 ## Current Review Findings
 
@@ -548,11 +548,11 @@ Lives at `<mission_path>/DEVELOPMENT-STATUS.md`. Single source of truth for prog
 
 ## Session History
 
-| Session | Date       | Tasks Completed                                                     | Duration |
-| ------- | ---------- | ------------------------------------------------------------------- | -------- |
-| 1       | 2026-04-14 | TASK-project-scaffold-haiku (4 tasks)                               | ~45 min  |
-| 2       | 2026-04-14 | TASK-setup-config-haiku (4 tasks), TASK-core-types-sonnet (2 tasks) | ~50 min  |
-| 3       | 2026-04-15 | TASK-core-types-sonnet (2 tasks), TASK-api-routes-sonnet (2 tasks)  | ~40 min  |
+| Session | Date       | Tasks Completed                                                       | Duration |
+| ------- | ---------- | --------------------------------------------------------------------- | -------- |
+| 1       | 2026-04-14 | TASK-project-scaffold-simple (4 tasks)                                | ~45 min  |
+| 2       | 2026-04-14 | TASK-setup-config-simple (4 tasks), TASK-core-types-average (2 tasks) | ~50 min  |
+| 3       | 2026-04-15 | TASK-core-types-average (2 tasks), TASK-api-routes-average (2 tasks)  | ~40 min  |
 ```
 
 ## Error handling

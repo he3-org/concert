@@ -146,7 +146,7 @@ Listed Critical → Nice-to-have. Within a severity, list in execution order (de
 
 - **Severity:** Critical
 - **Status:** Open
-- **Recommended Model:** <Opus | Sonnet>
+- **Recommended Model:** <complex | average>
 - **Files:** <comma-separated files / globs primarily affected>
 - **Reasoning:** <Why this matters; cite concrete code.>
 - **Guidance:** <How to do it; concrete enough for `concert-develop` without re-investigation. Target shape, invariants to preserve, sequencing notes.>
@@ -180,10 +180,10 @@ Items considered but excluded, one-line reason each. Prevents future plans from 
 - **ID format:** `REF-NNN`, three digits, monotonically increasing across the document. On `update`, continue from the highest existing ID; do not renumber.
 - **Status values:** `Open`, `In Progress`, `Resolved`, `Skipped`, `Failed`, `Obsolete`. The refactor agent only writes `Open` (new) or `Obsolete` (no longer relevant); `concert-develop` owns the other transitions.
 - **Recommended Model:** Same heuristic as `concert-develop-review`:
-  - **Opus** — multi-file restructuring, cross-cutting changes, security-sensitive code, novel algorithm reshaping.
-  - **Sonnet** — well-contained renames, small extractions, single-file cleanups, mechanical changes following an obvious pattern.
+  - **complex** (e.g. Opus, GPT-5.4, Gemini Pro) — multi-file restructuring, cross-cutting changes, security-sensitive code, novel algorithm reshaping.
+  - **average** (e.g. Sonnet, GPT-5.4) — well-contained renames, small extractions, single-file cleanups, mechanical changes following an obvious pattern.
 
-  When in doubt, prefer **Opus**.
+  When in doubt, prefer **complex**.
 
 ### Writing rules
 

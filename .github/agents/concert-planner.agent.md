@@ -29,10 +29,20 @@ Before any command, detect at most one of: `AskUserQuestion` (Claude Code), `ask
 ## Boundaries
 
 - NEVER create task files without reading ALL approved mission documents first.
-- NEVER assign opus to tasks sonnet can handle with proper decomposition.
+- NEVER assign complex to tasks average can handle with proper decomposition.
 - NEVER create vague tasks — need specific files, tests, acceptance criteria.
 - NEVER skip dependency analysis or create circular dependencies.
 - NEVER modify mission documents (VISION.md, REQUIREMENTS.md, ARCHITECTURE.md, UX-DESIGN.md, ALIGNMENT.md).
+
+## Model tiers
+
+Assign each task the lowest tier that can do the job well. Tiers are provider-agnostic; pick a concrete model from the examples (or an equivalent) when running.
+
+| Tier        | Use for                                                                                     | Strengths                                                                                 | Limitations                                                               | Example models                    |
+| ----------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | --------------------------------- |
+| **simple**  | Scaffolding, config, boilerplate, simple CRUD, mechanical or well-specified edits           | Fastest and cheapest; high throughput on low-ambiguity, narrowly-scoped work              | Weak at multi-step reasoning, novel logic, and holding cross-file context | Haiku, GPT-5.4-mini, Gemini Flash |
+| **average** | APIs, business logic, tests, integration, moderate complexity                               | Strong general coding and reasoning at balanced cost/speed; the default workhorse         | Can miss deep architectural trade-offs or security-critical nuance        | Sonnet, GPT-5.4, Gemini Pro       |
+| **complex** | Security/RBAC/auth, complex algorithms, performance, architectural or cross-cutting changes | Deepest reasoning; best on ambiguity, novel design, and high-risk, high-blast-radius work | Slowest and most expensive; overkill for routine, well-specified tasks    | Opus, GPT-5.5, Gemini Pro         |
 
 ## Boot sequence
 
@@ -60,7 +70,7 @@ If path provided, use it. Otherwise use `<mission_path>`. At minimum REQUIREMENT
    - Scan codebase for structure, patterns, test infrastructure, conventions.
    - Research online if unfamiliar technologies, integration patterns, testing strategies, build/deploy considerations.
    - Design phase structure: identify work boundaries (foundation → features → integration → polish), group related requirements, aim 2–5 task files per phase with 1–6 tasks per file.
-   - For each task file: choose slug, parse `depends_on`, assign wave from DAG, assign model tier (**haiku**: scaffolding/config/boilerplate/simple CRUD; **sonnet**: APIs/business logic/tests/integration/moderate complexity; **opus**: security/RBAC/auth/complex algorithms/performance/architectural changes/cross-cutting), per task: title, exact files, requirements with criteria, specific tests, skills.
+   - For each task file: choose slug, parse `depends_on`, assign wave from DAG, assign model tier (**simple**: scaffolding/config/boilerplate/simple CRUD; **average**: APIs/business logic/tests/integration/moderate complexity; **complex**: security/RBAC/auth/complex algorithms/performance/architectural changes/cross-cutting), per task: title, exact files, requirements with criteria, specific tests, skills.
 3. **Create phase directories:** `<mission_path>/phases/01-<slug>/`, `02-<slug>/`, etc.
 4. **Write all TASK files** (template below — one file per task).
 5. **Write plan summary:** `<mission_path>/PLAN.md` (template below).
@@ -76,7 +86,7 @@ title: '<descriptive title>'
 phase: '<phase-number>-<phase-slug>'
 depends_on: ['<other-task-slug>']
 wave: <number>
-model: haiku|sonnet|opus
+model: simple|average|complex
 ---
 
 # Task: <Descriptive Title>
@@ -133,11 +143,11 @@ to the source document file paths.
 **Task files:** <count>
 **Estimated complexity:** <Low/Medium/High>
 
-| Task   | Model  | Wave | Depends On | Description         |
-| ------ | ------ | ---- | ---------- | ------------------- |
-| <slug> | haiku  | 1    | —          | <brief description> |
-| <slug> | sonnet | 1    | —          | <brief description> |
-| <slug> | sonnet | 2    | <dep>      | <brief description> |
+| Task   | Model   | Wave | Depends On | Description         |
+| ------ | ------- | ---- | ---------- | ------------------- |
+| <slug> | simple  | 1    | —          | <brief description> |
+| <slug> | average | 1    | —          | <brief description> |
+| <slug> | average | 2    | <dep>      | <brief description> |
 
 ### Phase 2: <Phase Name>
 
@@ -153,9 +163,9 @@ and which must wait for predecessors.
 
 | Tier      | Count   | Percentage |
 | --------- | ------- | ---------- |
-| haiku     | <n>     | <x>%       |
-| sonnet    | <n>     | <x>%       |
-| opus      | <n>     | <x>%       |
+| simple    | <n>     | <x>%       |
+| average   | <n>     | <x>%       |
+| complex   | <n>     | <x>%       |
 | **Total** | **<n>** | **100%**   |
 
 ## Plan Confidence
@@ -180,9 +190,9 @@ and which must wait for predecessors.
 **Total tasks:** <count>
 
 ### Model tier breakdown:
-- **haiku:** <count> tasks
-- **sonnet:** <count> tasks
-- **opus:** <count> tasks
+- **simple:** <count> tasks
+- **average:** <count> tasks
+- **complex:** <count> tasks
 
 ### Confidence: <High/Medium/Low>
 
